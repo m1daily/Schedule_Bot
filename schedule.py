@@ -1,8 +1,8 @@
+import settings
 import tweepy
 import shutil
 import os
 import time
-import settings
 import cv2 
 import numpy as np
 from mega import Mega
@@ -20,11 +20,11 @@ consumer_secret = settings.CS
 access_token = settings.AT
 access_token_secret = settings.ATC
 
-# tweepyの設定（認証情報を設定）
+# tweepyの設定(認証情報を設定)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 
-# tweepyの設定（APIインスタンスの作成）
+# tweepyの設定(APIインスタンスの作成)
 api = tweepy.API(auth)
 #-----------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
@@ -39,7 +39,7 @@ driver.implicitly_wait(10)
 url = settings.GU
 
 # ファイル名接頭辞
-fileNamePrefix = "before"
+fileNamePrefix = 'before'
 
 # ウインドウ幅指定
 windowSizeWidth = 680
@@ -78,19 +78,19 @@ driver.quit()
 im = Image.open('before.png')
 im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 #-----------------------------------------------------------------------------
-#Megaにログイン(E-mailとパスワードは伏せています)
+#Megaにログイン(e-mailとパスワードは伏せています)
 mega = Mega()
 email = settings.EM
 password = settings.PW
 m = mega.login(email,password)
 
 #画像取得
-file = m.find("upload.png")
+file = m.find('upload.png')
 m.download(file)
 #-----------------------------------------------------------------------------
 #画像比較
-img_1 = cv2.imread("now.png")
-img_2 = cv2.imread("upload.png")
+img_1 = cv2.imread('now.png')
+img_2 = cv2.imread('upload.png')
 
 #もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
 if np.array_equal(img_1, img_2) == False:
@@ -99,7 +99,7 @@ if np.array_equal(img_1, img_2) == False:
   os.rename('now.png', 'upload.png')
   file = m.find('upload.png')
   m.delete(file[0])
-  m.upload("upload.png")
+  m.upload('upload.png')
   #画像付きツイート
   api.update_status_with_media(status='時間割が更新されました！', filename='upload.png')
 
