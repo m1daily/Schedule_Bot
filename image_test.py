@@ -3,6 +3,8 @@ import shutil
 import os
 import time
 import settings
+import cv2 
+import numpy as np
 from mega import Mega
 from PIL import Image
 from selenium import webdriver
@@ -86,16 +88,8 @@ m = mega.login(email,password)
 file = m.find("upload.png")
 m.download(file)
 #-----------------------------------------------------------------------------
-
 #画像比較
-
+img_1 = cv2.imread("now.png")
+img_2 = cv2.imread("upload.png")
+print(np.array_equal(img_1, img_2))
 #-----------------------------------------------------------------------------
-#既にある画像を削除後、アップロード
-os.remove('upload.png')
-os.rename('now.png', 'upload.png')
-file = m.find('upload.png')
-m.delete(file[0])
-m.upload("upload.png")
-
-#画像ツイート
-api.update_status_with_media(status='テスト段階です', filename='upload.png')
