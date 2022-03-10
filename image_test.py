@@ -14,7 +14,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 #-----------------------------------------------------------------------------
-# keyの指定
+# keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = settings.CK
 consumer_secret = settings.CS
 access_token = settings.AT
@@ -35,7 +35,7 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome('chromedriver',options=options)
 driver.implicitly_wait(10)
 
-# 対象URL
+# 対象URL(伏せています)
 url = settings.GU
 
 # ファイル名接頭辞
@@ -78,7 +78,7 @@ driver.quit()
 im = Image.open('before.png')
 im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 #-----------------------------------------------------------------------------
-#Megaにログイン
+#Megaにログイン(E-mailとパスワードは伏せています)
 mega = Mega()
 email = settings.EM
 password = settings.PW
@@ -91,5 +91,19 @@ m.download(file)
 #画像比較
 img_1 = cv2.imread("now.png")
 img_2 = cv2.imread("upload.png")
-print(np.array_equal(img_1, img_2))
-#-----------------------------------------------------------------------------
+
+#もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
+if np.array_equal(img_1, img_2)) == False:
+  #既にある画像を削除後、アップロード
+  os.remove('upload.png')
+  os.rename('now.png', 'upload.png')
+  file = m.find('upload.png')
+  m.delete(file[0])
+  m.upload("upload.png")
+  #画像付きツイート
+  api.update_status_with_media(status='テスト段階です', filename='upload.png')
+
+else:
+  #終了
+  exit()
+
