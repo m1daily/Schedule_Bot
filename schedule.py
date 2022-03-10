@@ -101,7 +101,7 @@ if np.array_equal(img_1, img_2) == False:
   m.delete(file[0])
   m.upload("upload.png")
   #画像付きツイート
-  api.update_status_with_media(status='完成きｔらあああああああああ', filename='upload.png')
+  api.update_status_with_media(status='時間割が更新されました！', filename='upload.png')
 
 else:
   #終了
