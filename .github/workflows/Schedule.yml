@@ -1,6 +1,7 @@
 name: selenium-github-actions
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: "*/10 * * * *" 
 env:
   ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
   ACCESS_TOKEN_SECRET: ${{secrets.ACCESS_TOKEN_SECRET}}
