@@ -118,5 +118,5 @@ if np.array_equal(img_1, img_2) == False:
 
 else:
   #終了
-  #exit()
+  exit()
 
