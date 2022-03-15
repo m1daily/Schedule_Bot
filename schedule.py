@@ -83,6 +83,7 @@ driver.quit()
 # 画像トリミング
 im = Image.open('before.png')
 im.crop((35, 145, 640, 645)).save('now.png', quality=95)
+api.update_status(status='てすと')
 #-----------------------------------------------------------------------------
 #Megaにログイン(e-mailとパスワードは伏せています)
 mega = Mega()
