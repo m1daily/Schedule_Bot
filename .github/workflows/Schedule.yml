@@ -1,6 +1,6 @@
 name: github-actions
 on:
-  #workflow_dispatch:
+  workflow_dispatch:
   schedule:
     - cron: "*/10 2-10 * * *"  #10分ごとに動作
 env:  #環境変数から文字列(パスワードなど)を取得
