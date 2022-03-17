@@ -85,21 +85,21 @@ im = Image.open('before.png')
 im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 #-----------------------------------------------------------------------------
 #Megaにログイン(e-mailとパスワードは伏せています)
-#mega = Mega()
-#email = settings.EM
-#password = settings.PW
-#m = mega.login(email,password)
+mega = Mega()
+email = settings.EM
+password = settings.PW
+m = mega.login(email,password)
 
 #画像取得
-#file = m.find('upload.png')
-#m.download(file)
+file = m.find('upload.png')
+m.download(file)
 #-----------------------------------------------------------------------------
 #画像比較
 img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('upload.png')
 
 #もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
-if np.array_equal(img_1, img_2) == False:
+#if np.array_equal(img_1, img_2) == False:
   #既にある画像を削除後、アップロード
   os.remove('upload.png')
   os.rename('now.png', 'upload.png')
@@ -116,7 +116,7 @@ if np.array_equal(img_1, img_2) == False:
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
 
-else:
+#else:
   #終了
   exit()
 
