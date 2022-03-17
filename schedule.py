@@ -101,22 +101,22 @@ img_2 = cv2.imread('upload.png')
 #もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
 #if np.array_equal(img_1, img_2) == False:
   #既にある画像を削除後、アップロード
-  os.remove('upload.png')
-  os.rename('now.png', 'upload.png')
-  file = m.find('upload.png')
-  m.delete(file[0])
-  m.upload('upload.png')
+  #os.remove('upload.png')
+  #os.rename('now.png', 'upload.png')
+  #file = m.find('upload.png')
+  #m.delete(file[0])
+  #m.upload('upload.png')
   #画像付きツイート
-  api.update_status_with_media(status='時間割が更新されました！', filename='upload.png')
+  #api.update_status_with_media(status='時間割が更新されました！', filename='upload.png')
   #LINEへ通知
-  line_message = '時間割が更新されました。'
-  line_image = 'upload.png'
-  payload = {'message': line_message}
-  files = {'imageFile': open(line_image, 'rb')}
-  r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  #line_message = '時間割が更新されました。'
+  #line_image = 'upload.png'
+  #payload = {'message': line_message}
+  #files = {'imageFile': open(line_image, 'rb')}
+  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
 
 #else:
   #終了
-  exit()
+  #exit()
 
