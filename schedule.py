@@ -88,7 +88,7 @@ im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 mega = Mega()
 email = settings.EM
 password = settings.PW
-m = mega.login(email,password)
+#m = mega.login(email,password)
 
 #画像取得
 #file = m.find('upload.png')
