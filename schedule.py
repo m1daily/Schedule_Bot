@@ -107,13 +107,13 @@ if np.array_equal(img_1, img_2) == False:
   m.delete(file[0])
   m.upload('upload.png')
   #画像付きツイート
-  #api.update_status_with_media(status='時間割が更新されました！', filename='upload.png')
+  api.update_status_with_media(status='時間割が更新されました！', filename='upload.png')
   #LINEへ通知
   line_message = '時間割が更新されました。'
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
-  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
 
 else:
