@@ -114,7 +114,7 @@ if np.array_equal(img_1, img_2) == False:
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
-  line_access_token = settings.LN_27
+  line_access_token = settings.LN27
   headers = {'Authorization': 'Bearer ' + line_access_token}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
