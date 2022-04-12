@@ -107,16 +107,21 @@ if np.array_equal(img_1, img_2) == False:
   m.delete(file[0])
   m.upload('upload.png')
   #画像付きツイート
-  api.update_status_with_media(status='時間割が更新されました！', filename='upload.png')
+  #api.update_status_with_media(status='時間割が更新されました！', filename='upload.png')
   #LINEへ通知
-  line_message = '時間割が更新されました。'
+  line_message = 'テスト'
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
   #27組用
+  line_url = 'https://notify-api.line.me/api/notify'
   line_access_token = settings.LN27
   headers = {'Authorization': 'Bearer ' + line_access_token}
+  line_message = '時間割が更新されました。'
+  line_image = 'upload.png'
+  payload = {'message': line_message}
+  files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
 
