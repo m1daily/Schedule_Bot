@@ -116,7 +116,7 @@ if np.array_equal(img_1, img_2) == False:
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
-  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  r = requests.post(line_url, headers=headers, params=payload, files=files,)
   #27組用
   line_url = 'https://notify-api.line.me/api/notify'
   line_access_token = settings.LN27
@@ -125,7 +125,7 @@ if np.array_equal(img_1, img_2) == False:
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
-  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
 
 else:
