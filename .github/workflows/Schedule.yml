@@ -1,8 +1,8 @@
 name: github-actions
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/10 0-12,21-23 * * *"
+  #schedule:
+    #- cron: "*/10 0-12,21-23 * * *"
             #"*/10 2-10 * * 1-5" 12時〜20時、10分ごとに動作
 env:  #環境変数から文字列(パスワードなど)を取得
   ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
