@@ -32,6 +32,6 @@ jobs:
           pip install selenium
           pip install tweepy
           pip install pillow
-          pip install mega.py
+          pip install pydrive
           pip install opencv-python
           python schedule.py
