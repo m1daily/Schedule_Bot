@@ -139,9 +139,11 @@ if np.array_equal(img_1, img_2) == False:
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  print('upload.')
 
 
 else:
   #終了
+  print('exit.')
   exit()
 
