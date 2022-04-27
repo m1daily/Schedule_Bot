@@ -34,6 +34,11 @@ api = tweepy.API(auth, wait_on_rate_limit=True)
 line_url = 'https://notify-api.line.me/api/notify'
 line_access_token = settings.LN
 headers = {'Authorization': 'Bearer ' + line_access_token}
+
+#Googleにログイン
+gauth = GoogleAuth()
+gauth.LocalWebserverAuth()
+drive = GoogleDrive(gauth)
 #-----------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
 options = webdriver.ChromeOptions()
@@ -86,16 +91,23 @@ driver.quit()
 im = Image.open('before.png')
 im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 #-----------------------------------------------------------------------------
-#Googleにログイン
-gauth = GoogleAuth()
-gauth.LocalWebserverAuth()
-drive = GoogleDrive(gauth)
+#画像取得(白)
+file_id = drive.ListFile({'q': 'title = "white.jpg"'}).GetList()[0]['id']
+f = drive.CreateFile({'id': file_id})
+f.GetContentFile('white.jpg')
 
-#画像取得
+#画像比較
+img_1 = cv2.imread('now.png')
+img_2 = cv2.imread('white.jpg')
+
+if np.array_equal(img_1, img_2) == True:
+  exit()
+#-----------------------------------------------------------------------------
+#画像取得(時間割)
 file_id = drive.ListFile({'q': 'title = "upload.png"'}).GetList()[0]['id']
 f = drive.CreateFile({'id': file_id})
 f.GetContentFile('upload.png')
-#-----------------------------------------------------------------------------
+
 #画像比較
 img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('upload.png')
