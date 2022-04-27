@@ -102,6 +102,7 @@ img_2 = cv2.imread('white.jpg')
 
 #画像が真っ白なら中止
 if np.array_equal(img_1, img_2) == True:
+  print('編集中の為、終了')
   exit()
 #-----------------------------------------------------------------------------
 #画像取得(時間割)
@@ -114,7 +115,7 @@ img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('upload.png')
 
 #もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
-print(np.count_nonzero(img_1 == img_2))
+print("一致度: " + str(np.count_nonzero(img_1 == img_2)))
 if np.count_nonzero(img_1 == img_2) < 400000:
   #既にある画像を削除後、アップロード
   os.remove('upload.png')
@@ -140,11 +141,11 @@ if np.count_nonzero(img_1 == img_2) < 400000:
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
-  print('upload.')
+  print('アップロード完了.')
 
 
 else:
   #終了
-  print('exit.')
+  print('画像が一致した為、終了')
   exit()
 
