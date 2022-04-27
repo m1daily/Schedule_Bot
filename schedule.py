@@ -100,6 +100,7 @@ f.GetContentFile('white.jpg')
 img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('white.jpg')
 
+#画像が真っ白なら中止
 if np.array_equal(img_1, img_2) == True:
   exit()
 #-----------------------------------------------------------------------------
