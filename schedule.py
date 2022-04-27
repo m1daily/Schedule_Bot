@@ -114,7 +114,8 @@ img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('upload.png')
 
 #もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
-if np.array_equal(img_1, img_2) == False:
+print(np.count_nonzero(img_1 == img_2))
+if np.count_nonzero(img_1 == img_2) < 400000:
   #既にある画像を削除後、アップロード
   os.remove('upload.png')
   os.rename('now.png', 'upload.png')
