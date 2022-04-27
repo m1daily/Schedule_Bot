@@ -141,7 +141,7 @@ if np.count_nonzero(img_1 == img_2) < 400000:
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
-  print('アップロード完了.')
+  print('アップロード完了')
 
 
 else:
