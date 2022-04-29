@@ -50,7 +50,7 @@ from selenium.webdriver.common.by import By  (〃)
 from selenium.webdriver.support.ui import WebDriverWait  (〃)
 from selenium.webdriver.support import expected_conditions as EC  (〃)
 ```
-
+```
 [意味解説]
 - 環境変数
   - リポジトリ内にあるファイル全てに使える変数
@@ -65,5 +65,5 @@ from selenium.webdriver.support import expected_conditions as EC  (〃)
 - Gooleスプレッドシート
   - Google版Excel
   - M1はこれに時間割の画像を貼り付けている
-
+```
 #### 2.下準備～時間取得、各サービス使用準備～(18行目～46行目)
