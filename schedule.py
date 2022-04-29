@@ -18,7 +18,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 #-----------------------------------------------------------------------------
-#バグ発生時に備え、日付を取得
+#バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
 dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 w_list = ['月', '火', '水', '木', '金', '土', '日']
 print('')
