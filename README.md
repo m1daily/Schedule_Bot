@@ -29,5 +29,10 @@ LINEで通知を受け取りたい場合は@M1_SchedulesのDMへどうぞ。
 
 --------------------------------------------------------------------------------------
 ## [細かく解説]
-`import settings
-import datetime`
+```
+import settings
+import datetime
+～～～～～(省略)
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+```
