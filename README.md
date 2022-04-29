@@ -28,9 +28,9 @@ Schedule_Bot
             Schedule.yml  (定期実行用ファイル)
 ```
 
-#### 1.必要なモジュールをインポート(1行目～16行目)
+#### 1.下準備～必要なモジュールをインポート～(1行目～16行目)
 - バージョンを指定することでバグが発生しないようにしています。
-  - バージョンが変更されると記述の仕方を変える必要があるモジュールが存在するからです。
+  - バージョン変更により記述の仕方を変える必要があるモジュールが存在するからです。
 ```
 [Shedules.py]
 import settings  (settings.pyから環境変数をインポート)
@@ -44,7 +44,7 @@ import numpy as np  (〃)
 from pydrive.auth import GoogleAuth  (GoogleDriveAPI用)
 from pydrive.drive import GoogleDrive  (〃)
 from PIL import Image  (画像トリミング)
-from selenium import webdriver  (スプレッドシートから画像を取得)
+from selenium import webdriver  (Gooleスプレッドシートから画像を取得)
 from selenium.webdriver.chrome.options import Options  (〃)
 from selenium.webdriver.common.by import By  (〃)
 from selenium.webdriver.support.ui import WebDriverWait  (〃)
@@ -62,3 +62,8 @@ from selenium.webdriver.support import expected_conditions as EC  (〃)
   - 「Application Programming Interface」の略
   - 簡潔に言うと、他サービスの機能連携
    - TwitterAPIを導入するとPythonからツイートすることができたり、GoogleDriveAPIを導入するとPythonからファイルのアップロードができたりする
+- Gooleスプレッドシート
+  - Google版Excel
+  - M1はこれに時間割の画像を貼り付けている
+
+#### 2.下準備～時間取得、各サービス使用準備～(18行目～46行目)
