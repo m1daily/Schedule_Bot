@@ -1,7 +1,6 @@
 import settings
 import datetime
 import tweepy
-import shutil
 import os
 import time
 import requests
