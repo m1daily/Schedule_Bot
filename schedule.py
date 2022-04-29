@@ -17,9 +17,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+#-----------------------------------------------------------------------------
 #バグ発生時に備え、日付を取得
-dt_now = datetime.datetime.now()
-print(dt_now.strftime('[%Y年%m月%d日 %H:%M:%S]'))
+dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+w_list = ['月', '火', '水', '木', '金', '土', '日']
+
+print(dt.strftime('[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 #-----------------------------------------------------------------------------
 # keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = settings.CK
