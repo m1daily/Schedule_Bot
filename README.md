@@ -112,3 +112,7 @@ gauth = GoogleAuth()
 gauth.LocalWebserverAuth()
 drive = GoogleDrive(gauth)
 ```
+
+[意味解説]
+- トークン(token)
+  - あ
