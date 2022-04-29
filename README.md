@@ -27,13 +27,13 @@ Schedule_Bot
     └─workflows
             Schedule.yml  (定期実行用ファイル)
 ```
+ここからはschedule.pyの解説をしていきます。
 <br>
 
 #### 1.下準備～必要なモジュールをインポート～(1行目～16行目)
 - バージョンを指定することでバグが発生しないようにしています。
   - バージョン変更により記述の仕方を変える必要があるモジュールが存在するからです。
 ```
-[shedule.py]
 import settings  (settings.pyから環境変数をインポート)
 import datetime  (日付を扱う)
 import tweepy  (Twitter投稿)
