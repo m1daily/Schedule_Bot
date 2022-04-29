@@ -39,17 +39,11 @@ from selenium.webdriver.support import expected_conditions as EC  (〃)
 ```
 [意味解説]
 - 環境変数
-  - 
+  - リポジトリにある全ファイルで使える変数(使うには設定が必要)
 ```
 [settings.py]
-import os
-from os.path import join, dirname
-from dotenv import load_dotenv
-
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
-
-CK = os.environ.get("CONSUMER_KEY") # 環境変数の値をCKに代入(以下同様)
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～(略)
+CK = os.environ.get("CONSUMER_KEY")
 CS = os.environ.get("CONSUMER_SECRET")
 AT = os.environ.get("ACCESS_TOKEN")
 ATC = os.environ.get("ACCESS_TOKEN_SECRET")
