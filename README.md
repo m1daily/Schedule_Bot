@@ -19,7 +19,20 @@ LINEで通知を受け取りたい場合は@M1_SchedulesのDMへどうぞ。<br>
 ```
 import settings
 import datetime
-～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+import tweepy
+import shutil
+import os
+import time
+import requests
+import cv2 
+import numpy as np
+import pprint
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+from PIL import Image
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 ```
