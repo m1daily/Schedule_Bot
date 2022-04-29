@@ -13,7 +13,19 @@ LINEで通知を受け取りたい場合は@M1_SchedulesのDMへどうぞ。<br>
 --------------------------------------------------------------------------------------
 ### [細かく解説]
 
-#### 0.各ファイルの説明
+#### 0.各ファイルの役割
+Schedule_Bot
+│  a.txt
+│  client_secrets.json
+│  credentials.json
+│  README.md
+│  schedule.py
+│  settings.py
+│  settings.yaml
+│  
+└─.github
+    └─workflows
+            Schedule.yml
 
 #### 1.必要なモジュールをインポート(1行目～16行目)
 - バージョンを指定することでバグが発生しないようにしています。
