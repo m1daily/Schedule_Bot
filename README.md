@@ -71,13 +71,7 @@ from selenium.webdriver.support import expected_conditions as EC  (〃)
 #### 2.下準備～時間取得、各サービス使用準備～(18行目～46行目)
 - 18行目～23行目 時刻の取得
   - プログラムを実行したタイミングを記録しています。
-  - 「settings.CK」はsettings.pyのCKという変数の中身を表しています。
-- 24行目～36行目 Twitterの設定
-  - Twitterへの投稿が可能になります。
-- 38行目～41行目 LINEの設定
-  - LINEへの画像、メッセージ送信が可能になります。
-- 43行目～46行目 Googleにログイン
-  - client_secrets.jsonなどのファイルを使ってログインしています。
+
 ```
 #バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
 dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
@@ -85,6 +79,14 @@ w_list = ['月', '火', '水', '木', '金', '土', '日']
 print('')
 print(dt.strftime('[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 ```
+
+- 24行目～36行目 Twitterの設定
+  - Twitterへの投稿が可能になります。
+  - 「settings.CK」はsettings.pyのCKという変数の中身を表しています。
+- 38行目～41行目 LINEの設定
+  - LINEへの画像、メッセージ送信が可能になります。
+- 43行目～46行目 Googleにログイン
+  - client_secrets.jsonなどのファイルを使ってログインしています。
 ```
 # keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = settings.CK
