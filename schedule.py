@@ -21,7 +21,7 @@ from selenium.webdriver.support import expected_conditions as EC
 #バグ発生時に備え、日付を取得
 dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 w_list = ['月', '火', '水', '木', '金', '土', '日']
-
+print('')
 print(dt.strftime('[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 #-----------------------------------------------------------------------------
 # keyの指定(情報漏えいを防ぐため伏せています)
