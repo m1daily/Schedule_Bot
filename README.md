@@ -16,16 +16,16 @@ LINEで通知を受け取りたい場合は@M1_SchedulesのDMへどうぞ。<br>
 #### 0.各ファイルの役割
 ```
 Schedule_Bot
-│  client_secrets.json
-│  credentials.json
-│  README.md
-│  schedule.py
-│  settings.py
-│  settings.yaml
+│  README.md  (このファイル)
+│  client_secrets.json  (GoogleDriveアクセス用)
+│  credentials.json  (〃)
+│  schedule.py  (プログラムが記述してある)
+│  settings.py  (環境変数関連)
+│  settings.yaml  (GoogleDriveアクセス用)
 │  
 └─.github
     └─workflows
-            Schedule.yml
+            Schedule.yml  (定期実行用ファイル)
 ```
 
 #### 1.必要なモジュールをインポート(1行目～16行目)
@@ -54,4 +54,11 @@ from selenium.webdriver.support import expected_conditions as EC  (〃)
 [意味解説]
 - 環境変数
   - リポジトリ内にあるファイル全てに使える変数
-  - Schedule.ymlでsecret を環境変数に入れている
+  - Schedule.ymlでsecretを環境変数に入れ、settings.pyで環境変数を楽に扱えるようにしている
+- secret
+  - 暗号化された環境変数
+  - パスワードなどを記述しても誰も見ることができない
+- API
+  - 「Application Programming Interface」の略
+  - 簡潔に言うと、他サービスの機能連携
+   - TwitterAPIを導入するとPythonからツイートすることができたり、GoogleDriveAPIを導入するとPythonからファイルのアップロードができたりする
