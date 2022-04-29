@@ -17,22 +17,22 @@ LINEで通知を受け取りたい場合は@M1_SchedulesのDMへどうぞ。<br>
 - バージョンを指定することでバグが発生しないようにしています。
   - バージョンが変更されると記述の仕方を変える必要があるモジュールが存在するからです。
 ```
-import settings  ()
-import datetime
-import tweepy
-import shutil
-import os
-import time
-import requests
-import cv2 
-import numpy as np
-import pprint
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
-from PIL import Image
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+import settings  (環境変数をインポート)
+import datetime  (日付を扱う)
+import tweepy  (Twitter投稿)
+import shutil  ()
+import os  ()
+import time  ()
+import requests  ()
+import cv2   ()
+import numpy as np  (画像切り抜き)
+import pprint  ()
+from pydrive.auth import GoogleAuth  (GoogleDriveAPI用)
+from pydrive.drive import GoogleDrive  (〃)
+from PIL import Image  ()
+from selenium import webdriver  (スプレッドシートから画像を取得)
+from selenium.webdriver.chrome.options import Options  (〃)
+from selenium.webdriver.common.by import By  (〃)
+from selenium.webdriver.support.ui import WebDriverWait  (〃)
+from selenium.webdriver.support import expected_conditions as EC  (〃)
 ```
