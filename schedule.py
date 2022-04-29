@@ -131,6 +131,7 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   f = drive.CreateFile()
   f.SetContentFile('upload.png')
   f.Upload()
+  print('アップロード完了')
   #画像付きツイート
   api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   #LINEへ通知
@@ -148,7 +149,7 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
-  print('アップロード完了')
+  print('通知完了')
 
 
 else:
