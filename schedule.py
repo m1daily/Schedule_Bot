@@ -7,7 +7,6 @@ import time
 import requests
 import cv2 
 import numpy as np
-import pprint
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from PIL import Image
