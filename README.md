@@ -36,6 +36,6 @@ from selenium.webdriver.common.by import By  (〃)
 from selenium.webdriver.support.ui import WebDriverWait  (〃)
 from selenium.webdriver.support import expected_conditions as EC  (〃)
 ```
-- 意味解説
-  - 環境変数
-    - あ
+[意味解説]
+- 環境変数
+  - 
