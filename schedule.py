@@ -59,10 +59,8 @@ url = settings.GU
 # ファイル名接頭辞
 fileNamePrefix = 'before'
 
-# ウインドウ幅指定
+# ウインドウ幅、高さ指定
 windowSizeWidth = 680
-
-# ウインドウ高さ指定
 windowSizeHeight = 700
 
 # パス指定
