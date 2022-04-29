@@ -33,7 +33,7 @@ Schedule_Bot
 - バージョンを指定することでバグが発生しないようにしています。
   - バージョン変更により記述の仕方を変える必要があるモジュールが存在するからです。
 ```
-[Shedules.py]
+[shedule.py]
 import settings  (settings.pyから環境変数をインポート)
 import datetime  (日付を扱う)
 import tweepy  (Twitter投稿)
@@ -69,3 +69,36 @@ from selenium.webdriver.support import expected_conditions as EC  (〃)
 <br>
 
 #### 2.下準備～時間取得、各サービス使用準備～(18行目～46行目)
+- 18行目～23行目 時刻の取得
+  - プログラムを実行したタイミングを記録しています。
+  - 「settings.CK」はsettings.pyのCKという変数の中身を表しています。
+- 24行目～36行目 Twitterの設定
+  - Twitterへの投稿が可能になります。
+- 38行目～41行目 LINEの設定
+  - LINEへの画像、メッセージ送信が可能になります。
+- 43行目～46行目 Googleにログイン
+  - client_secrets.jsonなどのファイルを使ってログインしています。
+```
+# keyの指定(情報漏えいを防ぐため伏せています)
+consumer_key = settings.CK
+consumer_secret = settings.CS
+access_token = settings.AT
+access_token_secret = settings.ATC
+
+# tweepyの設定(認証情報を設定)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+
+# tweepyの設定(APIインスタンスの作成)
+api = tweepy.API(auth, wait_on_rate_limit=True)
+
+#LINEの設定(伏せています)
+line_url = 'https://notify-api.line.me/api/notify'
+line_access_token = settings.LN
+headers = {'Authorization': 'Bearer ' + line_access_token}
+
+#Googleにログイン
+gauth = GoogleAuth()
+gauth.LocalWebserverAuth()
+drive = GoogleDrive(gauth)
+```
