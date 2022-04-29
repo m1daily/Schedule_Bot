@@ -56,15 +56,9 @@ driver.implicitly_wait(10)
 # 対象URL(伏せています)
 url = settings.GU
 
-# ファイル名接頭辞
-fileNamePrefix = 'before'
-
 # ウインドウ幅、高さ指定
 windowSizeWidth = 680
 windowSizeHeight = 700
-
-# パス指定
-folderPath = fileNamePrefix
 
 # サイトURL取得
 driver.get(url)
