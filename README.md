@@ -17,7 +17,7 @@ LINEで通知を受け取りたい場合は@M1_SchedulesのDMへどうぞ。<br>
 - バージョンを指定することでバグが発生しないようにしています。
   - バージョンが変更されると記述の仕方を変える必要があるモジュールが存在するからです。
 ```
-import settings
+import settings  ()
 import datetime
 import tweepy
 import shutil
