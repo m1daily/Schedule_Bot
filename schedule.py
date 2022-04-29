@@ -53,15 +53,12 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome('chromedriver',options=options)
 driver.implicitly_wait(10)
 
-# 対象URL(伏せています)
-url = settings.GU
-
 # ウインドウ幅、高さ指定
 windowSizeWidth = 680
 windowSizeHeight = 700
 
-# サイトURL取得
-driver.get(url)
+# サイトURL取得(伏せています)
+driver.get(settings.GU)
 WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located)
   
 # ウインドウ幅・高さ指定
@@ -73,7 +70,7 @@ driver.set_window_size(windowWidth, windowHeight)
 driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
 
 # 処理後一時待機
-time.sleep(3)
+time.sleep(2)
 
 # スクリーンショット格納
 driver.save_screenshot('before.png')
