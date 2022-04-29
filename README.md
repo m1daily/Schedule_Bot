@@ -27,7 +27,7 @@ Schedule_Bot
     └─workflows
             Schedule.yml  (定期実行用ファイル)
 ```
-
+<br>
 #### 1.下準備～必要なモジュールをインポート～(1行目～16行目)
 - バージョンを指定することでバグが発生しないようにしています。
   - バージョン変更により記述の仕方を変える必要があるモジュールが存在するからです。
@@ -50,7 +50,7 @@ from selenium.webdriver.common.by import By  (〃)
 from selenium.webdriver.support.ui import WebDriverWait  (〃)
 from selenium.webdriver.support import expected_conditions as EC  (〃)
 ```
-```
+
 [意味解説]
 - 環境変数
   - リポジトリ内にあるファイル全てに使える変数
@@ -65,5 +65,5 @@ from selenium.webdriver.support import expected_conditions as EC  (〃)
 - Gooleスプレッドシート
   - Google版Excel
   - M1はこれに時間割の画像を貼り付けている
-```
+<br>
 #### 2.下準備～時間取得、各サービス使用準備～(18行目～46行目)
