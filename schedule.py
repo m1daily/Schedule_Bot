@@ -67,10 +67,10 @@ windowHeight = windowSizeHeight if windowSizeHeight else driver.execute_script('
 driver.set_window_size(windowWidth, windowHeight)
 
 # スクロール処理
-driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+#driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
 
 # 処理後一時待機
-time.sleep(2)
+#time.sleep(2)
 
 # スクリーンショット格納
 driver.save_screenshot('before.png')
@@ -120,13 +120,13 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   f.Upload()
   print('アップロード完了')
   #画像付きツイート
-  api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
+  #api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   #LINEへ通知
   line_message = '時間割が更新されました。'
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
-  r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
   #27組用
   line_url = 'https://notify-api.line.me/api/notify'
   line_access_token = settings.LN27
@@ -135,7 +135,7 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
-  r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
   print('通知完了')
 
 
