@@ -101,9 +101,9 @@ f.GetContentFile('upload.png')
 #画像比較
 img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('upload.png')
+print("一致度: " + str(np.count_nonzero(img_1 == img_2)))
 
 #もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
-print("一致度: " + str(np.count_nonzero(img_1 == img_2)))
 if np.count_nonzero(img_1 == img_2) < 450000:
   #既にある画像を削除後、アップロード
   os.remove('upload.png')
