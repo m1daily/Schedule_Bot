@@ -65,7 +65,7 @@ WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located)
 windowWidth = windowSizeWidth if windowSizeWidth else driver.execute_script('return document.body.scrollWidth;')
 windowHeight = windowSizeHeight if windowSizeHeight else driver.execute_script('return document.body.scrollHeight;')
 driver.set_window_size(windowWidth, windowHeight)
-time.sleep(1)
+time.sleep(3)
 
 # スクリーンショット格納
 driver.save_screenshot('before.png')
