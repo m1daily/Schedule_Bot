@@ -92,6 +92,20 @@ img_2 = cv2.imread('white.jpg')
 if np.array_equal(img_1, img_2) == True:
   print('編集中の為、終了')
   exit()
+
+#画像取得(白)
+file_id = drive.ListFile({'q': 'title = "white2.jpg"'}).GetList()[0]['id']
+f = drive.CreateFile({'id': file_id})
+f.GetContentFile('white2.jpg')
+
+#画像比較
+img_1 = cv2.imread('now.png')
+img_2 = cv2.imread('white2.jpg')
+
+#画像が真っ白なら中止
+if np.array_equal(img_1, img_2) == True:
+  print('編集中の為、終了')
+  exit()
 #-----------------------------------------------------------------------------
 #画像取得(時間割)
 file_id = drive.ListFile({'q': 'title = "upload.png"'}).GetList()[0]['id']
