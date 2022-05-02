@@ -16,9 +16,9 @@ env:  #環境変数から文字列(パスワードなど)を取得
   LINE_NOTIFY_27: ${{secrets.LINE_NOTIFY_27}}
 
 jobs:
-  selenium:
+  python:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
