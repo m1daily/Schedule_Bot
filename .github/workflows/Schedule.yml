@@ -1,4 +1,4 @@
-name: github-actions
+name: GitHub_Actions
 on:
   workflow_dispatch:
   schedule:
