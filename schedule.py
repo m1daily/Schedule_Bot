@@ -91,7 +91,7 @@ black_list = ["error.png", "white1.jpg", "white2.jpg"]
 #画像取得(白)
 for black_image in black_list:
   
-  file_id = drive.ListFile().GetList()[0]['id']
+  file_id = drive.ListFile({'title' : black_image}).GetList()[0]['id']
   f = drive.CreateFile({'id': file_id})
   f.GetContentFile(black_image)
 
