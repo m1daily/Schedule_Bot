@@ -41,6 +41,10 @@ line_url = 'https://notify-api.line.me/api/notify'
 line_access_token = settings.LN
 headers = {'Authorization': 'Bearer ' + line_access_token}
 
+#Discordの設定
+Discord_token = settings.DT
+channel_id = int(settings.DI)
+
 #Googleにログイン
 gauth = GoogleAuth()
 gauth.LocalWebserverAuth()
@@ -151,10 +155,10 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   #DiscordBot起動時に動作する処理
   @client.event
   async def on_ready():
-      channel = client.get_channel(settings.DI)
+      channel = client.get_channel(channel_id)
       await channel.send('時間割が更新されました。', file=discord.File('upload.png'))
       await client.close()
-  client.run(settings.DT)
+  client.run(Discord_token)
   print('通知完了')
 
 
