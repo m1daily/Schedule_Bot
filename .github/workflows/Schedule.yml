@@ -14,6 +14,8 @@ env:  #環境変数から文字列(パスワードなど)を取得
   PASSWORD: ${{secrets.PASSWORD}}
   LINE_NOTIFY: ${{secrets.LINE_NOTIFY}}
   LINE_NOTIFY_27: ${{secrets.LINE_NOTIFY_27}}
+  DISCORD_TOKEN: ${{secrets.DISCORD_TOKEN}}
+  DISCORD_ID: ${{secrets.DISCORD_ID}}
 
 jobs:
   python:
