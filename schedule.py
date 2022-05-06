@@ -1,6 +1,7 @@
 import settings
 import datetime
 import tweepy
+import discord
 import os
 import time
 import requests
@@ -129,13 +130,13 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   f.Upload()
   print('アップロード完了')
   #画像付きツイート
-  api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
+  #api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   #LINEへ通知
   line_message = '時間割が更新されました。'
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
-  r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
   #27組用
   line_url = 'https://notify-api.line.me/api/notify'
   line_access_token = settings.LN27
@@ -144,7 +145,16 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
-  r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  #Discordの接続に必要なオブジェクトを生成
+  client = discord.Client()
+  #DiscordBot起動時に動作する処理
+  @client.event
+  async def on_ready():
+      channel = client.get_channel(settings.DI)
+      await channel.send('時間割が更新されました。', file=discord.File('upload.png'))
+      await client.close()
+  client.run(settings.DT)
   print('通知完了')
 
 
