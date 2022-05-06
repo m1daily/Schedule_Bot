@@ -86,7 +86,7 @@ im = Image.open('before.png')
 im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 #-----------------------------------------------------------------------------
 #ブラックリスト
-black_list = ['white1.jpg', 'white2.jpg', 'error.png']
+black_list = ["white1.jpg", "white2.jpg", "error.png"]
 
 #画像取得(白)
 for black_image in black_list:
