@@ -85,41 +85,29 @@ driver.quit()
 im = Image.open('before.png')
 im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 #-----------------------------------------------------------------------------
-#画像取得(白)
+#関数定義
+def exclusion(x):
+  f = drive.CreateFile({'id': file_id})
+  f.GetContentFile(x)
+  #画像比較
+  img_1 = cv2.imread('now.png')
+  img_2 = cv2.imread(x)
+  #画像が真っ白なら中止
+  if np.array_equal(img_1, img_2) == True:
+    print('編集中の為、終了(' + x + ')')
+    exit()
+
+#画像取得(白1)
 file_id = drive.ListFile({'q': 'title = "white1.jpg"'}).GetList()[0]['id']
-f = drive.CreateFile({'id': file_id})
-f.GetContentFile('white1.jpg')
-#画像比較
-img_1 = cv2.imread('now.png')
-img_2 = cv2.imread('white1.jpg')
-#画像が真っ白なら中止
-if np.array_equal(img_1, img_2) == True:
-  print('編集中の為、終了(white1)')
-  exit()
+def('white1.jpg')
 
-#画像取得(白)
+#画像取得(白2)
 file_id = drive.ListFile({'q': 'title = "white2.jpg"'}).GetList()[0]['id']
-f = drive.CreateFile({'id': file_id})
-f.GetContentFile('white2.jpg')
-#画像比較
-img_1 = cv2.imread('now.png')
-img_2 = cv2.imread('white2.jpg')
-#画像が真っ白なら中止
-if np.array_equal(img_1, img_2) == True:
-  print('編集中の為、終了(white2)')
-  exit()
+def('white2.jpg')
 
-#画像取得(白)
+#画像取得(エラー画像)
 file_id = drive.ListFile({'q': 'title = "error.png"'}).GetList()[0]['id']
-f = drive.CreateFile({'id': file_id})
-f.GetContentFile('error.png')
-#画像比較
-img_1 = cv2.imread('now.png')
-img_2 = cv2.imread('error.png')
-#画像が真っ白なら中止
-if np.array_equal(img_1, img_2) == True:
-  print('編集中の為、終了(error)')
-  exit()
+def('error.png')
 #-----------------------------------------------------------------------------
 #画像取得(時間割)
 file_id = drive.ListFile({'q': 'title = "upload.png"'}).GetList()[0]['id']
