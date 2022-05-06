@@ -89,39 +89,36 @@ im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 file_id = drive.ListFile({'q': 'title = "white1.jpg"'}).GetList()[0]['id']
 f = drive.CreateFile({'id': file_id})
 f.GetContentFile('white1.jpg')
-
 #画像比較
 img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('white1.jpg')
-
 #画像が真っ白なら中止
 if np.array_equal(img_1, img_2) == True:
+  print('編集中の為、終了(white1)')
   exit()
 
 #画像取得(白)
 file_id = drive.ListFile({'q': 'title = "white2.jpg"'}).GetList()[0]['id']
 f = drive.CreateFile({'id': file_id})
 f.GetContentFile('white2.jpg')
-
 #画像比較
 img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('white2.jpg')
-
 #画像が真っ白なら中止
 if np.array_equal(img_1, img_2) == True:
+  print('編集中の為、終了(white2)')
   exit()
 
 #画像取得(白)
 file_id = drive.ListFile({'q': 'title = "error.png"'}).GetList()[0]['id']
 f = drive.CreateFile({'id': file_id})
 f.GetContentFile('error.png')
-
 #画像比較
 img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('error.png')
-
 #画像が真っ白なら中止
 if np.array_equal(img_1, img_2) == True:
+  print('編集中の為、終了(error)')
   exit()
 #-----------------------------------------------------------------------------
 #画像取得(時間割)
@@ -145,13 +142,13 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   f.Upload()
   print('アップロード完了')
   #画像付きツイート
-  #api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
+  api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   #LINEへ通知
   line_message = '時間割が更新されました。'
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
-  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  r = requests.post(line_url, headers=headers, params=payload, files=files,)
   #27組用
   line_url = 'https://notify-api.line.me/api/notify'
   line_access_token = settings.LN27
@@ -160,7 +157,7 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
-  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  r = requests.post(line_url, headers=headers, params=payload, files=files,)
   #Discordの接続に必要なオブジェクトを生成
   client = discord.Client()
   #DiscordBot起動時に動作する処理
@@ -169,7 +166,7 @@ if np.count_nonzero(img_1 == img_2) < 450000:
       channel = client.get_channel(channel_id)
       await channel.send('時間割が更新されました。', file=discord.File('upload.png'))
       await client.close()
-  #client.run(Discord_token)
+  client.run(Discord_token)
   print('通知完了')
 
 
