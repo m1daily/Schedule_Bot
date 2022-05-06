@@ -99,15 +99,15 @@ def exclusion(x):
 
 #画像取得(白1)
 file_id = drive.ListFile({'q': 'title = "white1.jpg"'}).GetList()[0]['id']
-def('white1.jpg')
+exclusion('white1.jpg')
 
 #画像取得(白2)
 file_id = drive.ListFile({'q': 'title = "white2.jpg"'}).GetList()[0]['id']
-def('white2.jpg')
+exclusion('white2.jpg')
 
 #画像取得(エラー画像)
 file_id = drive.ListFile({'q': 'title = "error.png"'}).GetList()[0]['id']
-def('error.png')
+exclusion('error.png')
 #-----------------------------------------------------------------------------
 #画像取得(時間割)
 file_id = drive.ListFile({'q': 'title = "upload.png"'}).GetList()[0]['id']
