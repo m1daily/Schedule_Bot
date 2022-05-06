@@ -89,7 +89,7 @@ im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 black_list = ['white1.jpg', 'white2.jpg', 'error.png']
 
 #画像取得(白)
-for black_image in black_list
+for black_image in black_list:
   file_id = drive.ListFile({'q': 'title = black_image'}).GetList()[0]['id']
   f = drive.CreateFile({'id': file_id})
   f.GetContentFile(black_image)
