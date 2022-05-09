@@ -47,7 +47,7 @@ def line_notify(nofity_token):
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
-notify_group = settngs.LN
+notify_group = settings.LN
 nofify_27 = settings.LN27
 
 #Discordの設定
