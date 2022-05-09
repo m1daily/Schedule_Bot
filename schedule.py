@@ -47,6 +47,9 @@ def line_notify(nofity_token):
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
+notify_group = settngs.LN
+nofify_27 = settings.LN27
+
 #Discordの設定
 Discord_token = settings.DT
 channel_id = int(settings.DI)
@@ -140,9 +143,9 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   
   #LINEへ通知
-  def line_notify(settings.LN)
+  def line_notify(notify_group)
   #27組用
-  def line_notify(settings.LN27)
+  def line_notify(notify_27)
   
   #Discordの接続に必要なオブジェクトを生成
   client = discord.Client()
