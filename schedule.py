@@ -37,9 +37,9 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 #LINEの設定(伏せています)
-def line_notify(nofity_token):
+def line_notify(x):
   line_url = 'https://notify-api.line.me/api/notify'
-  line_access_token = notify_token
+  line_access_token = x
   headers = {'Authorization': 'Bearer ' + line_access_token}
   line_message = '時間割が更新されました。'
   line_image = 'upload.png'
@@ -143,9 +143,9 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   #api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   
   #LINEへ通知
-  line_notify(notify_group)
+  line_notify(x=notify_group)
   #27組用
-  line_notify(notify_27)
+  line_notify(x=notify_27)
   
   #Discordの接続に必要なオブジェクトを生成
   client = discord.Client()
