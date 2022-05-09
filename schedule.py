@@ -45,7 +45,7 @@ def line_notify(nofity_token):
   line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
-  r = requests.post(line_url, headers=headers, params=payload, files=files,)
+  #r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
 notify_group = settings.LN
 nofify_27 = settings.LN27
@@ -140,7 +140,7 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   print('アップロード完了')
   
   #画像付きツイート
-  api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
+  #api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   
   #LINEへ通知
   line_notify(notify_group)
@@ -155,7 +155,7 @@ if np.count_nonzero(img_1 == img_2) < 450000:
       channel = client.get_channel(channel_id)
       await channel.send('時間割が更新されました。', file=discord.File('upload.png'))
       await client.close()
-  client.run(Discord_token)
+  #client.run(Discord_token)
   print('通知完了')
 
 
