@@ -143,9 +143,9 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   
   #LINEへ通知
-  line_notify(x=notify_group)
+  line_notify(notify_group)
   #27組用
-  line_notify(x=notify_27)
+  line_notify(notify_27)
   
   #Discordの接続に必要なオブジェクトを生成
   client = discord.Client()
