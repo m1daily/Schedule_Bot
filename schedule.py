@@ -48,7 +48,7 @@ def line_notify(x):
   #r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
 notify_group = settings.LN
-nofify_27 = settings.LN27
+notify_27 = settings.LN27
 
 #Discordの設定
 Discord_token = settings.DT
