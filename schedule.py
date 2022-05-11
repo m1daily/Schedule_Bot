@@ -94,6 +94,24 @@ driver.quit()
 im = Image.open('before.png')
 im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 #-----------------------------------------------------------------------------
+#ブラックリスト
+Black_List = ["white1.jpg", "white2.jpg", "error.png"]
+
+for Black_image in Black_List:
+  GetFile = '\"' + Black_image + '\"'
+  print(GetFile)
+  file_id = drive.ListFile({'q': f'title = {GetFile}'}).GetList()[0]['id']
+  f = drive.CreateFile({'id': file_id})
+  f.GetContentFile(Black_image)
+  #画像比較
+  img_1 = cv2.imread('now.png')
+  img_2 = cv2.imread(Black_image)
+  #画像が真っ白なら中止
+  if np.array_equal(img_1, img_2) == True:
+    print('編集中の為、終了(' + Black_image + ')')
+    exit()
+  
+
 #関数定義
 def exclusion(x):
   f = drive.CreateFile({'id': file_id})
