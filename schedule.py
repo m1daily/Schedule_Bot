@@ -99,43 +99,16 @@ Black_List = ["white1.jpg", "white2.jpg", "error.png"]
 
 for Black_image in Black_List:
   GetFile = '\"' + Black_image + '\"'
-  print(GetFile)
   file_id = drive.ListFile({'q': f'title = {GetFile}'}).GetList()[0]['id']
   f = drive.CreateFile({'id': file_id})
   f.GetContentFile(Black_image)
   #画像比較
   img_1 = cv2.imread('now.png')
   img_2 = cv2.imread(Black_image)
-  #画像が真っ白なら中止
+  #画像が一致する(編集中orエラー)なら中止
   if np.array_equal(img_1, img_2) == True:
-    print('編集中の為、終了(' + Black_image + ')')
+    print('編集中かエラーの為、終了(' + Black_image + ')')
     exit()
-  
-
-#関数定義
-def exclusion(x):
-  f = drive.CreateFile({'id': file_id})
-  f.GetContentFile(x)
-  #画像比較
-  img_1 = cv2.imread('now.png')
-  img_2 = cv2.imread(x)
-  #画像が真っ白なら中止
-  if np.array_equal(img_1, img_2) == True:
-    print('編集中の為、終了(' + x + ')')
-    exit()
-
-#画像取得(白1)
-file_id = drive.ListFile({'q': 'title = "white1.jpg"'}).GetList()[0]['id']
-exclusion('white1.jpg')
-
-#画像取得(白2)
-file_id = drive.ListFile({'q': 'title = "white2.jpg"'}).GetList()[0]['id']
-exclusion('white2.jpg')
-
-#画像取得(エラー画像)
-GetFile = "\"error.png\""
-file_id = drive.ListFile({'q': f'title = {GetFile}'}).GetList()[0]['id']
-exclusion('error.png')
 #-----------------------------------------------------------------------------
 #画像取得(時間割)
 file_id = drive.ListFile({'q': 'title = "upload.png"'}).GetList()[0]['id']
