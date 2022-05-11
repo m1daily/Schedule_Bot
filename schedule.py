@@ -81,13 +81,9 @@ windowHeight = windowSizeHeight if windowSizeHeight else driver.execute_script('
 driver.set_window_size(windowWidth, windowHeight)
 time.sleep(4)
 
-# スクリーンショット格納
+# スクリーンショット格納、サーバー負荷軽減処理、ブラウザ稼働終了
 driver.save_screenshot('before.png')
-
-# サーバー負荷軽減処理
 time.sleep(1)
-
-# ブラウザ稼働終了
 driver.quit()
 
 # 画像トリミング
@@ -107,7 +103,7 @@ for Black_image in Black_List:
   img_2 = cv2.imread(Black_image)
   #画像が一致する(編集中orエラー)なら中止
   if np.array_equal(img_1, img_2) == True:
-    print('編集中かエラーの為、終了(' + Black_image + ')')
+    print('編集中orエラーの為、終了(' + Black_image + ')')
     exit()
 #-----------------------------------------------------------------------------
 #画像取得(時間割)
@@ -155,4 +151,3 @@ else:
   #終了
   print('画像が一致した為、終了')
   exit()
-
