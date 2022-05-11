@@ -115,7 +115,8 @@ file_id = drive.ListFile({'q': 'title = "white2.jpg"'}).GetList()[0]['id']
 exclusion('white2.jpg')
 
 #画像取得(エラー画像)
-file_id = drive.ListFile({'q': 'title = "error.png"'}).GetList()[0]['id']
+GetFile = "error.png"
+file_id = drive.ListFile({'q': f'title = {GetFile}'}).GetList()[0]['id']
 exclusion('error.png')
 #-----------------------------------------------------------------------------
 #画像取得(時間割)
