@@ -3,7 +3,10 @@ on:
   workflow_dispatch:
 
 env:  #環境変数から文字列(パスワードなど)を取得
-  LINE_TOKEN: ${{secrets.LINE_TOKEN}}
+  ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
+  ACCESS_TOKEN_SECRET: ${{secrets.ACCESS_TOKEN_SECRET}}
+  CONSUMER_KEY: ${{secrets.CONSUMER_KEY}}
+  CONSUMER_SECRET: ${{secrets.CONSUMER_SECRET}}
 
 jobs:
   python:
@@ -19,10 +22,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install get-chrome-driver --upgrade
           sudo apt-get -y install fonts-ipafont-gothic
-          pip install python-dotenv
-          pip install selenium
+          pip install python-dotenv==0.19.2
+          pip install selenium==3.141.0
           pip install requests
-          pip install pillow
-          pip install tweepy
+          pip install pillow==8.4.0
+          pip install tweepy==4.6.0
           pip install beautifulsoup4
           python weather.py
