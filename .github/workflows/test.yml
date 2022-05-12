@@ -1,0 +1,28 @@
+name: GitHub_Actions
+on:
+  workflow_dispatch:
+
+env:  #環境変数から文字列(パスワードなど)を取得
+  LINE_TOKEN: ${{secrets.LINE_TOKEN}}
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
+          architecture: 'x64'
+      - run: |
+          python -m pip install --upgrade pip
+          pip install get-chrome-driver --upgrade
+          sudo apt-get -y install fonts-ipafont-gothic
+          pip install python-dotenv
+          pip install selenium
+          pip install requests
+          pip install pillow
+          pip install tweepy
+          pip install beautifulsoup4
+          python test.py
