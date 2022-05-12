@@ -12,9 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 #-----------------------------------------------------------------------------
 #バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
 dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
-w_list = ['月', '火', '水', '木', '金', '土', '日']
-print('')
-print(dt.strftime('[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
+print(dt.strftime('\n[%Y年%m月%d日(日) %H:%M:%S]'))
 
 # keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = settings.CK
