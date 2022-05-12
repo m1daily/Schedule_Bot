@@ -1,5 +1,6 @@
 import settings
-import requests
+import request
+import tweepy
 import time
 import datetime
 from PIL import Image
@@ -16,6 +17,19 @@ dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 w_list = ['月', '火', '水', '木', '金', '土', '日']
 print('')
 print(dt.strftime('[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
+
+# keyの指定(情報漏えいを防ぐため伏せています)
+consumer_key = settings.CK
+consumer_secret = settings.CS
+access_token = settings.AT
+access_token_secret = settings.ATC
+
+# tweepyの設定(認証情報を設定)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+
+# tweepyの設定(APIインスタンスの作成)
+api = tweepy.API(auth, wait_on_rate_limit=True)
 #---------------------------------------------------
 # Chromeヘッドレスモード起動
 options = webdriver.ChromeOptions()
@@ -53,16 +67,6 @@ im = Image.open('before.png')
 im.crop((535, 490, 920, 870)).save('upload.png', quality=95)
 print("トリミング完了")
 #-----------------------------------------------------------------------------
-# keyの指定(情報漏えいを防ぐため伏せています)
-token = settings.LT
-
-#LINEの設定(伏せています)
-line_url = 'https://notify-api.line.me/api/notify'
-line_access_token = token
-headers = {'Authorization': 'Bearer ' + line_access_token}
-line_message = 'test2'
-line_image = 'upload.png'
-payload = {'message': line_message}
-files = {'imageFile': open(line_image, 'rb')}
-r = requests.post(line_url, headers=headers, params=payload, files=files,)
+#ツイート
+api.update_status_with_media(status="テスト\n今週の天気です。\n\nFrom OpenWeathermap", filename="upload.png")
 print("通知完了")
