@@ -3,7 +3,6 @@ import tweepy
 import time
 import datetime
 from PIL import Image
-from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -49,7 +48,7 @@ WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located)
 windowWidth = windowSizeWidth if windowSizeWidth else driver.execute_script('return document.body.scrollWidth;')
 windowHeight = windowSizeHeight if windowSizeHeight else driver.execute_script('return document.body.scrollHeight;')
 driver.set_window_size(windowWidth, windowHeight)
-time.sleep(4)
+time.sleep(5)
 
 # スクリーンショット格納
 driver.save_screenshot('before.png')
