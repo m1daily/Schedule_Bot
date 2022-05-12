@@ -66,5 +66,5 @@ im.crop((535, 490, 920, 870)).save('upload.png', quality=95)
 print("トリミング完了")
 #-----------------------------------------------------------------------------
 #ツイート
-api.update_status_with_media(status="テスト\n今週の天気です。\n\nFrom OpenWeathermap", filename="upload.png")
+api.update_status_with_media(status="今週の天気です。\n\nFrom OpenWeatherMap", filename="upload.png")
 print("通知完了")
