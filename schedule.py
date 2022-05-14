@@ -142,15 +142,15 @@ if np.count_nonzero(img_1 == img_2) <= 450000:
   print('アップロード完了') 
   
   #画像付きツイート
-  api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
+  #api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   
   #LINEへ通知
-  line_notify(notify_group)
+  #line_notify(notify_group)
   #27組用
-  line_notify(notify_27)
+  #line_notify(notify_27)
   
   #Discordに通知
-  discord_notify(channel_id, '時間割が更新されました。', 'upload.png', '')
+  discord_notify(debug_channel_id, '時間割が更新されました。', 'upload.png', '')
   print('通知完了')
 
 elif 450000 < np.count_nonzero(img_1 == img_2) < 907500:
