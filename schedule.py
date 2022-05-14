@@ -130,8 +130,8 @@ img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('upload.png')
 print("一致度: " + str(np.count_nonzero(img_1 == img_2)))
 
-#アップロード関数
-def image_upload():
+#もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
+if np.count_nonzero(img_1 == img_2) <= 450000:
   #既にある画像を削除後、アップロード
   os.remove('upload.png')
   os.rename('now.png', 'upload.png')
@@ -139,11 +139,7 @@ def image_upload():
   f = drive.CreateFile()
   f.SetContentFile('upload.png')
   f.Upload()
-  print('アップロード完了')
-
-#もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
-if np.count_nonzero(img_1 == img_2) <= 450000:
-  image_upload()
+  print('アップロード完了') 
   
   #画像付きツイート
   api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
@@ -162,7 +158,14 @@ elif 450000 < np.count_nonzero(img_1 == img_2) <= 907500:
   Debug_message = '一致度が' + str(np.count_nonzero(img_1 == img_2)) + 'でした。'
   discord_notify(debug_channel_id, Debug_message, 'now.png', 'Y')
   print('通知完了')
-  image_upload()
+  #既にある画像を削除後、アップロード
+  os.remove('upload.png')
+  os.rename('now.png', 'upload.png')
+  f.Delete()
+  f = drive.CreateFile()
+  f.SetContentFile('upload.png')
+  f.Upload()
+  print('アップロード完了')
   
 else:
   #終了
