@@ -49,7 +49,7 @@ def line_notify(x):
 notify_group = settings.LN
 notify_27 = settings.LN27
 
-def discord_notify(D_channel, D_message, D_image):
+def discord_notify(D_channel, D_message, D_image, which):
   #Discordの接続に必要なオブジェクトを生成
   client = discord.Client()
   #DiscordBot起動時に動作する処理
@@ -57,6 +57,9 @@ def discord_notify(D_channel, D_message, D_image):
   async def on_ready():
       channel = client.get_channel(D_channel)
       await channel.send(D_message, file=discord.File(D_image))
+      if which = 'Y':
+        Debug_message = '(1枚目=現在,2枚目=アップロード済み)'
+      await channel.send(Debug_message, file=discord.File('upload.png'))
       await client.close()
   client.run(Discord_token)
 
@@ -147,15 +150,13 @@ if np.count_nonzero(img_1 == img_2) <= 450000:
   line_notify(notify_27)
   
   #Discordに通知
-  discord_notify(channel_id, '時間割が更新されました。', 'upload.png')
+  discord_notify(channel_id, '時間割が更新されました。', 'upload.png', '')
   print('通知完了')
 
 elif np.count_nonzero(img_1 == img_2) <= 907500:
   #Discordに通知
   Debug_message = '一致度が' + str(np.count_nonzero(img_1 == img_2)) + 'でした。'
-  discord_notify(debug_channel_id, Debug_message, 'now.png')
-  Debug_message = '(1枚目=現在,2枚目=アップロード済み)'
-  discord_notify(debug_channel_id, Debug_message, 'upload.png')
+  discord_notify(debug_channel_id, Debug_message, 'now.png', 'Y')
   print('通知完了')
   #既にある画像を削除後、アップロード
   os.remove('upload.png')
