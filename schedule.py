@@ -57,7 +57,7 @@ def discord_notify(D_channel, D_message, D_image, which):
   async def on_ready():
       channel = client.get_channel(D_channel)
       await channel.send(D_message, file=discord.File(D_image))
-      if which = 'Y':
+      if which == 'Y':
         Debug_message = '(1枚目=現在,2枚目=アップロード済み)'
       await channel.send(Debug_message, file=discord.File('upload.png'))
       await client.close()
