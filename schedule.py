@@ -49,6 +49,7 @@ def line_notify(x):
 notify_group = settings.LN
 notify_27 = settings.LN27
 
+#Discordの設定
 def discord_notify(D_channel, D_message, D_image, which):
   #Discordの接続に必要なオブジェクトを生成
   client = discord.Client()
