@@ -150,7 +150,7 @@ if np.count_nonzero(img_1 == img_2) <= 450000:
   discord_notify(channel_id, '時間割が更新されました。', 'upload.png')
   print('通知完了')
 
-elif np.count_nonzero(img_1 == img_2) = 907500:
+elif np.count_nonzero(img_1 == img_2) <= 907500:
   #Discordに通知
   Debug_message = '一致度が' + str(np.count_nonzero(img_1 == img_2)) + 'でした。'
   discord_notify(debug_channel_id, 'Debug_message', 'now.png')
