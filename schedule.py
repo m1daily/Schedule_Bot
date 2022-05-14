@@ -49,9 +49,21 @@ def line_notify(x):
 notify_group = settings.LN
 notify_27 = settings.LN27
 
+def discord_notify(D_channel, D_message, D_image):
+  #Discordの接続に必要なオブジェクトを生成
+  client = discord.Client()
+  #DiscordBot起動時に動作する処理
+  @client.event
+  async def on_ready():
+      channel = client.get_channel(D_channel)
+      await channel.send(D_message, file=discord.File(D_image))
+      await client.close()
+  client.run(Discord_token)
+
 #Discordの設定
 Discord_token = settings.DT
 channel_id = int(settings.DI)
+debug_channel_id = int(settings.DID)
 
 #Googleにログイン
 gauth = GoogleAuth()
@@ -116,7 +128,7 @@ img_2 = cv2.imread('upload.png')
 print("一致度: " + str(np.count_nonzero(img_1 == img_2)))
 
 #もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
-if np.count_nonzero(img_1 == img_2) < 450000:
+if np.count_nonzero(img_1 == img_2) <= 450000:
   #既にある画像を削除後、アップロード
   os.remove('upload.png')
   os.rename('now.png', 'upload.png')
@@ -134,17 +146,25 @@ if np.count_nonzero(img_1 == img_2) < 450000:
   #27組用
   line_notify(notify_27)
   
-  #Discordの接続に必要なオブジェクトを生成
-  client = discord.Client()
-  #DiscordBot起動時に動作する処理
-  @client.event
-  async def on_ready():
-      channel = client.get_channel(channel_id)
-      await channel.send('時間割が更新されました。', file=discord.File('upload.png'))
-      await client.close()
-  client.run(Discord_token)
+  #Discordに通知
+  discord_notify(channel_id, '時間割が更新されました。', 'upload.png')
   print('通知完了')
 
+elif 450000 < np.count_nonzero(img_1 == img_2) < 907500:
+  #Discordに通知
+  Debug_message = '一致度が' + str(np.count_nonzero(img_1 == img_2)) + 'でした。'
+  discord_notify(debug_channel_id, 'Debug_message', 'now.png')
+  Debug_message = '(1枚目=現在,2枚目=アップロード済み)'
+  discord_notify(debug_channel_id, 'Debug_message', 'upload.png')
+  print('通知完了')
+  #既にある画像を削除後、アップロード
+  os.remove('upload.png')
+  os.rename('now.png', 'upload.png')
+  f.Delete()
+  f = drive.CreateFile()
+  f.SetContentFile('upload.png')
+  f.Upload()
+  print('アップロード完了')
 
 else:
   #終了
