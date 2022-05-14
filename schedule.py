@@ -22,18 +22,6 @@ dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 #-----------------------------------------------------------------------------
-#アップロード関数
-def image_upload():
-  #既にある画像を削除後、アップロード
-  os.remove('upload.png')
-  os.rename('now.png', 'upload.png')
-  f.Delete()
-  f = drive.CreateFile()
-  f.SetContentFile('upload.png')
-  f.Upload()
-  print('アップロード完了')
-
-  
 # keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = settings.CK
 consumer_secret = settings.CS
@@ -141,6 +129,17 @@ f.GetContentFile('upload.png')
 img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('upload.png')
 print("一致度: " + str(np.count_nonzero(img_1 == img_2)))
+
+#アップロード関数
+def image_upload():
+  #既にある画像を削除後、アップロード
+  os.remove('upload.png')
+  os.rename('now.png', 'upload.png')
+  f.Delete()
+  f = drive.CreateFile()
+  f.SetContentFile('upload.png')
+  f.Upload()
+  print('アップロード完了')
 
 #もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
 if np.count_nonzero(img_1 == img_2) <= 450000:
