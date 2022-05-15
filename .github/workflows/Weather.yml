@@ -2,7 +2,7 @@ name: GitHub_Actions(weather)
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 22 * * 0"
+    - cron: "0 22 * * 6"
 
 env:  #環境変数から文字列(パスワードなど)を取得
   ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
