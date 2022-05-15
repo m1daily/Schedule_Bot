@@ -56,10 +56,8 @@ def discord_notify(D_channel, D_message, D_image, which):
   #DiscordBot起動時に動作する処理
   @client.event
   async def on_ready():
-      member_id = 971997121823801355
-      member = client.guild.get_member(member_id)
       channel = client.get_channel(D_channel)
-      await channel.send(f'{member}{D_message}', file=discord.File(D_image))
+      await channel.send(D_message, file=discord.File(D_image))
       if which == 'Y':
         Debug_message = '(1枚目=現在,2枚目=アップロード済み)'
         await channel.send(Debug_message, file=discord.File('upload.png'))
@@ -173,5 +171,5 @@ elif 450000 < np.count_nonzero(img_1 == img_2) < 907500:
 else:
   #終了
   print('画像が一致した為、終了')
-  discord_notify(debug_channel_id, 'a', 'now.png', '')
+  discord_notify(debug_channel_id, '@everyone\na', 'now.png', '')
   exit()
