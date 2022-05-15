@@ -59,7 +59,7 @@ def discord_notify(D_channel, D_message, D_image, which):
       member_id = 971997121823801355
       member = client.guild.get_member(member_id)
       channel = client.get_channel(D_channel)
-      await channel.send(member + D_message, file=discord.File(D_image))
+      await channel.send(f'{member}{D_message}', file=discord.File(D_image))
       if which == 'Y':
         Debug_message = '(1枚目=現在,2枚目=アップロード済み)'
         await channel.send(Debug_message, file=discord.File('upload.png'))
