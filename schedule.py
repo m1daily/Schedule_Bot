@@ -7,6 +7,7 @@ import time
 import requests
 import cv2 
 import numpy as np
+from pathlib import Path
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from PIL import Image
@@ -22,6 +23,13 @@ dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 #-----------------------------------------------------------------------------
+#jsonファイル作成(情報漏えいを防ぐため伏せています)
+f = open('credentials.txt', 'w')
+f.write()
+f.close()
+for f in Path('.').rglob('*.txt'):
+    f.rename(f.stem+'.json')
+
 # keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = settings.CK
 consumer_secret = settings.CS
