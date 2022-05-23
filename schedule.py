@@ -25,7 +25,11 @@ print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 #-----------------------------------------------------------------------------
 #jsonファイル作成(情報漏えいを防ぐため伏せています)
 gda = settings.JSON
+cs = settings.CLIENT
 f = open('credentials.txt', 'w')
+f.write(gda)
+f.close()
+f = open('client_secrets.txt', 'w')
 f.write(gda)
 f.close()
 for f in Path('.').rglob('*.txt'):
