@@ -132,7 +132,7 @@ img_2 = cv2.imread('upload.png')
 print("一致度: " + str(np.count_nonzero(img_1 == img_2)))
 
 #もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
-if np.count_nonzero(img_1 == img_2) <= 510000:
+if np.count_nonzero(img_1 == img_2) <= 450000:
   #既にある画像を削除後、アップロード
   os.remove('upload.png')
   os.rename('now.png', 'upload.png')
@@ -154,7 +154,7 @@ if np.count_nonzero(img_1 == img_2) <= 510000:
   discord_notify(channel_id, '@everyone\n時間割が更新されました。', 'upload.png', '')
   print('通知完了')
 
-elif 510000 < np.count_nonzero(img_1 == img_2) < 907500:
+elif 450000 < np.count_nonzero(img_1 == img_2) < 907500:
   #Discordに通知
   Debug_message = '一致度が' + str(np.count_nonzero(img_1 == img_2)) + 'でした。'
   discord_notify(debug_channel_id, Debug_message, 'now.png', 'Y')
