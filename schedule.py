@@ -24,8 +24,9 @@ w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 #-----------------------------------------------------------------------------
 #jsonファイル作成(情報漏えいを防ぐため伏せています)
+gda = settings.JSON
 f = open('credentials.txt', 'w')
-f.write()
+f.write(gda)
 f.close()
 for f in Path('.').rglob('*.txt'):
     f.rename(f.stem+'.json')
