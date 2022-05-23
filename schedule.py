@@ -30,7 +30,7 @@ f = open('credentials.txt', 'w')
 f.write(gda)
 f.close()
 f = open('client_secrets.txt', 'w')
-f.write(gda)
+f.write(cs)
 f.close()
 for f in Path('.').rglob('*.txt'):
     f.rename(f.stem+'.json')
