@@ -30,6 +30,7 @@ gauth = GoogleAuth()
 gauth.LocalWebserverAuth()
 drive = GoogleDrive(gauth)
 
+#-----------------------------------------------------------------------------
 
 #Discordの設定
 Discord_token = settings.DT2
@@ -48,27 +49,11 @@ async def on_message(message):
       file_id = drive.ListFile({'q': 'title = "upload.png"'}).GetList()[0]['id']
       f = drive.CreateFile({'id': file_id})
       f.GetContentFile('upload.png')
+      os.remove('upload.png')
+      os.rename('error.png', 'upload.png')
+      f.Delete()
+      f = drive.CreateFile()
+      f.SetContentFile('upload.png')
+      f.Upload()
       await channel.send('アップロード完了')
 client.run(Discord_token)
-#-----------------------------------------------------------------------------
-
-
-#画像比較
-img_1 = cv2.imread('now.png')
-img_2 = cv2.imread('upload.png')
-print("一致度: " + str(np.count_nonzero(img_1 == img_2)))
-
-#もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
-if np.count_nonzero(img_1 == img_2) <= 410000:
-  #既にある画像を削除後、アップロード
-  os.remove('upload.png')
-  os.rename('now.png', 'upload.png')
-  f.Delete()
-  f = drive.CreateFile()
-  f.SetContentFile('upload.png')
-  f.Upload()
-  print('アップロード完了') 
-  
-  #Discordに通知
-  discord_notify(channel_id, '@everyone\n時間割が更新されました。', 'upload.png', '')
-  print('通知完了')
