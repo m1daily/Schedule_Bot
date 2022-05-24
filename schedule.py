@@ -176,28 +176,22 @@ elif 410000 < np.count_nonzero(img_1 == img_2) < 907500:
   img_1 = cv2.imread('now.png')
   img_2 = cv2.imread('test.png')
   print("テスト一致度: " + str(np.count_nonzero(img_1 == img_2)))
-  if np.count_nonzero(img_1 == img_2) >= 430000:
-    #既にある画像を削除後、アップロード
-    os.remove('upload.png')
-    os.rename('now.png', 'upload.png')
-    f.Delete()
-    f = drive.CreateFile()
-    f.SetContentFile('upload.png')
-    f.Upload()
-    print('アップロード完了')
-  else:
+  if np.count_nonzero(img_1 == img_2) <= 430000:
     #Discordに通知
     Debug_message = '@everyone\n一致度が' + match + 'でした。'
     discord_notify(debug_channel_id, Debug_message, 'now.png', 'Y')
     print('報告完了')
-    #既にある画像を削除後、アップロード
-    os.remove('upload.png')
-    os.rename('now.png', 'upload.png')
-    f.Delete()
-    f = drive.CreateFile()
-    f.SetContentFile('upload.png')
-    f.Upload()
-    print('アップロード完了')
+  #既にある画像を削除後、アップロード
+  file_id = drive.ListFile({'q': 'title = "upload.png"'}).GetList()[0]['id']
+  f = drive.CreateFile({'id': file_id})
+  f.GetContentFile('upload.png')
+  os.remove('upload.png')
+  os.rename('now.png', 'upload.png')
+  f.Delete()
+  f = drive.CreateFile()
+  f.SetContentFile('upload.png')
+  f.Upload()
+  print('アップロード完了')
   
 else:
   #終了
