@@ -187,7 +187,7 @@ elif 410000 < np.count_nonzero(img_1 == img_2) < 907500:
     print('アップロード完了')
   else:
     #Discordに通知
-    Debug_message = '一致度が' + match + 'でした。'
+    Debug_message = '@everyone\n一致度が' + match + 'でした。'
     discord_notify(debug_channel_id, Debug_message, 'now.png', 'Y')
     print('報告完了')
     #既にある画像を削除後、アップロード
