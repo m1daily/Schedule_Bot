@@ -24,7 +24,7 @@ w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 #-----------------------------------------------------------------------------
 #jsonファイル作成(情報漏えいを防ぐため伏せています)
-GDA = {'credentials.txt':settings.JSON, 'client_secrets.txt':settings.CLIENT]
+GDA = {'credentials.txt':settings.JSON, 'client_secrets.txt':settings.CLIENT}
 for key, value in GDA.items():
   f = open(key, 'w')
   f.write(value)
