@@ -24,16 +24,13 @@ w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 #-----------------------------------------------------------------------------
 #jsonファイル作成(情報漏えいを防ぐため伏せています)
-gda = settings.JSON
-cs = settings.CLIENT
-f = open('credentials.txt', 'w')
-f.write(gda)
-f.close()
-f = open('client_secrets.txt', 'w')
-f.write(cs)
-f.close()
+GDA = {'credentials.txt':settings.JSON, 'client_secrets.txt':settings.CLIENT]
+for key, value in GDA.items():
+  f = open(key, 'w')
+  f.write(value)
+  f.close()
 for f in Path('.').rglob('*.txt'):
-    f.rename(f.stem+'.json')
+  f.rename(f.stem+'.json')
 
 # keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = settings.CK
@@ -169,6 +166,8 @@ if np.count_nonzero(img_1 == img_2) <= 410000:
   print('通知完了')
 
 elif 410000 < np.count_nonzero(img_1 == img_2) < 907500:
+  os.remove('upload.png')
+  f.Delete()
   file_id = drive.ListFile({'q': 'title = "test.png"'}).GetList()[0]['id']
   f = drive.CreateFile({'id': file_id})
   f.GetContentFile('test.png')
@@ -182,12 +181,7 @@ elif 410000 < np.count_nonzero(img_1 == img_2) < 907500:
     discord_notify(debug_channel_id, Debug_message, 'now.png', 'Y')
     print('報告完了')
   #既にある画像を削除後、アップロード
-  file_id = drive.ListFile({'q': 'title = "upload.png"'}).GetList()[0]['id']
-  f = drive.CreateFile({'id': file_id})
-  f.GetContentFile('upload.png')
-  os.remove('upload.png')
   os.rename('now.png', 'upload.png')
-  f.Delete()
   f = drive.CreateFile()
   f.SetContentFile('upload.png')
   f.Upload()
