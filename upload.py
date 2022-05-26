@@ -68,12 +68,12 @@ f = drive.CreateFile({'id': file_id})
 f.GetContentFile('upload.png')
 
 #画像付きツイート
-#api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
+api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   
 #LINEへ通知
-#line_notify(notify_group)
+line_notify(notify_group)
 #27組用
-#line_notify(notify_27)
+line_notify(notify_27)
   
 #Discordに通知
 @client.event
@@ -81,5 +81,5 @@ async def on_ready():
     channel = client.get_channel(channel_id)
     await channel.send('@everyone\n時間割が更新されました。', file=discord.File('upload.png'))
     await client.close()
-#client.run(Discord_token)
+client.run(Discord_token)
 print('通知完了')
