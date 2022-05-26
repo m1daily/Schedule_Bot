@@ -1,0 +1,32 @@
+name: GitHub_Actions(upload)
+on:
+  workflow_dispatch:
+env:  #環境変数から文字列(パスワードなど)を取得
+  ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
+  ACCESS_TOKEN_SECRET: ${{secrets.ACCESS_TOKEN_SECRET}}
+  CONSUMER_KEY: ${{secrets.CONSUMER_KEY}}
+  CONSUMER_SECRET: ${{secrets.CONSUMER_SECRET}}
+  LINE_NOTIFY: ${{secrets.LINE_NOTIFY}}
+  LINE_NOTIFY_27: ${{secrets.LINE_NOTIFY_27}}
+  DISCORD_TOKEN: ${{secrets.DISCORD_TOKEN}}
+  DISCORD_ID: ${{secrets.DISCORD_ID}}
+  DISCORD_ID_DEBUG: ${{secrets.DISCORD_ID_DEBUG}}
+  JSON: ${{secrets.JSON}}
+  CLIENT: ${{secrets.CLIENT}}
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
+          architecture: 'x64'
+      - run: |
+          python -m pip install --upgrade pip
+          pip install tweepy==4.6.0
+          pip install discord.py==1.7.3
+          pip install pydrive==1.3.1
+          python upload.py
