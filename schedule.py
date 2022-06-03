@@ -58,7 +58,6 @@ def line_notify(x):
 
 notify_group = settings.LN
 notify_27 = settings.LN27
-print(notify_27)
 
 #Discordの設定
 def discord_notify(D_channel, D_message, D_image, which):
