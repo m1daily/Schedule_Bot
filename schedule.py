@@ -83,6 +83,8 @@ debug_channel_id = int(settings.DID)
 gauth = GoogleAuth()
 gauth.LocalWebserverAuth()
 drive = GoogleDrive(gauth)
+os.remove('credentials.json')
+os.remove('client_secrets.json')
 #-----------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
 options = webdriver.ChromeOptions()
