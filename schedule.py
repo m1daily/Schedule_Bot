@@ -18,12 +18,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 #-----------------------------------------------------------------------------
-#バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
+# バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
 dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 #-----------------------------------------------------------------------------
-#jsonファイル作成(情報漏えいを防ぐため伏せています)
+# jsonファイル作成(情報漏えいを防ぐため伏せています)
 GDA = {'credentials.txt':settings.JSON, 'client_secrets.txt':settings.CLIENT}
 for key, value in GDA.items():
   f = open(key, 'w')
@@ -38,14 +38,12 @@ consumer_secret = settings.CS
 access_token = settings.AT
 access_token_secret = settings.ATC
 
-# tweepyの設定(認証情報を設定)
+# tweepyの設定(認証情報を設定、APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
-
-# tweepyの設定(APIインスタンスの作成)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
-#LINEの設定(伏せています)
+# LINEの設定
 def line_notify(x):
   line_url = 'https://notify-api.line.me/api/notify'
   line_access_token = x
@@ -56,14 +54,11 @@ def line_notify(x):
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
-notify_group = settings.LN
-notify_27 = settings.LN27
-
-#Discordの設定
+# Discordの設定
 def discord_notify(D_channel, D_message, D_image, which):
-  #Discordの接続に必要なオブジェクトを生成
+  # Discordの接続に必要なオブジェクトを生成
   client = discord.Client()
-  #DiscordBot起動時に動作する処理
+  # DiscordBot起動時に動作する処理
   @client.event
   async def on_ready():
       channel = client.get_channel(D_channel)
@@ -74,12 +69,14 @@ def discord_notify(D_channel, D_message, D_image, which):
       await client.close()
   client.run(Discord_token)
 
-#Discordの設定
+# LINE,Discordのtoken設定(伏せています)
+notify_group = settings.LN
+notify_27 = settings.LN27
 Discord_token = settings.DT
 channel_id = int(settings.DI)
 debug_channel_id = int(settings.DID)
 
-#Googleにログイン
+# Googleにログイン
 gauth = GoogleAuth()
 gauth.LocalWebserverAuth()
 drive = GoogleDrive(gauth)
@@ -94,21 +91,19 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome('chromedriver',options=options)
 driver.implicitly_wait(10)
 
-# ウインドウ幅、高さ指定
-windowSizeWidth = 680
-windowSizeHeight = 700
-
-# サイトURL取得(伏せています)
+# Googleスプレッドシートへ移動(URLは伏せています)
 driver.get(settings.GU)
 WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located)
   
-# ウインドウ幅・高さ指定
+# ウインドウ幅,高さ指定
+windowSizeWidth = 680
+windowSizeHeight = 700
 windowWidth = windowSizeWidth if windowSizeWidth else driver.execute_script('return document.body.scrollWidth;')
 windowHeight = windowSizeHeight if windowSizeHeight else driver.execute_script('return document.body.scrollHeight;')
 driver.set_window_size(windowWidth, windowHeight)
 time.sleep(4)
 
-# スクリーンショット格納、サーバー負荷軽減処理、ブラウザ稼働終了
+# スクリーンショットを格納し、ブラウザ稼働終了
 driver.save_screenshot('before.png')
 time.sleep(1)
 driver.quit()
@@ -117,7 +112,7 @@ driver.quit()
 im = Image.open('before.png')
 im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 #-----------------------------------------------------------------------------
-#ブラックリスト
+# ブラックリスト(リスト内の画像なら動作停止)
 Black_List = ["white1.jpg", "white2.jpg", "error.png"]
 
 for Black_image in Black_List:
@@ -125,28 +120,28 @@ for Black_image in Black_List:
   file_id = drive.ListFile({'q': f'title = {GetFile}'}).GetList()[0]['id']
   f = drive.CreateFile({'id': file_id})
   f.GetContentFile(Black_image)
-  #画像比較
+  # 画像比較
   img_1 = cv2.imread('now.png')
   img_2 = cv2.imread(Black_image)
-  #画像が一致する(編集中orエラー)なら中止
+  # 画像が一致する(編集中orエラー)なら中止
   if np.array_equal(img_1, img_2) == True:
     print('編集中orエラーの為、終了(' + Black_image + ')')
     exit()
 #-----------------------------------------------------------------------------
-#画像取得(時間割)
+# GoogleDriveから画像取得(旧時間割)
 file_id = drive.ListFile({'q': 'title = "upload.png"'}).GetList()[0]['id']
 f = drive.CreateFile({'id': file_id})
 f.GetContentFile('upload.png')
 
-#画像比較
+# スクリーンショットした画像(現在の時間割)とGoogleDriveから取得した画像(旧時間割)を比較
 img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('upload.png')
 match = str(np.count_nonzero(img_1 == img_2))
 print("一致度: " + match)
 
-#もしスクショした画像とアップロード済みの画像が異なる(＝時間割が更新された)なら
+# 2つの画像が全く一致しない(＝時間割が更新された)場合
 if np.count_nonzero(img_1 == img_2) <= 400000:
-  #既にある画像を削除後、アップロード
+  # 既にGoogleDriveにある画像(旧時間割)を削除後、現在の時間割の画像をアップロード
   os.remove('upload.png')
   os.rename('now.png', 'upload.png')
   f.Delete()
@@ -155,24 +150,25 @@ if np.count_nonzero(img_1 == img_2) <= 400000:
   f.Upload()
   print('アップロード完了') 
   
-  #画像付きツイート
+  # ツイート
   api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   
-  #LINEへ通知
+  # LINEへ通知
   line_notify(notify_group)
-  #27組用
+  # 27組用
   line_notify(notify_27)
   
-  #Discordに通知
+  # Discordに通知
   discord_notify(channel_id, '@everyone\n時間割が更新されました。', 'upload.png', '')
   print('通知完了')
 
+# 2つの画像が微妙に一致しない(=時間割が更新されたか判断できない)場合
 elif 400000 < np.count_nonzero(img_1 == img_2) < 900000:
-  #Discordに通知
+  # Discordに通知
   Debug_message = '@everyone\n一致度が' + match + 'でした。'
   discord_notify(debug_channel_id, Debug_message, 'now.png', 'Y')
   print('報告完了')
-  #既にある画像を削除後、アップロード
+  # 既にGoogleDriveにある画像(旧時間割)を削除後、現在の時間割の画像をアップロード
   os.remove('upload.png')
   os.rename('now.png', 'upload.png')
   f.Delete()
@@ -180,8 +176,9 @@ elif 400000 < np.count_nonzero(img_1 == img_2) < 900000:
   f.SetContentFile('upload.png')
   f.Upload()
   print('アップロード完了')
-  
+
+# 2つの画像が一致する(=時間割が更新されてない)場合
 else:
-  #終了
+  # 終了
   print('画像が一致した為、終了')
   exit()
