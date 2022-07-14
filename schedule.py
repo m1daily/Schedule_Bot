@@ -115,6 +115,7 @@ im.crop((35, 145, 640, 645)).save('now.png', quality=95)
 # ブラックリスト(リスト内の画像なら動作停止)
 Black_List = ["white1.jpg", "white2.jpg", "error.png"]
 
+# now.pngとリスト内の画像を比較
 for Black_image in Black_List:
   GetFile = '\"' + Black_image + '\"'
   file_id = drive.ListFile({'q': f'title = {GetFile}'}).GetList()[0]['id']
