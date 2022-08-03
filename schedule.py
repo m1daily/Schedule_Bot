@@ -44,7 +44,7 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # LINEの設定
-def line_notify(x):
+def line_notify(x, Lmessage, Limage):
   line_url = 'https://notify-api.line.me/api/notify'
   line_access_token = x
   headers = {'Authorization': 'Bearer ' + line_access_token}
@@ -165,6 +165,7 @@ if np.count_nonzero(img_1 == img_2) <= 400000:
 
 # 2つの画像が微妙に一致しない(=時間割が更新されたか判断できない)場合
 elif 400000 < np.count_nonzero(img_1 == img_2) < 900000:
+  line_notify(notify_group)
   # Discordに通知
   Debug_message = '@everyone\n一致度が' + match + 'でした。'
   discord_notify(debug_channel_id, Debug_message, 'now.png', 'Y')
