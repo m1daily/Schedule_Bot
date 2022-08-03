@@ -48,33 +48,18 @@ def line_notify(x, Lmessage, Limage):
   line_url = 'https://notify-api.line.me/api/notify'
   line_access_token = x
   headers = {'Authorization': 'Bearer ' + line_access_token}
-  line_message = '時間割が更新されました。'
-  line_image = 'upload.png'
+  line_message = Lmessage
+  line_image = Limage
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
-# Discordの設定
-def discord_notify(D_channel, D_message, D_image, which):
-  # Discordの接続に必要なオブジェクトを生成
-  client = discord.Client()
-  # DiscordBot起動時に動作する処理
-  @client.event
-  async def on_ready():
-      channel = client.get_channel(D_channel)
-      if which == 'Y':
-        Debug_message = '(1枚目=Up済み,2枚目=現在)'
-        await channel.send(Debug_message, file=discord.File('upload.png'))
-      await channel.send(D_message, file=discord.File(D_image))
-      await client.close()
-  client.run(Discord_token)
-
 # LINE,Discordのtoken設定(伏せています)
 notify_group = settings.LN
 notify_27 = settings.LN27
+notify_admin = settings.LNA
 Discord_token = settings.DT
 channel_id = int(settings.DI)
-debug_channel_id = int(settings.DID)
 
 # Googleにログイン
 gauth = GoogleAuth()
@@ -155,20 +140,26 @@ if np.count_nonzero(img_1 == img_2) <= 400000:
   api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
   
   # LINEへ通知
-  line_notify(notify_group)
+  line_notify(notify_group, '時間割が更新されました。', 'upload.png')
   # 27組用
-  line_notify(notify_27)
+  line_notify(notify_27, '時間割が更新されました。', 'upload.png')
   
-  # Discordに通知
-  discord_notify(channel_id, '@everyone\n時間割が更新されました。', 'upload.png', '')
+  # Discordの接続に必要なオブジェクトを生成
+  client = discord.Client()
+  # DiscordBot起動時に動作する処理
+  @client.event
+  async def on_ready():
+      channel = client.get_channel(channel_id)
+      await channel.send('@everyone\n時間割が更新されました。', file=discord.File'upload.png'))
+      await client.close()
+  client.run(Discord_token)
   print('通知完了')
 
 # 2つの画像が微妙に一致しない(=時間割が更新されたか判断できない)場合
 elif 400000 < np.count_nonzero(img_1 == img_2) < 900000:
-  line_notify(notify_group)
-  # Discordに通知
-  Debug_message = '@everyone\n一致度が' + match + 'でした。'
-  discord_notify(debug_channel_id, Debug_message, 'now.png', 'Y')
+  # LINEに通知
+  line_notify(notify_admin, '一致度が' + match + 'でした。', 'upload.png')
+  line_notify(notify_admin, '(1枚目=前の時間割,2枚目=現在)', 'now.png')
   print('報告完了')
   # 既にGoogleDriveにある画像(旧時間割)を削除後、現在の時間割の画像をアップロード
   os.remove('upload.png')
