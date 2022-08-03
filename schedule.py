@@ -124,7 +124,7 @@ img_1 = cv2.imread('now.png')
 img_2 = cv2.imread('upload.png')
 match = str(np.count_nonzero(img_1 == img_2))
 print("一致度: " + match)
-"""
+
 # 2つの画像が全く一致しない(＝時間割が更新された)場合
 if np.count_nonzero(img_1 == img_2) <= 400000:
   # 既にGoogleDriveにある画像(旧時間割)を削除後、現在の時間割の画像をアップロード
@@ -154,10 +154,9 @@ if np.count_nonzero(img_1 == img_2) <= 400000:
       await client.close()
   client.run(Discord_token)
   print('通知完了')
-"""
+
 # 2つの画像が微妙に一致しない(=時間割が更新されたか判断できない)場合
-#elif 400000 < np.count_nonzero(img_1 == img_2) < 900000:
-if np.count_nonzero(img_1 == img_2) >= 400000:
+elif 400000 < np.count_nonzero(img_1 == img_2) < 900000:
   # LINEに通知
   line_notify(notify_admin, '一致度が' + match + 'でした。', 'upload.png')
   line_notify(notify_admin, '(1枚目=前の時間割,2枚目=現在)', 'now.png')
@@ -170,10 +169,9 @@ if np.count_nonzero(img_1 == img_2) >= 400000:
   f.SetContentFile('upload.png')
   f.Upload()
   print('アップロード完了')
-"""
+
 # 2つの画像が一致する(=時間割が更新されてない)場合
 else:
   # 終了
   print('画像が一致した為、終了')
   exit()
-"""
