@@ -150,7 +150,7 @@ if np.count_nonzero(img_1 == img_2) <= 400000:
   @client.event
   async def on_ready():
       channel = client.get_channel(channel_id)
-      await channel.send('@everyone\n時間割が更新されました。', file=discord.File'upload.png'))
+      await channel.send('@everyone\n時間割が更新されました。', file=discord.File('upload.png'))
       await client.close()
   client.run(Discord_token)
   print('通知完了')
