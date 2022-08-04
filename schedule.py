@@ -1,11 +1,11 @@
 import settings
 import datetime
 import tweepy
-import discord
 import os
 import time
 import requests
-import cv2 
+import json
+import cv2
 import numpy as np
 from pathlib import Path
 from pydrive.auth import GoogleAuth
@@ -58,8 +58,7 @@ def line_notify(x, Lmessage, Limage):
 notify_group = settings.LN
 notify_27 = settings.LN27
 notify_admin = settings.LNA
-Discord_token = settings.DT
-channel_id = int(settings.DI)
+webhook = settings.WEB
 
 # Googleにログイン
 gauth = GoogleAuth()
@@ -144,16 +143,14 @@ if np.count_nonzero(img_1 == img_2) <= 400000:
   # 27組用
   line_notify(notify_27, '時間割が更新されました。', 'upload.png')
   
-  # Discordの接続に必要なオブジェクトを生成
-  client = discord.Client()
-  # DiscordBot起動時に動作する処理
-  @client.event
-  async def on_ready():
-      channel = client.get_channel(channel_id)
-      await channel.send('@everyone\n時間割が更新されました。', file=discord.File('upload.png'))
-      await client.close()
-  client.run(Discord_token)
-  print('通知完了')
+  # DiscordのWebhookを通して通知
+  content = {'content': '@everyone\n時間割が更新されました。'}
+  headers = {'Content-Type': 'application/json'}
+  with open('upload.png', 'rb') as f:
+          file_bin = f.read()
+  image = {'upload' : ('upload.png', file_bin)}
+  response = requests.post(webhook_url, json.dumps(content), headers=headers)
+  response = requests.post(webhook_url, files = image)
 
 # 2つの画像が微妙に一致しない(=時間割が更新されたか判断できない)場合
 elif 400000 < np.count_nonzero(img_1 == img_2) < 900000:
