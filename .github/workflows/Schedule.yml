@@ -36,7 +36,6 @@ jobs:
           pip install python-dotenv==0.19.2
           pip install selenium==3.141.0
           pip install tweepy==4.6.0
-          pip install discord.py==1.7.3
           pip install pillow==8.4.0
           pip install pydrive==1.3.1
           pip install opencv-python==4.5.5.64
