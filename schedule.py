@@ -147,7 +147,7 @@ if np.count_nonzero(img_1 == img_2) <= 400000:
   content = {'content': '@everyone\n時間割が更新されました。'}
   headers = {'Content-Type': 'application/json'}
   with open('upload.png', 'rb') as f:
-          file_bin = f.read()
+    file_bin = f.read()
   image = {'upload' : ('upload.png', file_bin)}
   response = requests.post(webhook_url, json.dumps(content), headers=headers)
   response = requests.post(webhook_url, files = image)
