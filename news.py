@@ -50,11 +50,9 @@ consumer_secret = os.environ.get("CONSUMER_SECRET")
 access_token = os.environ.get("ACCESS_TOKEN")
 access_token_secret = os.environ.get("ACCESS_TOKEN_SECRET")
 
-# tweepyの設定(認証情報を設定)
+# tweepyの設定(認証情報を設定,APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
-
-# tweepyの設定(APIインスタンスの作成)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # ツイート
