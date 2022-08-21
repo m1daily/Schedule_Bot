@@ -56,3 +56,6 @@ auth.set_access_token(access_token, access_token_secret)
 
 # tweepyの設定(APIインスタンスの作成)
 api = tweepy.API(auth, wait_on_rate_limit=True)
+
+# ツイート
+api.update_status_with_media(status="今月の予定です。", filename="image.png")
