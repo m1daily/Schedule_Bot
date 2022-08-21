@@ -19,6 +19,7 @@ ht = soup.select_one('#box-18 > section:nth-child(3) > div.panel-body.block > ar
 ht = [i.strip() for i in ht.text.splitlines()]
 ht = [i for i in ht if i != ""]
 ht = ht[0].split()
+# 外観調整
 li = []
 for i in ht:
     a = ''.join(i.split())
