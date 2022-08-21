@@ -1,5 +1,7 @@
 import os
+import json
 import requests
+import tweepy
 from bs4 import BeautifulSoup
 from PIL import Image, ImageDraw, ImageFont
 
