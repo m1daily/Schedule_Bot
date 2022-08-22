@@ -66,7 +66,7 @@ if imgurl_n == None:
 
 #----------------------------------------------------------------------------------------------------
 # jsonファイル作成(情報漏えいを防ぐため伏せています)
-dic = ast.literal_eval(settings.GSS_JSON)
+dic = ast.literal_eval(settings.JSON)
 with open('gss.json', mode='wt', encoding='utf-8') as file:
     json.dump(dic, file, ensure_ascii=False, indent=2)
 
@@ -74,7 +74,7 @@ with open('gss.json', mode='wt', encoding='utf-8') as file:
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 credentials = ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope)
 gc = gspread.authorize(credentials)
-ws = gc.open_by_key(settings.GSS_KEY).sheet1
+ws = gc.open_by_key(settings.KEY).sheet1
 
 # Google SpreadSheets上の値を読み込み
 imgurl_b = ws.acell('A1').value
