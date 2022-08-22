@@ -60,7 +60,7 @@ time.sleep(5)
 li = driver.find_elements(By.TAG_NAME, "img")
 for e in li:
     imgurl_n = e.get_attribute('src')
-    if imgurl_n != None and "googleusercontent.com" in imgurl_n == True:
+    if imgurl_n != None and "alr=yes" in imgurl_n == True:
         break
 if imgurl_n == None:
     print("画像が発見できなかったため終了")
