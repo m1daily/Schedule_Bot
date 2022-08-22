@@ -16,27 +16,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
 #-----------------------------------------------------------------------------
 # バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
 dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
-#-----------------------------------------------------------------------------
-# jsonファイル作成(情報漏えいを防ぐため伏せています)
-dic = ast.literal_eval(os.environ.get("JSON"))
-with open('gss.json', mode='wt', encoding='utf-8') as file:
-    json.dump(dic, file, ensure_ascii=False, indent=2)
 
-# keyの指定(情報漏えいを防ぐため伏せています)
-consumer_key = settings.CK
-consumer_secret = settings.CS
-access_token = settings.AT
-access_token_secret = settings.ATC
+#----------------------------------------------------------------------------------------------------
 
-# tweepyの設定(認証情報を設定、APIインスタンスの作成)
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth, wait_on_rate_limit=True)
+
+
 
 # LINEの設定
 def line_notify(x, Lmessage, Limage):
@@ -52,16 +42,9 @@ def line_notify(x, Lmessage, Limage):
 # LINE,Discordのtoken設定(伏せています)
 notify_group = settings.LN
 notify_27 = settings.LN27
-notify_admin = settings.LNA
-webhook = settings.WEB
+webhook_url = settings.WEB
 
-# Googleにログイン
-gauth = GoogleAuth()
-gauth.LocalWebserverAuth()
-drive = GoogleDrive(gauth)
-os.remove('credentials.json')
-os.remove('client_secrets.json')
-#-----------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
 options = webdriver.ChromeOptions()
 options.headless = True
@@ -72,98 +55,90 @@ driver.implicitly_wait(10)
 
 # Googleスプレッドシートへ移動(URLは伏せています)
 driver.get(settings.GU)
-WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located)
-  
-# ウインドウ幅,高さ指定
-windowSizeWidth = 680
-windowSizeHeight = 700
-windowWidth = windowSizeWidth if windowSizeWidth else driver.execute_script('return document.body.scrollWidth;')
-windowHeight = windowSizeHeight if windowSizeHeight else driver.execute_script('return document.body.scrollHeight;')
-driver.set_window_size(windowWidth, windowHeight)
-time.sleep(4)
+WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located)
+time.sleep(5)
 
-# スクリーンショットを格納し、ブラウザ稼働終了
-driver.save_screenshot('before.png')
-time.sleep(1)
-driver.quit()
-
-# 画像トリミング
-im = Image.open('before.png')
-im.crop((35, 145, 640, 645)).save('now.png', quality=95)
-#-----------------------------------------------------------------------------
-# ブラックリスト(リスト内の画像なら動作停止)
-Black_List = ["white1.jpg", "white2.jpg", "error.png"]
-
-# now.pngとリスト内の画像を比較
-for Black_image in Black_List:
-  GetFile = '\"' + Black_image + '\"'
-  file_id = drive.ListFile({'q': f'title = {GetFile}'}).GetList()[0]['id']
-  f = drive.CreateFile({'id': file_id})
-  f.GetContentFile(Black_image)
-  # 画像比較
-  img_1 = cv2.imread('now.png')
-  img_2 = cv2.imread(Black_image)
-  # 画像が一致する(編集中orエラー)なら中止
-  if np.array_equal(img_1, img_2) == True:
-    print('編集中orエラーの為、終了(' + Black_image + ')')
+# imgタグを含むものを抽出
+li = driver.find_elements(By.TAG_NAME, "img")
+for e in li:
+    imgurl_n = e.get_attribute('src')
+    if imgurl_n != None and "https://lh6.googleusercontent.com" in imgurl_n == True:
+        break
+if imgurl_n == None:
+    print("画像が発見できなかったため終了")
     exit()
-#-----------------------------------------------------------------------------
-# GoogleDriveから画像取得(旧時間割)
-file_id = drive.ListFile({'q': 'title = "upload.png"'}).GetList()[0]['id']
-f = drive.CreateFile({'id': file_id})
-f.GetContentFile('upload.png')
 
-# スクリーンショットした画像(現在の時間割)とGoogleDriveから取得した画像(旧時間割)を比較
-img_1 = cv2.imread('now.png')
+#----------------------------------------------------------------------------------------------------
+# jsonファイル作成(情報漏えいを防ぐため伏せています)
+dic = ast.literal_eval(settings.GSS_JSON)
+with open('gss.json', mode='wt', encoding='utf-8') as file:
+    json.dump(dic, file, ensure_ascii=False, indent=2)
+
+# Google SpreadSheetsにアクセス
+scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+credentials = ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope)
+gc = gspread.authorize(credentials)
+ws = gc.open_by_key(settings.GSS_KEY").sheet1
+
+# Google SpreadSheets上の値を読み込み
+imgurl_b = ws.acell('A1').value
+
+#----------------------------------------------------------------------------------------------------
+# 画像URLを使って画像をダウンロード
+def download(url, name, when):
+    with urllib.request.urlopen(url) as web_file:
+        time.sleep(3)
+        data = web_file.read()
+        with open(name, mode='wb') as local_file:
+            local_file.write(data)
+    print(when + ': ' + url)
+
+# 現在の時間割と旧時間割を比較
+download(imgurl_b, 'before.png', '前')
+download(imgurl_n, 'upload.png', '現在')
+img_1 = cv2.imread('before.png')
 img_2 = cv2.imread('upload.png')
 match = str(np.count_nonzero(img_1 == img_2))
 print("一致度: " + match)
+print(np.array_equal(img_1, img_2))
 
-# 2つの画像が全く一致しない(＝時間割が更新された)場合
-if np.count_nonzero(img_1 == img_2) <= 400000:
-  # 既にGoogleDriveにある画像(旧時間割)を削除後、現在の時間割の画像をアップロード
-  os.remove('upload.png')
-  os.rename('now.png', 'upload.png')
-  f.Delete()
-  f = drive.CreateFile()
-  f.SetContentFile('upload.png')
-  f.Upload()
-  print('アップロード完了') 
-  
-  # ツイート
-  api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
-  
-  # LINEへ通知
-  line_notify(notify_group, '時間割が更新されました。', 'upload.png')
-  # 27組用
-  line_notify(notify_27, '時間割が更新されました。', 'upload.png')
-  
-  # DiscordのWebhookを通して通知
-  content = {'content': '@everyone\n時間割が更新されました。'}
-  headers = {'Content-Type': 'application/json'}
-  with open('upload.png', 'rb') as f:
-    file_bin = f.read()
-  image = {'upload' : ('upload.png', file_bin)}
-  response = requests.post(webhook_url, json.dumps(content), headers=headers)
-  response = requests.post(webhook_url, files = image)
+#----------------------------------------------------------------------------------------------------
+# もし時間割の画像が一致しなかった(=時間割が更新されていた)場合
+if np.array_equal(img_1, img_2) == False:
+    
+    # Google SpreadSheetsに現在の画像のURLを上書き
+    ws.update_acell('A1', imgurl_n)
+    
+    
+    # keyの指定(情報漏えいを防ぐため伏せています)
+    consumer_key = settings.CK
+    consumer_secret = settings.CS
+    access_token = settings.AT
+    access_token_secret = settings.ATC
 
-# 2つの画像が微妙に一致しない(=時間割が更新されたか判断できない)場合
-elif 400000 < np.count_nonzero(img_1 == img_2) < 900000:
-  # LINEに通知
-  line_notify(notify_admin, '一致度が' + match + 'でした。', 'upload.png')
-  line_notify(notify_admin, '(1枚目=前の時間割,2枚目=現在)', 'now.png')
-  print('報告完了')
-  # 既にGoogleDriveにある画像(旧時間割)を削除後、現在の時間割の画像をアップロード
-  os.remove('upload.png')
-  os.rename('now.png', 'upload.png')
-  f.Delete()
-  f = drive.CreateFile()
-  f.SetContentFile('upload.png')
-  f.Upload()
-  print('アップロード完了')
+    # tweepyの設定(認証情報を設定、APIインスタンスの作成)
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_token_secret)
+    api = tweepy.API(auth, wait_on_rate_limit=True)
+    
+    # ツイート
+    api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
 
-# 2つの画像が一致する(=時間割が更新されてない)場合
+    # LINEへ通知
+    line_notify(notify_group, '時間割が更新されました。', 'upload.png')
+    # 27組用
+    line_notify(notify_27, '時間割が更新されました。', 'upload.png')
+    
+    # DiscordのWebhookを通して通知
+    content = {'content': '@everyone\n時間割が更新されました。'}
+    headers = {'Content-Type': 'application/json'}
+    with open('upload.png', 'rb') as f:
+        file_bin = f.read()
+    image = {'upload' : ('upload.png', file_bin)}
+    response = requests.post(webhook_url, json.dumps(content), headers=headers)
+    response = requests.post(webhook_url, files = image)
+
+
 else:
-  # 終了
-  print('画像が一致した為、終了')
-  exit()
+    print('画像が一致した為、終了')
+    exit()
