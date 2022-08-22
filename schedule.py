@@ -25,7 +25,7 @@ print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 
 #----------------------------------------------------------------------------------------------------
 # LINEの設定
-def line_notify(x, Lmessage, Limage):
+def line_notify(x):
   line_url = 'https://notify-api.line.me/api/notify'
   line_access_token = x
   headers = {'Authorization': 'Bearer ' + line_access_token}
