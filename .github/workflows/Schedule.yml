@@ -1,8 +1,8 @@
 name: GitHub_Actions(shedule)
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/10 0-12,21-23 * * *"
+  #schedule:
+    #- cron: "*/10 0-12,21-23 * * *"
             #6時〜21時、10分ごとに動作
 env:  #環境変数から文字列(パスワードなど)を取得
   ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
@@ -13,12 +13,9 @@ env:  #環境変数から文字列(パスワードなど)を取得
   LINE_NOTIFY: ${{secrets.LINE_NOTIFY}}
   LINE_NOTIFY_27: ${{secrets.LINE_NOTIFY_27}}
   LINE_NOTIFY_ADMIN: ${{secrets.LINE_NOTIFY_ADMIN}}
-  DISCORD_TOKEN: ${{secrets.DISCORD_TOKEN}}
-  DISCORD_ID: ${{secrets.DISCORD_ID}}
-  DISCORD_ID_DEBUG: ${{secrets.DISCORD_ID_DEBUG}}
   WEBHOOK: ${{secrets.WEBHOOK}}
-  JSON: ${{secrets.JSON}}
-  CLIENT: ${{secrets.CLIENT}}
+  GSS_JSON: ${{secrets.GSS_JSON}}
+  GSS_KEY: ${{secrets.GSS_KEY}}
 
 jobs:
   python:
@@ -36,8 +33,8 @@ jobs:
           pip install python-dotenv==0.19.2
           pip install selenium==3.141.0
           pip install tweepy==4.6.0
-          pip install pillow==8.4.0
-          pip install pydrive==1.3.1
+          pip install gspread==5.4.0
+          pip install oauth2client==4.1.3
           pip install opencv-python==4.5.5.64
           python schedule.py
       - name: Keepalive Workflow
