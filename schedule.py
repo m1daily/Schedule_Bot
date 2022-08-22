@@ -24,17 +24,13 @@ w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 
 #----------------------------------------------------------------------------------------------------
-
-
-
-
 # LINEの設定
 def line_notify(x, Lmessage, Limage):
   line_url = 'https://notify-api.line.me/api/notify'
   line_access_token = x
   headers = {'Authorization': 'Bearer ' + line_access_token}
-  line_message = Lmessage
-  line_image = Limage
+  line_message = '時間割が更新されました。'
+  line_image = 'upload.png'
   payload = {'message': line_message}
   files = {'imageFile': open(line_image, 'rb')}
   r = requests.post(line_url, headers=headers, params=payload, files=files,)
@@ -125,9 +121,9 @@ if np.array_equal(img_1, img_2) == False:
     api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
 
     # LINEへ通知
-    line_notify(notify_group, '時間割が更新されました。', 'upload.png')
+    line_notify(notify_group)
     # 27組用
-    line_notify(notify_27, '時間割が更新されました。', 'upload.png')
+    line_notify(notify_27)
     
     # DiscordのWebhookを通して通知
     content = {'content': '@everyone\n時間割が更新されました。'}
