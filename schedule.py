@@ -1,16 +1,15 @@
 import settings
 import datetime
-import tweepy
 import os
 import time
-import requests
 import json
+import requests
+import gspread
+import pprint
+import urllib.request
 import cv2
 import numpy as np
-from pathlib import Path
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
-from PIL import Image
+import tweepy
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -24,13 +23,9 @@ w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 #-----------------------------------------------------------------------------
 # jsonファイル作成(情報漏えいを防ぐため伏せています)
-GDA = {'credentials.txt':settings.JSON, 'client_secrets.txt':settings.CLIENT}
-for key, value in GDA.items():
-  f = open(key, 'w')
-  f.write(value)
-  f.close()
-for f in Path('.').rglob('*.txt'):
-  f.rename(f.stem+'.json')
+dic = ast.literal_eval(os.environ.get("JSON"))
+with open('gss.json', mode='wt', encoding='utf-8') as file:
+    json.dump(dic, file, ensure_ascii=False, indent=2)
 
 # keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = settings.CK
