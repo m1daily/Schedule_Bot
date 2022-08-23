@@ -58,6 +58,10 @@ time.sleep(5)
 
 # imgタグを含むものを抽出
 li = driver.find_elements(By.TAG_NAME, "img")
+if li == []:
+    print("画像が発見できなかったため終了")
+    exit()
+
 for e in li:
     imgurl_n = e.get_attribute('src')
     if imgurl_n != None and "alr=yes" in imgurl_n == True:
@@ -106,7 +110,6 @@ if np.array_equal(img_1, img_2) == False:
     
     # Google SpreadSheetsに現在の画像のURLを上書き
     ws.update_acell('A1', imgurl_n)
-    
     
     # keyの指定(情報漏えいを防ぐため伏せています)
     consumer_key = settings.CK
