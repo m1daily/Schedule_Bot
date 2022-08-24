@@ -63,10 +63,27 @@ api.update_status_with_media(status="今月の予定です。", filename="image.
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Discordに投稿
 webhook_url = os.environ.get("WEBHOOK")
-content = {'content': '今月の予定です。'}
-headers = {'Content-Type': 'application/json'}
-with open('image.png', 'rb') as f:
-    file_bin = f.read()
-image = {'upload' : ('image.png', file_bin)}
-response = requests.post(webhook_url, json.dumps(content), headers=headers)
-response = requests.post(webhook_url, files = image)
+payload2 = {
+    "payload_json" : {
+        "content" :"今月の予定です。",
+        "embeds": [
+            {
+                "color" : 5419910,
+                "footer": {
+                    "icon_url" : "https://raw.githubusercontent.com/Geusen/images/main/m1.jpg",
+                    "text" : "By 水戸一高時間割Bot",
+                },
+                "image": {
+                    "url" : "attachment://image.png"
+                },
+            }
+        ]
+    }
+}
+with open("image.png", 'rb') as f:
+    file_bin_image = f.read()
+files_qiita = {
+    "image" : ("image.png", file_bin_image),
+}
+payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
+res = requests.post(webhook_url, files = files_qiita, data = payload2)
