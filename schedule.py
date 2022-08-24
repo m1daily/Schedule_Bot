@@ -131,13 +131,25 @@ if np.array_equal(img_1, img_2) == False:
     line_notify(notify_27)
     
     # DiscordのWebhookを通して通知
-    content = {'content': '@everyone\n時間割が更新されました。'}
-    headers = {'Content-Type': 'application/json'}
-    with open('upload.png', 'rb') as f:
-        file_bin = f.read()
-    image = {'upload' : ('upload.png', file_bin)}
-    response = requests.post(webhook_url, json.dumps(content), headers=headers)
-    response = requests.post(webhook_url, files = image)
+    payload2 = {
+        "payload_json" : {
+            "content" :"'@everyone\n時間割が更新されました。",
+            "embeds": [
+                {
+                    "color" : 10931421,
+                    "footer": {
+                        "icon_url" : "https://raw.githubusercontent.com/Geusen/images/main/m1.jpg",
+                        "text" : "By 水戸一高時間割Bot",
+                    },
+                    "image": {
+                        "url" : imgurl_n
+                    },
+                }
+            ]
+        }
+    }
+    payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
+    res = requests.post(webhook_url, data = payload2)
 
 
 else:
