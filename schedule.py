@@ -134,11 +134,11 @@ if np.array_equal(img_1, img_2) == False:
     payload2 = {
         'payload_json' : {
             'content' : '@everyone\n時間割が更新されました。',
-            'embeds': [
+            'embeds' : [
                 {
                     'color' : 10931421,
-                    'footer': {'icon_url' : 'https://raw.githubusercontent.com/Geusen/images/main/m1.jpg', 'text' : 'By 水戸一高時間割Bot'},
-                    'image': {'url' : imgurl_n},
+                    'footer' : {'icon_url' : 'https://raw.githubusercontent.com/Geusen/images/main/m1.jpg', 'text' : 'By 水戸一高時間割Bot'},
+                    'image' : {'url' : imgurl_n}
                 }
             ]
         }
