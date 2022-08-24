@@ -133,7 +133,7 @@ if np.array_equal(img_1, img_2) == False:
     # DiscordのWebhookを通して通知
     payload2 = {
         "payload_json" : {
-            "content" :"'@everyone\n時間割が更新されました。",
+            "content" : "@everyone\n時間割が更新されました。",
             "embeds": [
                 {
                     "color" : 10931421,
