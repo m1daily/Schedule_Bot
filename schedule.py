@@ -132,17 +132,17 @@ if np.array_equal(img_1, img_2) == False:
     
     # DiscordのWebhookを通して通知
     payload2 = {
-        "payload_json" : {
-            "content" : "@everyone\n時間割が更新されました。",
-            "embeds": [
+        'payload_json' : {
+            'content' : '@everyone\n時間割が更新されました。',
+            'embeds': [
                 {
-                    "color" : 10931421,
-                    "footer": {
-                        "icon_url" : "https://raw.githubusercontent.com/Geusen/images/main/m1.jpg",
-                        "text" : "By 水戸一高時間割Bot",
+                    'color' : 10931421,
+                    'footer': {
+                        'icon_url' : 'https://raw.githubusercontent.com/Geusen/images/main/m1.jpg',
+                        'text' : 'By 水戸一高時間割Bot',
                     },
-                    "image": {
-                        "url" : imgurl_n
+                    'image': {
+                        'url' : imgurl_n
                     },
                 }
             ]
