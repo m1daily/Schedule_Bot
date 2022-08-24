@@ -137,13 +137,8 @@ if np.array_equal(img_1, img_2) == False:
             'embeds': [
                 {
                     'color' : 10931421,
-                    'footer': {
-                        'icon_url' : 'https://raw.githubusercontent.com/Geusen/images/main/m1.jpg',
-                        'text' : 'By 水戸一高時間割Bot',
-                    },
-                    'image': {
-                        'url' : imgurl_n
-                    },
+                    'footer': {'icon_url' : 'https://raw.githubusercontent.com/Geusen/images/main/m1.jpg', 'text' : 'By 水戸一高時間割Bot'},
+                    'image': {'url' : imgurl_n},
                 }
             ]
         }
