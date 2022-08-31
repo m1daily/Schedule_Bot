@@ -18,21 +18,27 @@ ht = soup.select_one('#box-18 > section:nth-child(3) > div.panel-body.block > ar
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # 余計な文字列を削除
-ht = [i.strip() for i in ht.text.splitlines()]
-ht = [i for i in ht if i != ""]
-ht = ht[0].split()
+for i in ht.select("br"):
+    i.replace_with('\n')
+ht.text.strip()
+ht = str(ht)
+ht = ht.replace('<p>', '')
+ht = ht.replace('</p>', '')
+ht = ht.split('\n')
+print(ht)
 # 外観調整
 li = []
 for i in ht:
     a = ''.join(i.split())
     table = str.maketrans('（）', '()')
     a = a.translate(table)
+    a = a.strip()
     if a[0].isdecimal() == True:
         a = "\n" + a
     elif a[0] == "(":
         a = a
     else:
-        a = "\n                " + a
+        a = ",    " + a
     li.append(a)
 # リスト結合
 li = ''.join(li)
@@ -40,10 +46,10 @@ print(li)
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # 画像に文字を入れる
-im = Image.new("RGB", (512, 680), (256, 256, 256))
+im = Image.new("RGB", (720, 720), (256, 256, 256))
 draw = ImageDraw.Draw(im)
-font = ImageFont.truetype('NotoSansCJKjp-Medium.otf', 16)
-draw.text((20, 0), li, fill=(25, 40, 100), font=font, spacing=8)
+font = ImageFont.truetype('NotoSansCJKjp-Medium.otf', 14)
+draw.text((20, 0), li, fill=(25, 40, 100), font=font, spacing=12)
 im.save("image.png")
 
 #-----------------------------------------------------------------------------------------------------------------------------------
