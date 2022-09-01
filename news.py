@@ -25,7 +25,7 @@ ht = str(ht)
 ht = ht.replace('<p>', '')
 ht = ht.replace('</p>', '')
 ht = ht.split('\n')
-print(ht)
+
 # 外観調整
 li = []
 for i in ht:
