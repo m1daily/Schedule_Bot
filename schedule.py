@@ -4,9 +4,7 @@ import os
 import time
 import json
 import requests
-import ast
-import gspread
-import pprint
+import glob
 import urllib.request
 import cv2
 import numpy as np
@@ -19,7 +17,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from oauth2client.service_account import ServiceAccountCredentials
 
 
-#-----------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
 # バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
 dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 w_list = ['月', '火', '水', '木', '金', '土', '日']
@@ -71,19 +69,10 @@ if imgurl_n == None:
     exit()
 
 #----------------------------------------------------------------------------------------------------
-# jsonファイル作成(情報漏えいを防ぐため伏せています)
-dic = ast.literal_eval(settings.JSON)
-with open('gss.json', mode='wt', encoding='utf-8') as file:
-    json.dump(dic, file, ensure_ascii=False, indent=2)
-
-# Google SpreadSheetsにアクセス
-scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-credentials = ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope)
-gc = gspread.authorize(credentials)
-ws = gc.open_by_key(settings.KEY).sheet1
-
-# Google SpreadSheets上の値を読み込み
-imgurl_b = ws.acell('A1').value
+# 旧時間割の画像URL取得
+f = open("url.txt", 'r')
+imgurl_b = f.read()
+f.close()
 
 #----------------------------------------------------------------------------------------------------
 # 画像URLを使って画像をダウンロード
@@ -102,14 +91,16 @@ img_1 = cv2.imread('before.png')
 img_2 = cv2.imread('upload.png')
 match = str(np.count_nonzero(img_1 == img_2))
 print("一致度: " + match)
-print(np.array_equal(img_1, img_2))
+print("判定" + np.array_equal(img_1, img_2))
 
 #----------------------------------------------------------------------------------------------------
 # もし時間割の画像が一致しなかった(=時間割が更新されていた)場合
 if np.array_equal(img_1, img_2) == False:
     
-    # Google SpreadSheetsに現在の画像のURLを上書き
-    ws.update_acell('A1', imgurl_n)
+    # url.txtに現在の画像のURLを上書き
+    f = open("url.txt", 'w')
+    f.write(imgurl_n)
+    f.close()
     
     # keyの指定(情報漏えいを防ぐため伏せています)
     consumer_key = settings.CK
@@ -145,6 +136,10 @@ if np.array_equal(img_1, img_2) == False:
     }
     payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
     res = requests.post(webhook_url, data = payload2)
+    for file in glob.glob('*.png'):
+      os.remove(file)
+    print('投稿完了')
+    
 
 
 else:
