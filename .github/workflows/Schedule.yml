@@ -14,8 +14,6 @@ env:  #環境変数から文字列(パスワードなど)を取得
   LINE_NOTIFY_27: ${{secrets.LINE_NOTIFY_27}}
   LINE_NOTIFY_ADMIN: ${{secrets.LINE_NOTIFY_ADMIN}}
   WEBHOOK: ${{secrets.WEBHOOK}}
-  GSS_JSON: ${{secrets.GSS_JSON}}
-  GSS_KEY: ${{secrets.GSS_KEY}}
 
 jobs:
   build:
