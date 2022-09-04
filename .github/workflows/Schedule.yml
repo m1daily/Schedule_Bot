@@ -45,3 +45,5 @@ jobs:
             git commit -m "Updated image URL"; \
             git push origin HEAD:${GITHUB_REF}; \
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
