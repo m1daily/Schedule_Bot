@@ -34,8 +34,6 @@ jobs:
           pip install tweepy==4.6.0
           pip install opencv-python==4.5.5.64
           python schedule.py
-      - name: Keepalive Workflow
-        uses: gautamkrishnar/keepalive-workflow@1.0.7
       - name: commit&push
         run: |
           git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
@@ -46,3 +44,5 @@ jobs:
             git commit -m "Updated image URL"; \
             git push origin HEAD:${GITHUB_REF}; \
           fi
+      - name: Keepalive Workflow
+        uses: gautamkrishnar/keepalive-workflow@1.0.7
