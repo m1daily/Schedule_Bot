@@ -141,5 +141,7 @@ if np.array_equal(img_1, img_2) == False:
     exit()
 
 else:
+    for file in glob.glob('*.png'):
+        os.remove(file)
     print('画像が一致した為、終了')
     exit()
