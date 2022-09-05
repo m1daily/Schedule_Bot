@@ -23,6 +23,17 @@ w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 
 #----------------------------------------------------------------------------------------------------
+# keyの指定(情報漏えいを防ぐため伏せています)
+consumer_key = settings.CK
+consumer_secret = settings.CS
+access_token = settings.AT
+access_token_secret = settings.ATC
+
+# tweepyの設定(認証情報を設定、APIインスタンスの作成)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth, wait_on_rate_limit=True)
+
 # LINEの設定
 def line_notify(x):
   line_url = 'https://notify-api.line.me/api/notify'
@@ -100,17 +111,6 @@ if np.array_equal(img_1, img_2) == False:
     f = open("url.txt", 'w')
     f.write(imgurl_n)
     f.close()
-    
-    # keyの指定(情報漏えいを防ぐため伏せています)
-    consumer_key = settings.CK
-    consumer_secret = settings.CS
-    access_token = settings.AT
-    access_token_secret = settings.ATC
-
-    # tweepyの設定(認証情報を設定、APIインスタンスの作成)
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth, wait_on_rate_limit=True)
     
     # ツイート
     api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
