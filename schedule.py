@@ -101,7 +101,7 @@ img_1 = cv2.imread('before.png')
 img_2 = cv2.imread('upload.png')
 match = str(np.count_nonzero(img_1 == img_2))
 print("一致度: " + match)
-print("判定" + str(np.array_equal(img_1, img_2)))
+print("判定: " + str(np.array_equal(img_1, img_2)))
 
 #----------------------------------------------------------------------------------------------------
 # もし時間割の画像が一致しなかった(=時間割が更新されていた)場合
