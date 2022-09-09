@@ -33,7 +33,7 @@ jobs:
           pip install selenium==3.141.0
           pip install tweepy==4.6.0
           pip install opencv-python==4.5.5.64
-          python -B schedule.py > results/log.xml
+          python -B schedule.py > log.xml
       - name: commit&push
         run: |
           git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Unit Test Results (Python 3.7)
-          path: results/*.xml
+          path: log.xml
 
       - name: Download Artifacts
         if: success() || failure()
@@ -61,7 +61,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          files: artifacts/**/*.xml
+          files: artifacts/**/log.xml
 
       - name: Keepalive Workflow
         uses: gautamkrishnar/keepalive-workflow@1.0.7
