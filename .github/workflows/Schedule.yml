@@ -33,7 +33,7 @@ jobs:
           pip install selenium==3.141.0
           pip install tweepy==4.6.0
           pip install opencv-python==4.5.5.64
-          python -B schedule.py test --junit-xml results/result.xml
+          python -B schedule.py --junit-xml results/result.xml
       - name: commit&push
         run: |
           git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
