@@ -21,6 +21,9 @@ from selenium.webdriver.support import expected_conditions as EC
 dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 w_list = ['月', '火', '水', '木', '金', '土', '日']
 print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
+f = open('log.txt', 'w')
+    f.write(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
+    f.close()
 
 #----------------------------------------------------------------------------------------------------
 # keyの指定(情報漏えいを防ぐため伏せています)
@@ -93,6 +96,9 @@ def download(url, name, when):
         with open(name, mode='wb') as local_file:
             local_file.write(data)
     print(when + ': ' + url)
+    f = open('log.txt', 'w', mode='a')
+        f.write('\n' + when + ': ' + url)
+        f.close()
 
 # 現在の時間割と旧時間割を比較
 download(imgurl_b, 'before.png', '前')
@@ -100,15 +106,21 @@ download(imgurl_n, 'upload.png', '現在')
 img_1 = cv2.imread('before.png')
 img_2 = cv2.imread('upload.png')
 match = str(np.count_nonzero(img_1 == img_2))
-print("一致度: " + match)
-print("判定: " + str(np.array_equal(img_1, img_2)))
+print('一致度: ' + match)
+f = open('log.txt', 'w', mode='a')
+        f.write('\n一致度: ' + match)
+        f.close()
+print('判定: ' + str(np.array_equal(img_1, img_2)))
+f = open('log.txt', 'w', mode='a')
+        f.write('\n判定: ' + str(np.array_equal(img_1, img_2)))
+        f.close()
 
 #----------------------------------------------------------------------------------------------------
 # もし時間割の画像が一致しなかった(=時間割が更新されていた)場合
 if np.array_equal(img_1, img_2) == False:
     
     # url.txtに現在の画像のURLを上書き
-    f = open("url.txt", 'w')
+    f = open('url.txt', 'w')
     f.write(imgurl_n)
     f.close()
     
