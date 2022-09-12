@@ -36,14 +36,14 @@ api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # LINEの設定
 def line_notify(x):
-  line_url = 'https://notify-api.line.me/api/notify'
-  line_access_token = x
-  headers = {'Authorization': 'Bearer ' + line_access_token}
-  line_message = '時間割が更新されました。'
-  line_image = 'upload.png'
-  payload = {'message': line_message}
-  files = {'imageFile': open(line_image, 'rb')}
-  r = requests.post(line_url, headers=headers, params=payload, files=files,)
+    line_url = 'https://notify-api.line.me/api/notify'
+    line_access_token = x
+    headers = {'Authorization': 'Bearer ' + line_access_token}
+    line_message = '時間割が更新されました。'
+    line_image = 'upload.png'
+    payload = {'message': line_message}
+    files = {'imageFile': open(line_image, 'rb')}
+    r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
 # LINE,Discordのtoken設定(伏せています)
 notify_group = settings.LN
