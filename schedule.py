@@ -69,10 +69,12 @@ if li == []:
     print('画像が発見できなかったため終了')
     exit()
 
+# 時間割の画像以外も取り出している場合があるため、時間割の画像のみ抽出(GoogleSpreadSheet上の画像は画像URLの末尾が「alr=yes」)
 for e in li:
     imgurl_n = e.get_attribute('src')
     if imgurl_n != None and 'alr=yes' in imgurl_n == True:
         break
+# 時間割の画像が見つからなかった場合は終了
 if imgurl_n == None:
     print('画像が発見できなかったため終了')
     exit()
@@ -101,7 +103,7 @@ img_2 = cv2.imread('upload.png')
 print('判定: ' + str(np.array_equal(img_1, img_2)))
 
 #----------------------------------------------------------------------------------------------------
-# もし時間割の画像が一致しなかった(=時間割が更新されていた)場合
+# 時間割の画像が一致しなかった(=時間割が更新されていた)場合
 if np.array_equal(img_1, img_2) == False:
     
     # url.txtに現在の画像のURLを上書き
@@ -137,6 +139,7 @@ if np.array_equal(img_1, img_2) == False:
     print('投稿完了')
     exit()
 
+# 時間割の画像が一致した(=時間割が更新されていなかった)場合
 else:
     for file in glob.glob('*.png'):
         os.remove(file)
