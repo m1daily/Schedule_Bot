@@ -1,4 +1,3 @@
-import settings
 import datetime
 import os
 import time
@@ -24,10 +23,10 @@ print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 
 #----------------------------------------------------------------------------------------------------
 # keyの指定(情報漏えいを防ぐため伏せています)
-consumer_key = settings.CK
-consumer_secret = settings.CS
-access_token = settings.AT
-access_token_secret = settings.ATC
+consumer_key = os.environ.get("CONSUMER_KEY")    # TwitterAPI識別キー
+consumer_secret = os.environ.get("CONSUMER_SECRET")    # TwitterAPI識別シークレットキー
+access_token = os.environ.get("ACCESS_TOKEN")    # Twitterアカウントに対するアクセストークン
+access_token_secret = os.environ.get("ACCESS_TOKEN_SECRET")    # 	Twitterアカウントに対するアクセストークンシークレット
 
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -46,9 +45,9 @@ def line_notify(x):
     r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
 # LINE,Discordのtoken設定(伏せています)
-notify_group = settings.LN
-notify_27 = settings.LN27
-webhook_url = settings.WEB
+notify_group = os.environ.get("LINE_NOTIFY")    # 時間割LINEグループのトークン
+notify_27 = os.environ.get("LINE_NOTIFY_27")    # 自分のクラスのライングループのトークン
+webhook_url = os.environ.get("WEBHOOK")    # Discordの時間割サーバーのWebhookのURL
 
 #----------------------------------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
@@ -60,7 +59,7 @@ driver = webdriver.Chrome('chromedriver',options=options)
 driver.implicitly_wait(10)
 
 # Googleスプレッドシートへ移動(URLは伏せています)
-driver.get(settings.GU)
+driver.get(os.environ.get("GOOGLE_URL"))    # 時間割の画像があるGoogleSpreadSheetのURL
 WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located)
 time.sleep(5)
 
