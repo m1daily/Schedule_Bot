@@ -8,6 +8,7 @@ import urllib.request
 import cv2
 import numpy as np
 import tweepy
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -23,10 +24,11 @@ print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 
 #----------------------------------------------------------------------------------------------------
 # keyの指定(情報漏えいを防ぐため伏せています)
-consumer_key = os.environ.get("CONSUMER_KEY")    # TwitterAPI識別キー
-consumer_secret = os.environ.get("CONSUMER_SECRET")    # TwitterAPI識別シークレットキー
-access_token = os.environ.get("ACCESS_TOKEN")    # Twitterアカウントに対するアクセストークン
-access_token_secret = os.environ.get("ACCESS_TOKEN_SECRET")    # 	Twitterアカウントに対するアクセストークンシークレット
+load_dotenv('.env')
+consumer_key = os.environ.get('CONSUMER_KEY')    # TwitterAPI識別キー
+consumer_secret = os.environ.get('CONSUMER_SECRET')    # TwitterAPI識別シークレットキー
+access_token = os.environ.get('ACCESS_TOKEN')    # Twitterアカウントに対するアクセストークン
+access_token_secret = os.environ.get('ACCESS_TOKEN_SECRET')    # Twitterアカウントに対するアクセストークンシークレット
 
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -45,9 +47,9 @@ def line_notify(x):
     r = requests.post(line_url, headers=headers, params=payload, files=files,)
 
 # LINE,Discordのtoken設定(伏せています)
-notify_group = os.environ.get("LINE_NOTIFY")    # 時間割LINEグループのトークン
-notify_27 = os.environ.get("LINE_NOTIFY_27")    # 自分のクラスのライングループのトークン
-webhook_url = os.environ.get("WEBHOOK")    # Discordの時間割サーバーのWebhookのURL
+notify_group = os.environ.get('LINE_NOTIFY')    # 時間割LINEグループのトークン
+notify_27 = os.environ.get('LINE_NOTIFY_27')    # 自分のクラスのライングループのトークン
+webhook_url = os.environ.get('WEBHOOK')    # Discordの時間割サーバーのWebhookのURL
 
 #----------------------------------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
@@ -59,27 +61,27 @@ driver = webdriver.Chrome('chromedriver',options=options)
 driver.implicitly_wait(10)
 
 # Googleスプレッドシートへ移動(URLは伏せています)
-driver.get(os.environ.get("GOOGLE_URL"))    # 時間割の画像があるGoogleSpreadSheetのURL
+driver.get(os.environ.get('GOOGLE_URL'))    # 時間割の画像があるGoogleSpreadSheetのURL
 WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located)
 time.sleep(5)
 
 # imgタグを含むものを抽出
-li = driver.find_elements(By.TAG_NAME, "img")
+li = driver.find_elements(By.TAG_NAME, 'img')
 if li == []:
-    print("画像が発見できなかったため終了")
+    print('画像が発見できなかったため終了')
     exit()
 
 for e in li:
     imgurl_n = e.get_attribute('src')
-    if imgurl_n != None and "alr=yes" in imgurl_n == True:
+    if imgurl_n != None and 'alr=yes' in imgurl_n == True:
         break
 if imgurl_n == None:
-    print("画像が発見できなかったため終了")
+    print('画像が発見できなかったため終了')
     exit()
 
 #----------------------------------------------------------------------------------------------------
 # 旧時間割の画像URL取得
-f = open("url.txt", 'r')
+f = open('url.txt', 'r')
 imgurl_b = f.read()
 f.close()
 
@@ -110,7 +112,7 @@ if np.array_equal(img_1, img_2) == False:
     f.close()
     
     # ツイート
-    api.update_status_with_media(status="時間割が更新されました！", filename="upload.png")
+    api.update_status_with_media(status = '時間割が更新されました！', filename = 'upload.png')
 
     # LINEへ通知
     line_notify(notify_group)
