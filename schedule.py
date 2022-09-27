@@ -8,7 +8,6 @@ import urllib.request
 import cv2
 import numpy as np
 import tweepy
-from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -24,7 +23,6 @@ print(dt.strftime('\n[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]'))
 
 #----------------------------------------------------------------------------------------------------
 # keyの指定(情報漏えいを防ぐため伏せています)
-load_dotenv('.env')
 consumer_key = os.environ.get('CONSUMER_KEY')    # TwitterAPI識別キー
 consumer_secret = os.environ.get('CONSUMER_SECRET')    # TwitterAPI識別シークレットキー
 access_token = os.environ.get('ACCESS_TOKEN')    # Twitterアカウントに対するアクセストークン
