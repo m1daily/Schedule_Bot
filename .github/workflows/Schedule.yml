@@ -43,5 +43,6 @@ jobs:
             git commit -m 'Updated image URL'; \
             git push origin HEAD:${GITHUB_REF}; \
           fi
+      # 永久的にGitHubActionsが使えるようにする
       - name: Keepalive Workflow
         uses: gautamkrishnar/keepalive-workflow@1.0.7
