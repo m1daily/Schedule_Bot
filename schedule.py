@@ -134,14 +134,10 @@ if np.array_equal(img_1, img_2) == False:
     }
     payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
     res = requests.post(webhook_url, data = payload2)
-    for file in glob.glob('*.png'):
-      os.remove(file)
     print('投稿完了')
     exit()
 
 # 時間割の画像が一致した(=時間割が更新されていなかった)場合
 else:
-    for file in glob.glob('*.png'):
-        os.remove(file)
     print('画像が一致した為、終了')
     exit()
