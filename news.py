@@ -54,10 +54,10 @@ im.save('image.png')
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # keyの指定(情報漏えいを防ぐため伏せています)
-consumer_key = os.environ.get('CONSUMER_KEY')
-consumer_secret = os.environ.get('CONSUMER_SECRET')
-access_token = os.environ.get('ACCESS_TOKEN')
-access_token_secret = os.environ.get('ACCESS_TOKEN_SECRET')
+consumer_key = os.environ['CONSUMER_KEY']
+consumer_secret = os.environ['CONSUMER_SECRET']
+access_token = os.environ['ACCESS_TOKEN']
+access_token_secret = os.environ['ACCESS_TOKEN_SECRET']
 
 # tweepyの設定(認証情報を設定,APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -68,7 +68,7 @@ api = tweepy.API(auth, wait_on_rate_limit=True)
 api.update_status_with_media(status='今月の予定です。', filename='image.png')
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Discordに投稿
-webhook_url = os.environ.get('WEBHOOK')
+webhook_url = os.environ['WEBHOOK']
 payload2 = {
     'payload_json' : {
         'content' :'今月の予定です。',
