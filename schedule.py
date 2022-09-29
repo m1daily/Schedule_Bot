@@ -3,7 +3,6 @@ import os
 import time
 import json
 import requests
-import glob
 import urllib.request
 import cv2
 import numpy as np
