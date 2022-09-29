@@ -112,12 +112,12 @@ if np.array_equal(img_1, img_2) == False:
     f.close()
     
     # ツイート
-    api.update_status_with_media(status = '時間割が更新されました！', filename = 'upload.png')
+    #api.update_status_with_media(status = '時間割が更新されました！', filename = 'upload.png')
 
     # LINEへ通知
-    line_notify(notify_group)
+    #line_notify(notify_group)
     # 27組用
-    line_notify(notify_27)
+    #line_notify(notify_27)
     
     # DiscordのWebhookを通して通知
     payload2 = {
@@ -133,7 +133,7 @@ if np.array_equal(img_1, img_2) == False:
         }
     }
     payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-    res = requests.post(webhook_url, data = payload2)
+    #res = requests.post(webhook_url, data = payload2)
     print('投稿完了')
     exit()
 
