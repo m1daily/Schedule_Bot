@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import tweepy
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -48,6 +48,11 @@ notify_group = os.environ.get('LINE_NOTIFY')    # 時間割LINEグループの�
 notify_27 = os.environ.get('LINE_NOTIFY_27')    # 自分のクラスのライングループのトークン
 webhook_url = os.environ.get('WEBHOOK')    # Discordの時間割サーバーのWebhookのURL
 
+# 終了時用
+def finish(x):
+    print(x)
+    exit()
+
 #----------------------------------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
 options = webdriver.ChromeOptions()
@@ -65,8 +70,7 @@ time.sleep(5)
 # imgタグを含むものを抽出
 li = driver.find_elements(By.TAG_NAME, 'img')
 if li == []:
-    print('画像が発見できなかったため終了')
-    exit()
+    finish('画像が発見できなかったため終了')
 
 # 時間割の画像以外も取り出している場合があるため、時間割の画像のみ抽出(GoogleSpreadSheet上の画像は画像URLの末尾が「alr=yes」)
 for e in li:
@@ -75,8 +79,7 @@ for e in li:
         break
 # 時間割の画像が見つからなかった場合は終了
 if imgurl_n == None:
-    print('画像が発見できなかったため終了')
-    exit()
+    finish('画像が発見できなかったため終了')
 
 #----------------------------------------------------------------------------------------------------
 # 旧時間割の画像URL取得
@@ -132,10 +135,8 @@ if np.array_equal(img_1, img_2) == False:
     }
     payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
     res = requests.post(webhook_url, data = payload2)
-    print('投稿完了')
-    exit()
+    finish('投稿完了')
 
 # 時間割の画像が一致した(=時間割が更新されていなかった)場合
 else:
-    print('画像が一致した為、終了')
-    exit()
+    finish('画像が一致した為、終了')
