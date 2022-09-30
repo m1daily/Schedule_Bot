@@ -23,6 +23,7 @@ for i in ht.select('br'):
 ht.text.strip()
 ht = str(ht)
 ht = ht.replace('<p>', '')
+ht = ht.replace('<p style="text-align: left;">', '')
 ht = ht.replace('</p>', '')
 ht = ht.split('\n')
 
@@ -48,7 +49,7 @@ print(li)
 # 画像に文字を入れる
 im = Image.new('RGB', (720, 720), (256, 256, 256))
 draw = ImageDraw.Draw(im)
-font = ImageFont.truetype('NotoSansCJKjp-Medium.otf', 14)
+font = ImageFont.truetype('NotoSansCJKjp-Medium.otf', 12)
 draw.text((20, 0), li, fill=(25, 40, 100), font=font, spacing=12)
 im.save('image.png')
 
