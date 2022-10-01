@@ -40,7 +40,7 @@ def line_notify(x):
     line_image = 'upload.png'
     payload = {'message': line_message}
     files = {'imageFile': open(line_image, 'rb')}
-    r = requests.post(line_url, headers=headers, params=payload, files=files,)
+    r = requests.post(line_url, headers=headers, params=payload, files=files)
 
 # LINE,Discordのtoken設定(伏せています)
 notify_group = os.environ['LINE_NOTIFY']    # 時間割LINEグループのトークン
