@@ -45,6 +45,7 @@ def line_notify(x):
 # LINE,Discordのtoken設定(伏せています)
 notify_group = os.environ['LINE_NOTIFY']    # 時間割LINEグループのトークン
 notify_27 = os.environ['LINE_NOTIFY_27']    # 自分のクラスのライングループのトークン
+notify_13 = os.environ['LINE_NOTIFY_13']    # 13組のライングループのトークン
 webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebhookのURL
 
 # 終了時用
@@ -116,9 +117,9 @@ if np.array_equal(img_1, img_2) == False:
     api.update_status_with_media(status = '時間割が更新されました！', filename = 'upload.png')
 
     # LINEへ通知
-    line_notify(notify_group)
-    # 27組用
-    line_notify(notify_27)
+    line_list = [notify_group, notify_27, notify_13]
+    for l in line_list:
+        line_notify(l)
     
     # DiscordのWebhookを通して通知
     payload2 = {
