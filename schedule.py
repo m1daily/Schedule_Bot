@@ -32,14 +32,11 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # LINEの設定
-def line_notify(x):
+def line_notify(line_access_token):
     line_url = 'https://notify-api.line.me/api/notify'
-    line_access_token = x
     headers = {'Authorization': 'Bearer ' + line_access_token}
-    line_message = '時間割が更新されました。'
-    line_image = 'upload.png'
-    payload = {'message': line_message}
-    files = {'imageFile': open(line_image, 'rb')}
+    payload = {'message': '時間割が更新されました。'}
+    files = {'imageFile': open('upload.png', 'rb')}
     r = requests.post(line_url, headers=headers, params=payload, files=files)
 
 # LINE,Discordのtoken設定(伏せています)
@@ -49,8 +46,8 @@ notify_13 = os.environ['LINE_NOTIFY_13']    # 13組のライングループの�
 webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebhookのURL
 
 # 終了時用
-def finish(x):
-    print(x)
+def finish(exit_message):
+    print(exit_message)
     exit()
 
 #----------------------------------------------------------------------------------------------------
@@ -114,7 +111,7 @@ if np.array_equal(img_1, img_2) == False:
     f.close()
     
     # ツイート
-    api.update_status_with_media(status = '時間割が更新されました！', filename = 'upload.png')
+    api.update_status_with_media(status='時間割が更新されました！', filename='upload.png')
 
     # LINEへ通知
     line_list = [notify_group, notify_27, notify_13]
@@ -134,7 +131,7 @@ if np.array_equal(img_1, img_2) == False:
         }
     }
     payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-    res = requests.post(webhook_url, data = payload2)
+    res = requests.post(webhook_url, data=payload2)
     finish('投稿完了')
 
 # 時間割の画像が一致した(=時間割が更新されていなかった)場合
