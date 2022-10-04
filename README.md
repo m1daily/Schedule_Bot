@@ -3,7 +3,7 @@
 ![twitter](https://img.shields.io/twitter/follow/mito1daily?style=social)
 
 - Googleスプレッドシート上にある時間割が更新されたらTwitterとLINEとDiscordにその時間割を投稿するBotです。
-- LINEで通知を受け取りたい場合は[@M1_Schedules](https://twitter.com/mito1daily)のDMへどうぞ。
+- LINEで通知を受け取りたい場合は[@mito1daily](https://twitter.com/mito1daily)のDMへどうぞ。
 
 --------------------------------------------------------------------------------------
 
