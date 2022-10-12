@@ -27,5 +27,3 @@ jobs:
           pip install pillow==8.4.0
           pip install tweepy==4.6.0
           python news.py
-      - name: Keepalive Workflow
-        uses: gautamkrishnar/keepalive-workflow@1.0.7
