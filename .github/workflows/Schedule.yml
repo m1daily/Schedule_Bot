@@ -43,4 +43,4 @@ jobs:
             git push origin HEAD:${GITHUB_REF}; \
           fi
       - name: Keepalive Workflow    # 永久的にGitHubActionsが使えるようにする
-        uses: gautamkrishnar/keepalive-workflow@1.0.7
+        uses: gautamkrishnar/keepalive-workflow@v1
