@@ -41,14 +41,13 @@ jobs:
           git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
           git config --global user.name '${GITHUB_ACTOR}'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          echo -e "ステータス:\n${{ steps.results.outputs.STATUS }}" >> $GITHUB_STEP_SUMMARY
           if (git diff --shortstat | grep '[0-9]'); then \
             git add .; \
             git commit -m 'Updated image URL'; \
             git push origin HEAD:${GITHUB_REF}; \
-            echo '# Updated image URL :rocket:' >> $GITHUB_STEP_SUMMARY \
+            echo '# Updated image URL :rocket:' >> $GITHUB_STEP_SUMMARY; \
           fi
-        #echo -e "ステータス:\n${{ steps.results.outputs.STATUS }}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- ステータス:\n${{steps.results.outputs.STATUS}}" >> $GITHUB_STEP_SUMMARY
         #echo "The selected color is ${{ steps.abcdf.outputs.AAA }}" >> $GITHUB_STEP_SUMMARY
-        #echo -e "- 現在の時間割:\n${{steps.python.outputs.NOW}}" >> $GITHUB_STEP_SUMMARY
-        #echo -e "- 過去の時間割:\n${{steps.python.outputs.BEFORE}}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- 現在の時間割:\n${{steps.python.outputs.NOW}}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- 過去の時間割:\n${{steps.python.outputs.BEFORE}}" >> $GITHUB_STEP_SUMMARY
