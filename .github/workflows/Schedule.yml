@@ -25,21 +25,9 @@ jobs:
         with:
           python-version: '3.10'
           architecture: 'x64'
-      # cache取得
-      - name: Get pip cache
-        id: pip-cache
-        run: |
-          python -c "from pip._internal.locations import USER_CACHE_DIR; print('::set-output name=dir::' + USER_CACHE_DIR)"
-      - uses: actions/cache@v2
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
       - run: |
           python -m pip install --upgrade pip
-          pip install -r **/requirements.txt
+          pip install -r requirements.txt
           python -B schedule.py
       - name: commit&push
         run: |    # 差分が発生した場合のみcommit&push
