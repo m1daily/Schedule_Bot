@@ -123,14 +123,14 @@ media_ids = []
 for image in images:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
-# api.update_status(status='時間割が更新されました！', media_ids=media_ids)
-'''
+api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+
 # LINEへ通知
 line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
 for l in line_list:
     for i in images:
         line_notify(l, i)
-'''
+
 # DiscordのWebhookを通して通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。',}}
 embed = []
@@ -143,5 +143,5 @@ for i in imgurl_n:
     embed.append(new_d)
 payload2['payload_json']['embeds'] = embed
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-# res = requests.post(webhook_url, data=payload2)
+res = requests.post(webhook_url, data=payload2)
 finish('投稿完了')
