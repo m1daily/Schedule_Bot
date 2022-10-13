@@ -26,7 +26,7 @@ jobs:
           python-version: '3.10'
           architecture: 'x64'
       - name: run python
-        id: python
+        id: results
         run: |
           echo "::group::pip install --upgrade pip"
           python -m pip install --upgrade pip
@@ -47,6 +47,7 @@ jobs:
             git push origin HEAD:${GITHUB_REF}; \
             echo '# Updated image URL :rocket:' >> $GITHUB_STEP_SUMMARY \
           fi
-          echo -e "ステータス\n${{steps.python.outputs.STATUS}}" >> $GITHUB_STEP_SUMMARY
+          echo -e "ステータス:\n ${{steps.results.outputs.STATUS}}" >> $GITHUB_STEP_SUMMARY
+        #echo "The selected color is ${{ steps.abcdf.outputs.AAA }}" >> $GITHUB_STEP_SUMMARY
         #echo -e "- 現在の時間割:\n${{steps.python.outputs.NOW}}" >> $GITHUB_STEP_SUMMARY
         #echo -e "- 過去の時間割:\n${{steps.python.outputs.BEFORE}}" >> $GITHUB_STEP_SUMMARY
