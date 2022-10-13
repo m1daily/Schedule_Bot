@@ -1,6 +1,7 @@
 import datetime    # 日付取得
 import os    # 環境変数用
 import time    # 待機
+import subprocess    # GitHubActionsの環境変数追加
 import cv2u    # 画像URLから読み込み
 import tweepy    # Twitter送信
 import requests    # LINE・Discord送信
@@ -47,6 +48,7 @@ webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebho
 # 終了時用
 def finish(exit_message):
     print(exit_message)
+    subprocess.run([f'echo STATUS={exit_message} >> $GITHUB_OUTPUT'], shell=True)
     exit()
 
 #----------------------------------------------------------------------------------------------------
@@ -81,6 +83,10 @@ if imgurl_n == []:
     finish('画像が発見できなかったため終了')
 print(imgurl_n)
 
+# $GITHUB_OUTPUTに追加
+now = ','.join(imgurl_n)
+subprocess.run([f'echo NOW={now} >> $GITHUB_OUTPUT'], shell=True)
+
 #----------------------------------------------------------------------------------------------------
 # 最後に投稿した画像のリストを読み込み
 with open('url.txt', 'r') as f:
@@ -90,6 +96,10 @@ print(imgurl_b)
 imgcv2u_b = []    # cv2u用リスト(過去)
 for e in imgurl_b:
     imgcv2u_b.append(str(cv2u.urlread(e)))
+
+# $GITHUB_OUTPUTに追加
+before = ','.join(imgurl_b)
+subprocess.run([f'echo BEFORE={before} >> $GITHUB_OUTPUT'], shell=True)
 
 # 比較
 if len(imgurl_n) == len(imgurl_b):
