@@ -2,7 +2,7 @@
 
 ## About
 
-![update](https%3A//img.shields.io/badge/%E6%9C%80%E7%B5%82%E6%99%82%E9%96%93%E5%89%B2%E6%9B%B4%E6%96%B0-%25237448%20%5B2022%E5%B9%B410%E6%9C%8814%E6%97%A5%28%E9%87%91%29%2021%3A02%3A12%5D-blue.svg)
+![update](img.shields.io/badge/%E6%9C%80%E7%B5%82%E6%99%82%E9%96%93%E5%89%B2%E6%9B%B4%E6%96%B0-%237449%20%5B2022%E5%B9%B410%E6%9C%8814%E6%97%A5%28%E9%87%91%29%2021%3A10%3A21%5D-blue.svg)
 
 ![twitter](https://img.shields.io/twitter/follow/mito1daily?label=%40mito1daily&style=social)
 
