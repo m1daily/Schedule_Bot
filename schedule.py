@@ -103,6 +103,12 @@ for e in imgurl_b:
 before = ','.join(imgurl_b)
 subprocess.run([f'echo BEFORE={before} >> $GITHUB_OUTPUT'], shell=True)
 
+with open("README.md", encoding="utf-8") as f:
+    text_list = f.readlines()
+text_list[4] = '#' + str(os.environ['RUN_NUMBER']) + time_now + '\n'
+with open("README.md", mode='w', encoding='utf-8')as f:
+    f.writelines(text_list)
+
 # 比較
 if len(imgurl_n) == len(imgurl_b):
     if bool(set(imgcv2u_n) == set(imgcv2u_b)) == True:
