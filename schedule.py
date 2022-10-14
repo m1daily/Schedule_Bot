@@ -127,7 +127,13 @@ for i in imgurl_n:
 # 上書き
 with open('url.txt', 'w') as f:
     f.write(' \n'.join(imgurl_n))
-    f.close()
+
+# MARKDOWN編集
+with open("README.md", encoding="utf-8") as f:
+    text_list = f.readlines()
+text_list[4] = '#' + str(os.environ['RUN_NUMBER']) + time_now + '\n'
+with open("README.md", mode='w', encoding='utf-8')as f:
+    f.writelines(text_list)
 
 #----------------------------------------------------------------------------------------------------
 # ツイート
