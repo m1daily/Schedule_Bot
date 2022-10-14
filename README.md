@@ -2,7 +2,7 @@
 
 ## About
 
-![update](blue.svg)
+#7443[2022年10月14日(金) 20:47:03]
 
 ![twitter](https://img.shields.io/twitter/follow/mito1daily?label=%40mito1daily&style=social)
 
