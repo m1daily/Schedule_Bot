@@ -3,6 +3,7 @@ import os    # 環境変数用
 import time    # 待機
 import subprocess    # GitHubActionsの環境変数追加
 import cv2u    # 画像URLから読み込み
+import urllib.parse    # urlエンコード
 import tweepy    # Twitter送信
 import requests    # LINE・Discord送信
 import json    # webhook用
@@ -105,7 +106,8 @@ subprocess.run([f'echo BEFORE={before} >> $GITHUB_OUTPUT'], shell=True)
 
 with open("README.md", encoding="utf-8") as f:
     text_list = f.readlines()
-text_list[4] = '![update](https://img.shields.io/badge/最終時間割更新-%23' + str(os.environ['RUN_NUMBER']) + ' ' + time_now + '-blue.svg)\n'
+url = '![update](https://img.shields.io/badge/最終時間割更新-%23' + str(os.environ['RUN_NUMBER']) + ' ' + time_now + '-blue.svg)'
+text_list[4] = urllib.parse.quote(url) + '\n'
 with open("README.md", mode='w', encoding='utf-8')as f:
     f.writelines(text_list)
 
