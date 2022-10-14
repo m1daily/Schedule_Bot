@@ -10,7 +10,7 @@
 
 - Googleスプレッドシート上にある時間割が更新されたらTwitterとLINEとDiscordにその時間割を投稿するBotです。
 
-- LINEで通知を受け取りたい場合は&ensp;<a href='https://twitter.com/mito1daily'><img src='https://img.shields.io/twitter/follow/mito1daily?label=%40mito1daily&style=social'></a>&ensp;のDMへどうぞ。<br><br>
+- LINEで通知を受け取りたい場合は&ensp;<a href='https://twitter.com/mito1daily' target="_blank" rel="noopener noreferrer"><img src='https://img.shields.io/twitter/follow/mito1daily?label=%40mito1daily&style=social'></a>&ensp;のDMへどうぞ。<br><br>
 
 ## 大雑把な解説
 
