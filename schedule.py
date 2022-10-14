@@ -105,7 +105,7 @@ subprocess.run([f'echo BEFORE={before} >> $GITHUB_OUTPUT'], shell=True)
 
 with open("README.md", encoding="utf-8") as f:
     text_list = f.readlines()
-text_list[4] = '#' + str(os.environ['RUN_NUMBER']) + time_now + '\n'
+text_list[4] = 'https://img.shields.io/badge/最終時間割更新-%23' + str(os.environ['RUN_NUMBER']) + ' ' + time_now + '-blue.svg\n'
 with open("README.md", mode='w', encoding='utf-8')as f:
     f.writelines(text_list)
 
