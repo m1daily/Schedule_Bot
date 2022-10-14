@@ -2,7 +2,7 @@
 
 ![twitter](https://img.shields.io/twitter/follow/mito1daily?label=%40mito1daily&style=social)
 
-![commit](https://img.shields.io/github/commit-activity/y/Geusen/Schedule_Bot?label=Geusen%20commit%20activity)
+![actions](https://github.com/Geusen/Schedule_Bot/actions/workflows/Schedule.yml/badge.svg)
 
 - Googleスプレッドシート上にある時間割が更新されたらTwitterとLINEとDiscordにその時間割を投稿するBotです。
 - LINEで通知を受け取りたい場合は[@mito1daily](https://twitter.com/mito1daily)のDMへどうぞ。
