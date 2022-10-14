@@ -2,7 +2,7 @@
 
 ## About
 
-![update](https://img.shields.io/badge/最終時間割更新-%237445 [2022年10月14日(金) 20:55:00]-blue.svg)
+%21%5Bupdate%5D%28https%3A//img.shields.io/badge/%E6%9C%80%E7%B5%82%E6%99%82%E9%96%93%E5%89%B2%E6%9B%B4%E6%96%B0-%25237447%20%5B2022%E5%B9%B410%E6%9C%8814%E6%97%A5%28%E9%87%91%29%2021%3A00%3A10%5D-blue.svg%29
 
 ![twitter](https://img.shields.io/twitter/follow/mito1daily?label=%40mito1daily&style=social)
 
