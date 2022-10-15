@@ -108,7 +108,7 @@ subprocess.run([f'echo BEFORE={before} >> $GITHUB_OUTPUT'], shell=True)
 with open("README.md", encoding="utf-8") as f:
     text_list = f.readlines()
 url = 'img.shields.io/badge/最終時間割更新-#' + str(os.environ['RUN_NUMBER']) + ' ' + time_now + '-0374b5.svg'
-text_list[2] = '<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']) + '><img src="https://' + urllib.parse.quote(url) + '"></a>\n'
+text_list[2] = '<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']) + '"><img src="https://' + urllib.parse.quote(url) + '"></a>\n'
 with open("README.md", mode='w', encoding='utf-8')as f:
     f.writelines(text_list)
 
@@ -141,7 +141,7 @@ with open('url.txt', 'w') as f:
 with open("README.md", encoding="utf-8") as f:
     text_list = f.readlines()
 url = 'img.shields.io/badge/最終時間割更新-#' + str(os.environ['RUN_NUMBER']) + ' ' + time_now + '-0374b5.svg'
-text_list[2] = '<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']) + '><img src="https://' + urllib.parse.quote(url) + '"></a>\n'
+text_list[2] = '<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']) + '"><img src="https://' + urllib.parse.quote(url) + '"></a>\n'
 with open("README.md", mode='w', encoding='utf-8')as f:
     f.writelines(text_list)
 
