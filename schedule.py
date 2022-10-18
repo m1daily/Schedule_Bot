@@ -10,7 +10,7 @@ import json    # webhook用
 import urllib.request    # 画像取得
 from selenium import webdriver    # サイトから画像取得(以下略)
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
