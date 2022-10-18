@@ -142,7 +142,7 @@ with open("README.md", mode='w', encoding='utf-8')as f:
 media_ids = []
 for image in images:
    img = api.media_upload(image)
-   media_ids.append(img.media_id)
+   media_ids.append(img.media_id)    # type: ignore
 api.update_status(status='時間割が更新されました！', media_ids=media_ids)
 
 # LINEへ通知
@@ -161,7 +161,7 @@ for i in imgurl_n:
     else:
         new_d = {'url' : 'https://www.google.com/','image' : {'url' : i}}
     embed.append(new_d)
-payload2['payload_json']['embeds'] = embed
-payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
+payload2['payload_json']['embeds'] = embed    # type: ignore
+payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)    # type: ignore
 res = requests.post(webhook_url, data=payload2)
 finish('投稿完了')
