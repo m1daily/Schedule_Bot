@@ -152,7 +152,7 @@ for i in imgurl_n:
 #         line_notify(l, i)
 
 # DiscordのWebhookを通して通知
-payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。','embeds': ''}}
+payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
 embed = []
 # 画像の枚数分"embed"の値追加
 for i in imgurl_n:
@@ -163,7 +163,7 @@ for i in imgurl_n:
     embed.append(new_d)
 payload2['payload_json']['embeds'] = embed
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-res = requests.post(webhook_url, data=payload2)
+res = requests.post(webhook_url, headers={'Content-Type': 'application/json'}, data=payload2)
 print(payload2)
 print('Discord_Webhook: ' +str(res.status_code))
 finish('投稿完了')
