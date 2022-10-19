@@ -41,6 +41,7 @@ def line_notify(line_access_token, image):
     payload = {'message': '時間割が更新されました。'}
     files = {'imageFile': open(image, 'rb')}
     r = requests.post(line_url, headers=headers, params=payload, files=files)
+    return str(r.status_code)
 
 # LINE,Discordのtoken設定(伏せています)
 notify_group = os.environ['LINE_NOTIFY']    # 時間割LINEグループのトークン
@@ -125,48 +126,45 @@ for i in imgurl_n:
         with open(img, mode='wb') as local_file:
             local_file.write(data)
 
-# # 上書き
-# with open('url.txt', 'w') as f:
-#     f.write(' \n'.join(imgurl_n))
+# 上書き
+with open('url.txt', 'w') as f:
+    f.write(' \n'.join(imgurl_n))
 
-# # MARKDOWN編集
-# with open("README.md", encoding="utf-8") as f:
-#     text_list = f.readlines()
-# url = 'img.shields.io/badge/最終時間割更新-#' + str(os.environ['RUN_NUMBER']) + ' ' + time_now + '-0374b5.svg'
-# text_list[2] = '<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']) + '"><img src="https://' + urllib.parse.quote(url) + '"></a>\n'
-# with open("README.md", mode='w', encoding='utf-8')as f:
-#     f.writelines(text_list)
+# MARKDOWN編集
+with open("README.md", encoding="utf-8") as f:
+    text_list = f.readlines()
+url = 'img.shields.io/badge/最終時間割更新-#' + str(os.environ['RUN_NUMBER']) + ' ' + time_now + '-0374b5.svg'
+text_list[2] = '<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']) + '"><img src="https://' + urllib.parse.quote(url) + '"></a>\n'
+with open("README.md", mode='w', encoding='utf-8')as f:
+    f.writelines(text_list)
 
-# #----------------------------------------------------------------------------------------------------
-# # ツイート
-# media_ids = []
-# for image in images:
-#    img = api.media_upload(image)
-#    media_ids.append(img.media_id)
-# api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+#----------------------------------------------------------------------------------------------------
+# ツイート
+media_ids = []
+for image in images:
+   img = api.media_upload(image)
+   media_ids.append(img.media_id)
+api.update_status(status='時間割が更新されました！', media_ids=media_ids)
 
-# # LINEへ通知
-# line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
-# for l in line_list:
-#     for i in images:
-#         line_notify(l, i)
+# LINEへ通知
+line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
+print('[LINE]')
+for l in line_list:
+    for i in images:
+        print(str(line_list.index(l) + 1) + '-' + str(images.index(i) + 1) + ': ' + line_notify(l, i))
 
 # DiscordのWebhookを通して通知
-payload2 = {"payload_json" : {"content" : "@everyone\n時間割が更新されました。"}}
+payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
 embed = []
-print(imgurl_n)
 # 画像の枚数分"embed"の値追加
 for i in imgurl_n:
     if imgurl_n.index(i) == 0:
-        new_d = {"color" : 10931421, "url" : 'https://www.google.com/', "image" : {"url" : i}}
+        new_d = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
     else:
-        new_d = {"url" : "https://www.google.com/", "image" : {"url" : i}}
+        new_d = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
     embed.append(new_d)
-print(embed)
-payload2["payload_json"]["embeds"] = embed.copy()
-print(payload2)
-payload2["payload_json"] = json.dumps(payload2['payload_json'], ensure_ascii=False)
+payload2['payload_json']['embeds'] = embed
+payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
 res = requests.post(webhook_url, data=payload2)
-print(payload2)
-print('Discord_Webhook: ' +str(res.status_code))
+print('Discord_Webhook: ' + str(res.status_code))
 finish('投稿完了')
