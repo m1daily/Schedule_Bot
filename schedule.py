@@ -152,7 +152,7 @@ for i in imgurl_n:
 #         line_notify(l, i)
 
 # DiscordのWebhookを通して通知
-payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。',}}
+payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。','embeds': ''}}
 embed = []
 # 画像の枚数分"embed"の値追加
 for i in imgurl_n:
