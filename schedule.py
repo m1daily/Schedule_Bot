@@ -154,6 +154,7 @@ for i in imgurl_n:
 # DiscordのWebhookを通して通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
 embed = []
+print(imgurl_n)
 # 画像の枚数分"embed"の値追加
 for i in imgurl_n:
     if imgurl_n.index(i) == 0:
@@ -162,6 +163,7 @@ for i in imgurl_n:
         new_d = {'url' : 'https://www.google.com/','image' : {'url' : i}},
     embed.append(new_d)
 payload2['payload_json']['embeds'] = embed
+print(payload2)
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
 res = requests.post(webhook_url, headers={'Content-Type': 'application/json'}, data=payload2)
 print(payload2)
