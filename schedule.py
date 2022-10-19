@@ -162,6 +162,7 @@ for i in imgurl_n:
     else:
         new_d = {'url' : 'https://www.google.com/','image' : {'url' : i}},
     embed.append(new_d)
+print(embed)
 payload2['payload_json']['embeds'] = embed
 print(payload2)
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
