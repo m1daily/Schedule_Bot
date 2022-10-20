@@ -1,5 +1,5 @@
 *.pyc
 *.png
 .env
-*test*.*
+*test*
 .vscode
