@@ -149,9 +149,9 @@ api.update_status(status='時間割が更新されました！', media_ids=media
 # LINEへ通知
 line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
 print('[LINE]')
-for l in line_list:
-    for i in images:
-        print(str(line_list.index(l) + 1) + '-' + str(images.index(i) + 1) + ': ' + line_notify(l, i))
+for l, line in enumerate(line_list, 1):
+    for i, image in enumerate(images, 1):
+        print(str(l) + '-' + str(i) + ': ' + line_notify(line, image))
 
 # DiscordのWebhookを通して通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
