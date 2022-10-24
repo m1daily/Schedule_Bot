@@ -16,9 +16,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 #----------------------------------------------------------------------------------------------------
 # バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
-dt = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
-w_list = ['月', '火', '水', '木', '金', '土', '日']
-time_now = dt.strftime('[%Y年%m月%d日(' + w_list[dt.weekday()] + ') %H:%M:%S]')
+date = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+weekdays = ['月', '火', '水', '木', '金', '土', '日']
+time_now = date.strftime('[%Y年%m月%d日(' + weekdays[date.weekday()] + ') %H:%M:%S]')
 print('\n' + time_now)
 subprocess.run([f'echo "TIME={time_now}" >> $GITHUB_OUTPUT'], shell=True)
 
@@ -70,44 +70,44 @@ WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located)
 time.sleep(5)
 
 # imgタグを含むものを抽出
-web_li = driver.find_elements(By.TAG_NAME, 'img')
-if web_li == []:
+imgs_tag = driver.find_elements(By.TAG_NAME, 'img')
+if imgs_tag == []:
     finish('画像が発見できなかったため終了')
 # 時間割の画像以外も取り出している場合があるため時間割の画像のみ抽出(GoogleSpreadSheet上の画像は画像URLの末尾が「alr=yes」)
-imgcv2u_n = []    # cv2u用リスト(現在)
-imgurl_n = []     # URLリスト(現在)
-for e in web_li:
-    imgurl = e.get_attribute('src')
+imgs_cv2u_now = []    # cv2u用リスト(現在)
+imgs_url_now = []     # URLリスト(現在)
+for e in imgs_tag:
+    img_url = e.get_attribute('src')
     # リストに既に同じ画像がない場合リストに追加
-    if 'alr=yes' in imgurl and bool(str(cv2u.urlread(imgurl)) in imgcv2u_n) == False:
-        imgcv2u_n.append(str(cv2u.urlread(imgurl)))
-        imgurl_n.append(imgurl)
+    if 'alr=yes' in img_url and bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
+        imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
+        imgs_url_now.append(img_url)
 # 時間割の画像が見つからなかった場合は終了
-if imgurl_n == []:
+if imgs_url_now == []:
     finish('画像が発見できなかったため終了')
-print(imgurl_n)
+print(imgs_url_now)
 
 # $GITHUB_OUTPUTに追加
-now = ','.join(imgurl_n)
+now = ','.join(imgs_url_now)
 subprocess.run([f'echo NOW={now} >> $GITHUB_OUTPUT'], shell=True)
 
 #----------------------------------------------------------------------------------------------------
 # 最後に投稿した画像のリストを読み込み
 with open('url.txt', 'r') as f:
-    imgurl_b = f.read().split()    # URLリスト(過去)
+    imgs_url_latest = f.read().split()    # URLリスト(過去)
     f.close()
-print(imgurl_b)
-imgcv2u_b = []    # cv2u用リスト(過去)
-for e in imgurl_b:
-    imgcv2u_b.append(str(cv2u.urlread(e)))
+print(imgs_url_latest)
+imgs_cv2u_latest = []    # cv2u用リスト(過去)
+for e in imgs_url_latest:
+    imgs_cv2u_latest.append(str(cv2u.urlread(e)))
 
 # $GITHUB_OUTPUTに追加
-before = ','.join(imgurl_b)
+before = ','.join(imgs_url_latest)
 subprocess.run([f'echo BEFORE={before} >> $GITHUB_OUTPUT'], shell=True)
 
 # 比較
-if len(imgurl_n) == len(imgurl_b):
-    if bool(set(imgcv2u_n) == set(imgcv2u_b)) == True:
+if len(imgs_url_now) == len(imgs_url_latest):
+    if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
         finish('画像が一致した為、終了')
     else:
         print('画像が一致しないので続行')
@@ -116,32 +116,32 @@ else:
 
 #----------------------------------------------------------------------------------------------------
 # 画像URLを使って画像をダウンロード
-images = []    # 画像のファイル名用リスト
-for i in imgurl_n:
+imgs_path = []    # 画像のファイル名用リスト
+for i in imgs_url_now:
     with urllib.request.urlopen(i) as web_file:
         time.sleep(5)
         data = web_file.read()
-        img = str(imgurl_n.index(i) + 1) + '.png'    # ファイル名を"リストの順番.png"に
-        images.append(img)
+        img = str(imgs_url_now.index(i) + 1) + '.png'    # ファイル名を"リストの順番.png"に
+        imgs_path.append(img)
         with open(img, mode='wb') as local_file:
             local_file.write(data)
 
 # 上書き
 with open('url.txt', 'w') as f:
-    f.write(' \n'.join(imgurl_n))
+    f.write(' \n'.join(imgs_url_now))
 
 # MARKDOWN編集
 with open("README.md", encoding="utf-8") as f:
-    text_list = f.readlines()
+    markdown_texts = f.readlines()
 url = 'img.shields.io/badge/最終時間割更新-#' + str(os.environ['RUN_NUMBER']) + ' ' + time_now + '-0374b5.svg'
-text_list[2] = '<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']) + '"><img src="https://' + urllib.parse.quote(url) + '"></a>\n'
+markdown_texts[2] = '<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']) + '"><img src="https://' + urllib.parse.quote(url) + '"></a>\n'
 with open("README.md", mode='w', encoding='utf-8')as f:
-    f.writelines(text_list)
+    f.writelines(markdown_texts)
 
 #----------------------------------------------------------------------------------------------------
 # ツイート
 media_ids = []
-for image in images:
+for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
 api.update_status(status='時間割が更新されました！', media_ids=media_ids)
@@ -150,19 +150,19 @@ api.update_status(status='時間割が更新されました！', media_ids=media
 line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
 print('[LINE]')
 for l, line in enumerate(line_list, 1):
-    for i, image in enumerate(images, 1):
+    for i, image in enumerate(imgs_path, 1):
         print(str(l) + '-' + str(i) + ': ' + line_notify(line, image))
 
 # DiscordのWebhookを通して通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
 embed = []
 # 画像の枚数分"embed"の値追加
-for i in imgurl_n:
-    if imgurl_n.index(i) == 0:
-        new_d = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+for i in imgs_url_now:
+    if imgs_url_now.index(i) == 0:
+        img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
     else:
-        new_d = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-    embed.append(new_d)
+        img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+    embed.append(img_embed)
 payload2['payload_json']['embeds'] = embed
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
 res = requests.post(webhook_url, data=payload2)
