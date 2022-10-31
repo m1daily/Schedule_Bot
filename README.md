@@ -1,4 +1,4 @@
-# Schedule_Bot  
+# Schedule_Bot
 
 <a href="https://github.com/Geusen/Schedule_Bot/actions/runs/3359386084"><img src="https://img.shields.io/badge/%E6%9C%80%E7%B5%82%E6%99%82%E9%96%93%E5%89%B2%E6%9B%B4%E6%96%B0-%237883%20%5B2022%E5%B9%B410%E6%9C%8831%E6%97%A5%28%E6%9C%88%29%2016%3A26%3A19%5D-0374b5.svg"></a>
 
@@ -12,6 +12,6 @@
 
 ## 大雑把な解説
 
-1.10分おきにスプレッドシートが更新されているかどうかチェック  
-2.もし更新されてるなら今日の時間割の画像のURLをurl.txtに保存(明日比較するときに使用)  
+1.10分おきにスプレッドシートが更新されているかどうかチェック
+2.もし更新されてるなら今日の時間割の画像のURLをurl.txtに保存(明日比較するときに使用)
 3.画像をTwitter、LINE、Discordに送信してプログラム終了
