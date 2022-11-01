@@ -1,4 +1,5 @@
 import os
+import codecs
 import json
 import requests
 import tweepy
@@ -14,33 +15,46 @@ headers = {'User-Agent': ua}
 url = 'https://www.mito1-h.ibk.ed.jp/'
 r = requests.get(url, headers=headers)
 soup = BeautifulSoup(r.text, 'html.parser')
-ht = soup.select_one('#box-18 > section:nth-child(3) > div.panel-body.block > article > p')
+schedule = soup.select_one('#box-18 > section:nth-child(3) > div.panel-body.block > article > p')
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # 余計な文字列を削除
-for i in ht.select('br'):
+for i in schedule.select('br'):
     i.replace_with('\n')
-ht.text.strip()
-ht = str(ht)
-ht = ht.replace('<p>', '')
-ht = ht.replace('<p style="text-align: left;">', '')
-ht = ht.replace('</p>', '')
-ht = ht.split('\n')
+schedule.text.strip()
+schedule = str(schedule)
+schedule = schedule.replace('<p>', '')
+schedule = schedule.replace('<p style="text-align: left;">', '')
+schedule = schedule.replace('</p>', '')
+
+# 最後に投稿した予定を読み込み
+with codecs.open('./news/news.txt', 'r', 'utf-8') as f:
+    schedule_latest = f.read()
+
+# テキスト比較
+if schedule == schedule_latest:
+    print('更新されていないので終了')
+    exit()
+else:
+    print('更新されているので続行')
+    with codecs.open('./news/news.txt', 'w', 'utf-8') as f:
+        f.write(schedule)
+    schedule = schedule.split('\n')
 
 # 外観調整
 li = []
-for i in ht:
-    a = ''.join(i.split())
+for i in schedule:
+    news = ''.join(i.split())
     table = str.maketrans('（）', '()')
-    a = a.translate(table)
-    a = a.strip()
-    if a[0].isdecimal() == True:
-        a = '\n' + a
-    elif a[0] == '(':
-        a = a
+    news = news.translate(table)
+    news = news.strip()
+    if news[0].isdecimal() == True:
+        news = '\n' + news
+    elif news[0] == '(':
+        news = news
     else:
-        a = ',    ' + a
-    li.append(a)
+        news = ',    ' + news
+    li.append(news)
 # リスト結合
 li = ''.join(li)
 print(li)
@@ -49,7 +63,7 @@ print(li)
 # 画像に文字を入れる
 im = Image.new('RGB', (720, 720), (256, 256, 256))
 draw = ImageDraw.Draw(im)
-font = ImageFont.truetype('NotoSansCJKjp-Medium.otf', 12)
+font = ImageFont.truetype('./news/NotoSansCJKjp-Medium.otf', 12)
 draw.text((20, 0), li, fill=(25, 40, 100), font=font, spacing=12)
 im.save('image.png')
 
