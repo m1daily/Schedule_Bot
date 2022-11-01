@@ -26,4 +26,4 @@ jobs:
           pip install beautifulsoup4==4.11.1
           pip install pillow==8.4.0
           pip install tweepy==4.6.0
-          python news.py
+          python ./news/news.py
