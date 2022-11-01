@@ -1,8 +1,8 @@
 name: GitHub_Actions(news)
 on:
-  workflow_dispatch:
+  # workflow_dispatch:
   schedule:
-    - cron: '0 7 1 * *'
+    - cron: '0 7 * * *'
 
 env:  #環境変数から文字列(パスワードなど)を取得
   ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
