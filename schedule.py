@@ -95,7 +95,6 @@ subprocess.run([f'echo NOW={now} >> $GITHUB_OUTPUT'], shell=True)
 # 最後に投稿した画像のリストを読み込み
 with open('url.txt', 'r') as f:
     imgs_url_latest = f.read().split()    # URLリスト(過去)
-    f.close()
 print(imgs_url_latest)
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
