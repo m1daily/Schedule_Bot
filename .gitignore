@@ -1,5 +1,7 @@
 *.pyc
 *.png
-.env
+*env*
 *test*
 .vscode
+.actrc
+.secrets
