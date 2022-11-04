@@ -148,9 +148,9 @@ for image in imgs_path:
 # LINEへ通知
 line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
 print('[LINE]')
-# for ll, line in enumerate(line_list, 1):
-#     for i, image in enumerate(imgs_path, 1):
-#         print(str(ll) + '-' + str(i) + ': ' + line_notify(line, image))
+for ll, line in enumerate(line_list, 1):
+    for i, image in enumerate(imgs_path, 1):
+        print(str(ll) + '-' + str(i) + ': ' + line_notify(line, image))
 
 # DiscordのWebhookを通して通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
@@ -164,6 +164,6 @@ for i in imgs_url_now:
     embed.append(img_embed)
 payload2['payload_json']['embeds'] = embed
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-# res = requests.post(webhook_url, data=payload2)
-# print('Discord_Webhook: ' + str(res.status_code))
+res = requests.post(webhook_url, data=payload2)
+print('Discord_Webhook: ' + str(res.status_code))
 finish('投稿完了')
