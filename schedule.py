@@ -20,7 +20,7 @@ date = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 weekdays = ['月', '火', '水', '木', '金', '土', '日']
 time_now = date.strftime('[%Y年%m月%d日(' + weekdays[date.weekday()] + ') %H:%M:%S]')
 print('\n' + time_now)
-subprocess.run([f'echo "TIME={time_now}" >> $GITHUB_OUTPUT'], shell=True)
+subprocess.run(['echo', f'TIME={time_now}', '>>', '$GITHUB_OUTPUT'])
 
 #----------------------------------------------------------------------------------------------------
 # keyの指定(情報漏えいを防ぐため伏せています)
