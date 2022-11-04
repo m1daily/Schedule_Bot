@@ -116,11 +116,11 @@ else:
 #----------------------------------------------------------------------------------------------------
 # 画像URLを使って画像をダウンロード
 imgs_path = []    # 画像のファイル名用リスト
-for ip in imgs_url_now:
-    with urllib.request.urlopen(ip) as web_file:
+for i in imgs_url_now:
+    with urllib.request.urlopen(i) as web_file:
         time.sleep(5)
         data = web_file.read()
-        img = str(imgs_url_now.index(ip) + 1) + '.png'    # ファイル名を"リストの順番.png"に
+        img = str(imgs_url_now.index(i) + 1) + '.png'    # ファイル名を"リストの順番.png"に
         imgs_path.append(img)
         with open(img, mode='wb') as local_file:
             local_file.write(data)
@@ -149,18 +149,18 @@ api.update_status(status='時間割が更新されました！', media_ids=media
 line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
 print('[LINE]')
 for ll, line in enumerate(line_list, 1):
-    for ip, image in enumerate(imgs_path, 1):
-        print(str(ll) + '-' + str(ip) + ': ' + line_notify(line, image))
+    for i, image in enumerate(imgs_path, 1):
+        print(str(ll) + '-' + str(i) + ': ' + line_notify(line, image))
 
 # DiscordのWebhookを通して通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
 embed = []
 # 画像の枚数分"embed"の値追加
-for ip in imgs_url_now:
-    if imgs_url_now.index(ip) == 0:
-        img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : ip}}
+for i in imgs_url_now:
+    if imgs_url_now.index(i) == 0:
+        img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
     else:
-        img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : ip}}
+        img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
     embed.append(img_embed)
 payload2['payload_json']['embeds'] = embed
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
