@@ -67,7 +67,7 @@ driver.implicitly_wait(5)
 # Googleスプレッドシートへ移動(URLは伏せています)
 driver.get(os.environ['GOOGLE_URL'])    # 時間割の画像があるGoogleSpreadSheetのURL
 WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located)
-time.sleep(5)
+time.sleep(10)
 
 # imgタグを含むものを抽出
 imgs_tag = driver.find_elements(By.TAG_NAME, 'img')
