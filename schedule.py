@@ -80,9 +80,9 @@ imgs_url_now = []     # URLリスト(現在)
 for e in imgs_tag:
     img_url = e.get_attribute('src')
     # URLがBlob形式の場合は終了
-    if 'g' in img_url:
-        # subprocess.run(['echo "::error file=schedule.py,line=80::URLがBlob形式です。"'], shell=True)
-        sys.exit('URLがBlob形式です。')
+    if 'Blob:' in img_url:
+        subprocess.run(['echo "::error file=schedule.py,line=81::URLがBlob形式です。"'], shell=True)
+        sys.exit(1)
     # リストに既に同じ画像がない場合リストに追加
     if 'alr=yes' in img_url and bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
         imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
