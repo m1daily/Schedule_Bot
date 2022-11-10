@@ -54,6 +54,7 @@ webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebho
 def finish(exit_message):
     print(exit_message)
     subprocess.run([f'echo STATUS={exit_message} >> $GITHUB_OUTPUT'], shell=True)
+    print(globals())
     exit()
 
 #----------------------------------------------------------------------------------------------------
