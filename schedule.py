@@ -79,9 +79,9 @@ if imgs_tag == []:
 imgs_cv2u_now = []    # cv2u用リスト(現在)
 imgs_url_now = []     # URLリスト(現在)
 print('[抽出画像]')
-for e in imgs_tag:
+for index, e in enumerate(imgs_tag, 1):
     img_url = e.get_attribute('src')
-    print(str(e) + '枚目: ' + img_url)
+    print(str(index) + '枚目: ' + img_url)
     # URLがBlob形式の場合はエラーを出して終了
     if 'Blob:' in img_url:
         subprocess.run(['echo "::error file=schedule.py,line=81::URLがBlob形式です。"'], shell=True)
@@ -94,6 +94,7 @@ for e in imgs_tag:
 # 時間割の画像が見つからなかった場合は終了
 if imgs_url_now == []:
     finish('画像が発見できなかったため終了(alr=yes無)')
+print('\n-------------------------------------------------------------------------------------------------------------------------------------------------')
 print(imgs_url_now)
 
 # $GITHUB_OUTPUTに追加
