@@ -2,6 +2,7 @@ import datetime    # 日付取得
 import os    # 環境変数用
 import time    # 待機
 import subprocess    # GitHubActionsの環境変数追加
+import sys    # Blob対策
 import cv2u    # 画像URLから読み込み
 import urllib.parse    # urlエンコード
 import tweepy    # Twitter送信
@@ -78,8 +79,10 @@ imgs_cv2u_now = []    # cv2u用リスト(現在)
 imgs_url_now = []     # URLリスト(現在)
 for e in imgs_tag:
     img_url = e.get_attribute('src')
+    # URLがBlob形式の場合は終了
     if 'g' in img_url:
-        subprocess.run(['echo "::error file=schedule.py,line=80::URLがBlob形式です。"'], shell=True)
+        # subprocess.run(['echo "::error file=schedule.py,line=80::URLがBlob形式です。"'], shell=True)
+        sys.exit('URLがBlob形式です。')
     # リストに既に同じ画像がない場合リストに追加
     if 'alr=yes' in img_url and bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
         imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
