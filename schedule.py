@@ -73,23 +73,27 @@ time.sleep(10)
 # imgタグを含むものを抽出
 imgs_tag = driver.find_elements(By.TAG_NAME, 'img')
 if imgs_tag == []:
-    finish('画像が発見できなかったため終了1')
+    finish('画像が発見できなかったため終了(img無)')
+
 # 時間割の画像以外も取り出している場合があるため時間割の画像のみ抽出(GoogleSpreadSheet上の画像は画像URLの末尾が「alr=yes」)
 imgs_cv2u_now = []    # cv2u用リスト(現在)
 imgs_url_now = []     # URLリスト(現在)
+print('[抽出画像]')
 for e in imgs_tag:
     img_url = e.get_attribute('src')
-    # URLがBlob形式の場合は終了
+    print(str(e) + '枚目: ' + img_url)
+    # URLがBlob形式の場合はエラーを出して終了
     if 'Blob:' in img_url:
         subprocess.run(['echo "::error file=schedule.py,line=81::URLがBlob形式です。"'], shell=True)
         sys.exit(1)
     # リストに既に同じ画像がない場合リストに追加
     if 'alr=yes' in img_url and bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
+        print(' → append')
         imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
         imgs_url_now.append(img_url)
 # 時間割の画像が見つからなかった場合は終了
 if imgs_url_now == []:
-    finish('画像が発見できなかったため終了2')
+    finish('画像が発見できなかったため終了(alr=yes無)')
 print(imgs_url_now)
 
 # $GITHUB_OUTPUTに追加
@@ -151,11 +155,12 @@ for image in imgs_path:
 api.update_status(status='時間割が更新されました！', media_ids=media_ids)
 
 # LINEへ通知
-line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
+# line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
+line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
 print('[LINE]')
-for ll, line in enumerate(line_list, 1):
+for key, value in line_dict:
     for i, image in enumerate(imgs_path, 1):
-        print(str(ll) + '-' + str(i) + ': ' + line_notify(line, image))
+        print(str(key) + '-' + str(i) + '枚目: ' + line_notify(value, image))
 
 # DiscordのWebhookを通して通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
