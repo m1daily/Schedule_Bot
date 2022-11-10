@@ -16,6 +16,8 @@ env:  # 環境変数から文字列(パスワードなど)を取得
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
   RUN_NUMBER: ${{github.run_number}}
   RUN_ID: ${{github.run_id}}
+concurrency:  # 同時にworkflowが実行されたらキャンセル
+  group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   build:
