@@ -47,7 +47,7 @@ jobs:
             git add .; \
             git commit -m 'Updated image URL'; \
             git push origin HEAD:${GITHUB_REF}; \
-            echo '# Updated image URL :rocket:' >> $GITHUB_STEP_SUMMARY; \
+            echo '# Updated image URL :sunglasses:' >> $GITHUB_STEP_SUMMARY; \
           fi
           echo -e "- #### 時刻: ${{steps.results.outputs.TIME}}" >> $GITHUB_STEP_SUMMARY
           echo -e "- #### ステータス: ${{steps.results.outputs.STATUS}}" >> $GITHUB_STEP_SUMMARY
