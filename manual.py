@@ -1,17 +1,26 @@
 # 手動実行用
-import PySimpleGUI as sg
-import subprocess
+from tkinter import *
+from tkinter import ttk
 
 
-sg.theme("SystemDefaultForReal")
-layout = [[sg.Text('1.テキスト入力 [必須]', font=('游ゴシック',12))],
-          [sg.Input(font=('游ゴシック',12))],
-          [sg.Text('2.画像選択(1～4枚) [任意]', font=('游ゴシック',12))],
-          [sg.FilesBrowse('ファイルを追加', key='-FILES-', file_types=(('画像ファイル', '*.jpg'), ('画像ファイル', '*.png')))],
-          [sg.Text('3.送信先選択(最低1つ)', font=('游ゴシック',12))],
-          [sg.OK()]]
+root = Tk()
+root.title('Schedule_Bot')
 
-window = sg.Window('Schedule_Bot', layout)
+# ウィジェットの作成
+frame1 = ttk.Frame(root, padding=16)
+label1 = ttk.Label(frame1, text='1.送信テキスト入力')
+t = StringVar()
+entry1 = ttk.Entry(frame1, textvariable=t)
+button1 = ttk.Button(
+    frame1,
+    text='OK',
+    command=lambda: print('Hello, %s.' % t.get()))
 
-event, values = window.read()
-window.close()
+# レイアウト
+frame1.pack()
+label1.pack(side=LEFT)
+entry1.pack(side=LEFT)
+button1.pack(side=LEFT)
+
+# ウィンドウの表示開始
+root.mainloop()
