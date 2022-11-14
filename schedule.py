@@ -153,7 +153,7 @@ media_ids = []
 for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
-# api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+api.update_status(status='時間割が更新されました！', media_ids=media_ids)
 
 # LINEへ通知
 # line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
