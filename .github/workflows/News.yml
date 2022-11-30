@@ -31,8 +31,7 @@ jobs:
           pip install opencv-python==4.6.0.66
           pip install pillow==8.4.0
           pip install tweepy==4.6.0
-          sudo apt-get -y install fonts-ipafont-gothic
-          sudo apt-get -y install fonts-ipafont-mincho
+          sudo apt-get -y install fonts-sans-serif
           echo "::endgroup::"
           python -B ./news/news.py
       - name: commit&push
