@@ -28,7 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install get-chrome-driver==1.3.9
           pip install selenium==4.5.0
-          pip install opencv-python
+          pip install opencv-python==4.6.0.66
           pip install pillow==8.4.0
           pip install tweepy==4.6.0
           echo "::endgroup::"

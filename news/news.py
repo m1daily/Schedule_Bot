@@ -31,7 +31,7 @@ time.sleep(10)
 now = driver.find_element(By.XPATH, '/html/body/main/div/div[2]/div/div/section[3]').screenshot_as_png
 driver.close()
 
-with open('./news/now.png', 'wb') as f:
+with open('now.png', 'wb') as f:
     f.write(now)
 before_img = cv2.imread('news.png')
 now_img = cv2.imread('now.png')
@@ -41,7 +41,7 @@ if np.array_equal(before_img, now_img) == True:
 else:
     print('更新されているので続行')
 
-with open('./news/news.png', 'wb') as f:
+with open('news.png', 'wb') as f:
     f.write(now)
 
 #-----------------------------------------------------------------------------------------------------------------------------------
