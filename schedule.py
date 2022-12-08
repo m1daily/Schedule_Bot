@@ -3,6 +3,9 @@ import os    # 環境変数用
 import time    # 待機
 import subprocess    # GitHubActionsの環境変数追加
 import sys    # Blob対策
+import base64    # blob対策
+import numpy as np
+import cv2
 import cv2u    # 画像URLから読み込み
 import urllib.parse    # urlエンコード
 import tweepy    # Twitter送信
@@ -49,12 +52,36 @@ notify_group = os.environ['LINE_NOTIFY']    # 時間割LINEグループのトー
 notify_27 = os.environ['LINE_NOTIFY_27']    # 自分のクラスのライングループのトークン
 notify_13 = os.environ['LINE_NOTIFY_13']    # 13組のライングループのトークン
 webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebhookのURL
+imgur = os.environ['IMGUR']    # 画像URL取得用
 
 # 終了時用
 def finish(exit_message):
     print(exit_message)
     subprocess.run([f'echo STATUS={exit_message} >> $GITHUB_OUTPUT'], shell=True)
     exit()
+
+# blob形式のURLの対策
+def get_blob_file(driver, url):
+    result = driver.execute_async_script("""
+        var uri = arguments[0];
+        var callback = arguments[1];
+        var toBase64 = function(buffer){for(var r,n=new Uint8Array(buffer),t=n.length,a=new Uint8Array(4*Math.ceil(t/3)),i=new Uint8Array(64),o=0,c=0;64>c;++c)i[c]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".charCodeAt(c);for(c=0;t-t%3>c;c+=3,o+=4)r=n[c]<<16|n[c+1]<<8|n[c+2],a[o]=i[r>>18],a[o+1]=i[r>>12&63],a[o+2]=i[r>>6&63],a[o+3]=i[63&r];return t%3===1?(r=n[t-1],a[o]=i[r>>2],a[o+1]=i[r<<4&63],a[o+2]=61,a[o+3]=61):t%3===2&&(r=(n[t-2]<<8)+n[t-1],a[o]=i[r>>10],a[o+1]=i[r>>4&63],a[o+2]=i[r<<2&63],a[o+3]=61),new TextDecoder("ascii").decode(a)};
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'arraybuffer';
+        xhr.onload = function(){ callback(toBase64(xhr.response)) };
+        xhr.onerror = function(){ callback(xhr.status) };
+        xhr.open('GET', url);
+        xhr.send();
+        """, url)
+    if type(result) == int :
+        raise Exception("Request failed with status %s" % result)
+    jpg=np.frombuffer(base64.b64decode(result), dtype=np.uint8)
+    cv2.imwrite('blob.png', cv2.imdecode(jpg, cv2.IMREAD_COLOR))
+    headers = {'authorization': f'Client-ID {imgur}'}
+    files = {'image': (open('blob.png', 'rb'))}
+    r = requests.post('https://api.imgur.com/3/upload', headers=headers, files=files)
+    return json.loads(r.text)['data']['link']
+
 
 #----------------------------------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
@@ -83,9 +110,13 @@ for index, e in enumerate(imgs_tag, 1):
     img_url = e.get_attribute('src')
     print(str(index) + '枚目: ' + img_url)
     # URLがBlob形式の場合はエラーを出して終了
-    if 'Blob:' in img_url:
-        subprocess.run(['echo "::error file=schedule.py,line=81::URLがBlob形式です。"'], shell=True)
-        sys.exit(1)
+    if 'blob:' in img_url:
+        blob_url = get_blob_file(driver, img_url)
+        print(' → ' + blob_url)
+        if bool(str(cv2u.urlread(blob_url)) in imgs_cv2u_now) == False:
+            print(' → append')
+            imgs_cv2u_now.append(str(cv2u.urlread(blob_url)))
+            imgs_url_now.append(blob_url)
     # リストに既に同じ画像がない場合リストに追加
     if 'alr=yes' in img_url and bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
         print(' → append')
