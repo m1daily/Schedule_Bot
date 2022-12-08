@@ -184,15 +184,14 @@ media_ids = []
 for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
-api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+# api.update_status(status='時間割が更新されました！', media_ids=media_ids)
 
 # LINEへ通知
-# line_list = [notify_group, notify_27, notify_13]    # 送信先のグループ
-line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
-print('\n[LINE]')
-for key, value in line_dict.items():
-    for i, image in enumerate(imgs_path, 1):
-        print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
+# line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
+# print('\n[LINE]')
+# for key, value in line_dict.items():
+#     for i, image in enumerate(imgs_path, 1):
+#         print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
 
 # DiscordのWebhookを通して通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
