@@ -1,48 +1,71 @@
-import os    # 環境変数用
-import time    # 待機
-import cv2
-import numpy as np
-import tweepy    # Twitter送信
-import requests    # LINE・Discord送信
-import json    # webhook用
-from selenium import webdriver    # サイトから画像取得(以下略)
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.chrome.service import Service
-# from webdriver_manager.chrome import ChromeDriverManager
+import os
+import codecs
+import json
+import requests
+import tweepy
+from bs4 import BeautifulSoup
+from PIL import Image, ImageDraw, ImageFont
 
+#-----------------------------------------------------------------------------------------------------------------------------------
+# ユーザーエージェントを変更し、403エラー対策
+ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
+headers = {'User-Agent': ua}
 
-#----------------------------------------------------------------------------------------------------
-# Chromeヘッドレスモード起動
-options = webdriver.ChromeOptions()
-options.headless = True
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage')
-# options.add_argument('--disable-gpu')
-# driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
-driver = webdriver.Chrome('chromedriver',options=options)
-driver.implicitly_wait(5)
+# 月間予定のタグを抽出
+url = 'https://www.mito1-h.ibk.ed.jp/'
+r = requests.get(url, headers=headers)
+soup = BeautifulSoup(r.text, 'html.parser')
+schedule = soup.select_one('#box-18 > section:nth-child(3) > div.panel-body.block > article > p')
 
-# M1のサイトへ移動
-driver.get('https://www.mito1-h.ibk.ed.jp/')
-WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located)
-time.sleep(10)
-now = driver.find_element(By.XPATH, '/html/body/main/div/div[2]/div/div/section[3]').screenshot_as_png
-driver.close()
+#-----------------------------------------------------------------------------------------------------------------------------------
+# 余計な文字列を削除
+for i in schedule.select('br'):
+    i.replace_with('\n')
+schedule.text.strip()
+schedule = str(schedule)
+schedule = schedule.replace('<p>', '')
+schedule = schedule.replace('<p style="text-align: left;">', '')
+schedule = schedule.replace('</p>', '')
 
-with open('news/now.png', 'wb') as f:
-    f.write(now)
-before_img = cv2.imread('news/news.png')
-now_img = cv2.imread('news/now.png')
-if np.array_equal(before_img, now_img) == True:
+# 最後に投稿した予定を読み込み
+with codecs.open('./news/news.txt', 'r', 'utf-8') as f:
+    schedule_latest = f.read()
+
+# テキスト比較
+if schedule == schedule_latest:
     print('更新されていないので終了')
     exit()
 else:
     print('更新されているので続行')
+    with codecs.open('./news/news.txt', 'w', 'utf-8') as f:
+        f.write(schedule)
+    schedule = schedule.split('\n')
 
-with open('news/news.png', 'wb') as f:
-    f.write(now)
+# 外観調整
+li = []
+for i in schedule:
+    news = ''.join(i.split())
+    table = str.maketrans('（）', '()')
+    news = news.translate(table)
+    news = news.strip()
+    if news[0].isdecimal() == True:
+        news = '\n' + news
+    elif news[0] == '(':
+        news = news
+    else:
+        news = ',    ' + news
+    li.append(news)
+# リスト結合
+txt = ''.join(li)
+print(txt)
+
+#-----------------------------------------------------------------------------------------------------------------------------------
+# 画像に文字を入れる
+im = Image.new('RGB', (720, len(li)*19), (256, 256, 256))
+draw = ImageDraw.Draw(im)
+font = ImageFont.truetype('./news/NotoSansCJKjp-Light.otf', 12)
+draw.text((20, 10), txt, fill=(0, 0, 0), font=font, spacing=12)
+im.save('image.png')
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # keyの指定(情報漏えいを防ぐため伏せています)
@@ -57,8 +80,7 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # ツイート
-api.update_status_with_media(status='今月の予定です。', filename='./news/news.png')
-
+api.update_status_with_media(status='今月の予定です。', filename='image.png')
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Discordに投稿
 webhook_url = os.environ['WEBHOOK']
@@ -73,16 +95,16 @@ payload2 = {
                     'text' : 'By 水戸一高時間割Bot',
                 },
                 'image': {
-                    'url' : 'attachment://./news/news.png'
+                    'url' : 'attachment://image.png'
                 },
             }
         ]
     }
 }
-with open('./news/news.png', 'rb') as f:
+with open('image.png', 'rb') as f:
     file_bin_image = f.read()
 files_qiita = {
-    'image' : ('./news/news.png', file_bin_image),
+    'image' : ('image.png', file_bin_image),
 }
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
 res = requests.post(webhook_url, files = files_qiita, data = payload2)
