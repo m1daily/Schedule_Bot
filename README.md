@@ -1,6 +1,6 @@
 # Schedule_Bot
 
-<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/3843543152"><img src="https://img.shields.io/badge/%E6%9C%80%E7%B5%82%E6%99%82%E9%96%93%E5%89%B2%E6%9B%B4%E6%96%B0-%2310083%20%5B2023%E5%B9%B401%E6%9C%8805%E6%97%A5%28%E6%9C%A8%29%2012%3A14%3A46%5D-0374b5.svg"></a>
+<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/3851686085"><img src="https://img.shields.io/badge/%E6%9C%80%E7%B5%82%E6%99%82%E9%96%93%E5%89%B2%E6%9B%B4%E6%96%B0-%2310109%20%5B2023%E5%B9%B401%E6%9C%8806%E6%97%A5%28%E9%87%91%29%2010%3A06%3A50%5D-0374b5.svg"></a>
 
 <img src='https://github.com/Geusen/Schedule_Bot/actions/workflows/Schedule.yml/badge.svg'>&emsp;<img src='https://img.shields.io/github/last-commit/Geusen/Schedule_Bot?label=%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E6%9C%80%E7%B5%82%E6%9B%B4%E6%96%B0'>
 
