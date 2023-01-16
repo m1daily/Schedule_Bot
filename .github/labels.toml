@@ -1,0 +1,34 @@
+[Test]
+color = "555555"
+name = "Test"
+description = "テスト"
+
+["バグ"]
+color = "d73a4a"
+name = "バグ"
+description = "何かが動かない"
+
+["対応済み"]
+color = "5319E7"
+name = "対応済み"
+description = "closed"
+
+["機能提案"]
+color = "a2eeef"
+name = "機能提案"
+description = "機能提案"
+
+["被り"]
+color = "cfd3d7"
+name = "被り"
+description = "既にこのissues、pull requestsが存在する"
+
+["質問"]
+color = "d876e3"
+name = "質問"
+description = "Further information is requested"
+
+["重要"]
+color = "F34529"
+name = "重要"
+description = "important"
