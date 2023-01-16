@@ -2,7 +2,7 @@ import datetime    # 日付取得
 import os    # 環境変数用
 import time    # 待機
 import subprocess    # GitHubActionsの環境変数追加
-import sys    # Blob対策
+# import sys    # Blob対策
 import base64    # blob対策
 import numpy as np
 import cv2
