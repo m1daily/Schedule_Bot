@@ -1,34 +1,119 @@
-[Test]
-color = "555555"
-name = "Test"
-description = "テスト"
+["Effort: 1-Painful"]
+color = "ff6666"
+name = "Effort: 1-Painful"
+description = "作業量: 膨大"
 
-["バグ"]
-color = "d73a4a"
-name = "バグ"
-description = "何かが動かない"
+["Effort: 2-Heavy"]
+color = "ff8a65"
+name = "Effort: 2-Heavy"
+description = "作業量: 多"
 
-["対応済み"]
-color = "5319E7"
-name = "対応済み"
-description = "closed"
+["Effort: 3-Normal"]
+color = "ffd166"
+name = "Effort: 3-Normal"
+description = "作業量: 中"
 
-["機能提案"]
-color = "a2eeef"
-name = "機能提案"
-description = "機能提案"
+["Effort: 4-Light"]
+color = "dce775"
+name = "Effort: 4-Light"
+description = "作業量: 少"
 
-["被り"]
-color = "cfd3d7"
-name = "被り"
-description = "既にこのissues、pull requestsが存在する"
+["Effort: 5-Effortless"]
+color = "81c785"
+name = "Effort: 5-Effortless"
+description = "作業量: ほぼ無し"
 
-["質問"]
-color = "d876e3"
-name = "質問"
-description = "Further information is requested"
+["Feedback: 1-Discussion"]
+color = "f06293"
+name = "Feedback: 1-Discussion"
+description = "機能に関する議論"
 
-["重要"]
-color = "F34529"
-name = "重要"
-description = "important"
+["Feedback: 2-Question"]
+color = "f06293"
+name = "Feedback: 2-Question"
+description = "機能に関する質問"
+
+["Feedback: 3-Suggestion"]
+color = "f06293"
+name = "Feedback: 3-Suggestion"
+description = "機能に関する提案"
+
+["Priority: 1-ASAP"]
+color = "ff6666"
+name = "Priority: 1-ASAP"
+description = "最優先"
+
+["Priority: 2-High"]
+color = "ff8a65"
+name = "Priority: 2-High"
+description = "優先度: 高"
+
+["Priority: 3-Medium"]
+color = "ffd166"
+name = "Priority: 3-Medium"
+description = "優先度: 中"
+
+["Priority: 4-Low"]
+color = "dce775"
+name = "Priority: 4-Low"
+description = "優先度: 低"
+
+["Priority: 5-Safe"]
+color = "81c785"
+name = "Priority: 5-Safe"
+description = "余裕があれば取り組む"
+
+["Status: 1-Available"]
+color = "87a9c0"
+name = "Status: 1-Available"
+description = "待機中"
+
+["Status: 2-In Progress"]
+color = "bec680"
+name = "Status: 2-In Progress"
+description = "作業中"
+
+["Status: 3-Completed"]
+color = "81c785"
+name = "Status: 3-Completed"
+description = "作業完了"
+
+["Status: 4-Canceled"]
+color = "808ac6"
+name = "Status: 4-Canceled"
+description = "作業中止"
+
+["Status: 5-Duplicate"]
+color = "89a3a9"
+name = "Status: 5-Duplicate"
+description = "Issue重複"
+
+["Status: 6-Pending"]
+color = "80b399"
+name = "Status: 6-Pending"
+description = "保留"
+
+["Type: 1-Bug Fix"]
+color = "ff6666"
+name = "Type: 1-Bug Fix"
+description = "バグ修正"
+
+["Type: 2-Enhancement"]
+color = "ffdb66"
+name = "Type: 2-Enhancement"
+description = "新機能追加"
+
+["Type: 3-Improvement"]
+color = "66baff"
+name = "Type: 3-Improvement"
+description = "改良修正(処理の安定化など)"
+
+["Type: 4-Optimization"]
+color = "669eff"
+name = "Type: 4-Optimization"
+description = "最適化(処理の高速化など)"
+
+["Type: 5-Security Fix"]
+color = "ff6666"
+name = "Type: 5-Security Fix"
+description = "セキュリティ問題の修正"
