@@ -38,8 +38,32 @@ body:
 
   - type: textarea
     attributes:
-      label: エラーコード
+      label: エラーコード(任意)
       description: >
         エラーコードがある場合は記述してください。
+      placeholder: >
+        import pandas as pd
+
+  - type: textarea
+    attributes:
+      label: 3.関連Issue(任意)
+      description: >
+        関連するIssueがある場合は記述してください。
+      placeholder: >
+        import pandas as pd
+
+  - type: textarea
+    attributes:
+      label: 4.原因(任意)
+      description: >
+        原因が分かる場合は記述してください。
+      placeholder: >
+        import pandas as pd
+
+  - type: textarea
+    attributes:
+      label: 5.修正案(任意)
+      description: >
+        修正案がある場合は記述してください。
       placeholder: >
         import pandas as pd
