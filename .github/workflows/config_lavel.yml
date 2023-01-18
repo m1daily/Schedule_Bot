@@ -80,8 +80,8 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Fetch definition file from existing labels"
-          title: "Sync definition file with existing labels"
+          commit-message: "既存のラベルから定義ファイルを取得"
+          title: "定義ファイルを既存のラベルと同期"
           body: |
             Current definition file and existing labels don't match.
           branch: sync-labels
