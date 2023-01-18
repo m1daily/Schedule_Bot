@@ -1,4 +1,4 @@
-name: "バグ報告"
+name: "バグの報告"
 description: "バグが発生した際のテンプレート"
 title: "Bug: "
 labels: ["1-ステータス: 1-待機中"]
