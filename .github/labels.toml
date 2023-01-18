@@ -1,119 +1,119 @@
-["Effort: 1-Painful"]
+["作業量: 1-膨大"]
 color = "ff6666"
-name = "Effort: 1-Painful"
-description = "作業量: 膨大"
+name = "作業量: 1-膨大"
+description = "1ファイル変更する程度"
 
-["Effort: 2-Heavy"]
+["作業量: 2-多"]
 color = "ff8a65"
-name = "Effort: 2-Heavy"
-description = "作業量: 多"
+name = "作業量: 2-多"
+description = "数十行変更する程度"
 
-["Effort: 3-Normal"]
+["作業量: 3-中"]
 color = "ffd166"
-name = "Effort: 3-Normal"
-description = "作業量: 中"
+name = "作業量: 3-中"
+description = "数行変更する程度"
 
-["Effort: 4-Light"]
+["作業量: 4-少"]
 color = "dce775"
-name = "Effort: 4-Light"
-description = "作業量: 少"
+name = "作業量: 4-少"
+description = "1行変更する程度"
 
-["Effort: 5-Effortless"]
+["作業量: 5-ほぼ無し"]
 color = "81c785"
-name = "Effort: 5-Effortless"
-description = "作業量: ほぼ無し"
+name = "作業量: 5-ほぼ無し"
+description = "数文字変更する程度"
 
-["Feedback: 1-Discussion"]
-color = "f06293"
-name = "Feedback: 1-Discussion"
+["フィードバック: 1-議論"]
+color = "ec79a1"
+name = "フィードバック: 1-議論"
 description = "機能に関する議論"
 
-["Feedback: 2-Question"]
-color = "f06293"
-name = "Feedback: 2-Question"
+["フィードバック: 2-質問"]
+color = "ec79a1"
+name = "フィードバック: 2-質問"
 description = "機能に関する質問"
 
-["Feedback: 3-Suggestion"]
-color = "f06293"
-name = "Feedback: 3-Suggestion"
+["フィードバック: 3-提案"]
+color = "ec79a1"
+name = "フィードバック: 3-提案"
 description = "機能に関する提案"
 
-["Priority: 1-ASAP"]
+["優先度: 1-最優先"]
 color = "ff6666"
-name = "Priority: 1-ASAP"
-description = "最優先"
+name = "優先度: 1-最優先"
+description = "すぐさま取り組む必要がある程度"
 
-["Priority: 2-High"]
+["優先度: 2-高"]
 color = "ff8a65"
-name = "Priority: 2-High"
-description = "優先度: 高"
+name = "優先度: 2-高"
+description = "早く取り組む必要がある程度"
 
-["Priority: 3-Medium"]
+["優先度: 3-中"]
 color = "ffd166"
-name = "Priority: 3-Medium"
-description = "優先度: 中"
+name = "優先度: 3-中"
+description = "なるべく早く取り組む必要がある程度"
 
-["Priority: 4-Low"]
+["優先度: 4-低"]
 color = "dce775"
-name = "Priority: 4-Low"
-description = "優先度: 低"
+name = "優先度: 4-低"
+description = "いつか取り組む必要がある程度"
 
-["Priority: 5-Safe"]
+["優先度: 5-最低"]
 color = "81c785"
-name = "Priority: 5-Safe"
-description = "余裕があれば取り組む"
+name = "優先度: 5-最低"
+description = "余裕があれば取り組む程度"
 
-["Status: 1-Available"]
-color = "87a9c0"
-name = "Status: 1-Available"
+["ステータス: 1-待機中"]
+color = "186d86"
+name = "ステータス: 1-待機中"
 description = "待機中"
 
-["Status: 2-In Progress"]
-color = "bec680"
-name = "Status: 2-In Progress"
+["ステータス: 2-作業中"]
+color = "1fada2"
+name = "ステータス: 2-作業中"
 description = "作業中"
 
-["Status: 3-Completed"]
-color = "81c785"
-name = "Status: 3-Completed"
+["ステータス: 3-作業完了"]
+color = "22c373"
+name = "ステータス: 3-作業完了"
 description = "作業完了"
 
-["Status: 4-Canceled"]
-color = "808ac6"
-name = "Status: 4-Canceled"
+["ステータス: 4-作業中止"]
+color = "376863"
+name = "ステータス: 4-作業中止"
 description = "作業中止"
 
-["Status: 5-Duplicate"]
-color = "89a3a9"
-name = "Status: 5-Duplicate"
-description = "Issue重複"
+["ステータス: 5-重複"]
+color = "284f77"
+name = "ステータス: 5-重複"
+description = "Issueの重複"
 
-["Status: 6-Pending"]
-color = "80b399"
-name = "Status: 6-Pending"
+["ステータス: 6-保留"]
+color = "375f67"
+name = "ステータス: 6-保留"
 description = "保留"
 
-["Type: 1-Bug Fix"]
+["タイプ: 1-バグ修正"]
 color = "ff6666"
-name = "Type: 1-Bug Fix"
+name = "タイプ: 1-バグ修正"
 description = "バグ修正"
 
-["Type: 2-Enhancement"]
+["タイプ: 2-新機能追加"]
 color = "ffdb66"
-name = "Type: 2-Enhancement"
+name = "タイプ: 2-新機能追加"
 description = "新機能追加"
 
-["Type: 3-Improvement"]
+["タイプ: 3-改良修正"]
 color = "66baff"
-name = "Type: 3-Improvement"
-description = "改良修正(処理の安定化など)"
+name = "タイプ: 3-改良修正"
+description = "文法修正など"
 
-["Type: 4-Optimization"]
+["タイプ: 4-最適化"]
 color = "669eff"
-name = "Type: 4-Optimization"
-description = "最適化(処理の高速化など)"
+name = "タイプ: 4-最適化"
+description = "処理の高速化、安定化など"
 
-["Type: 5-Security Fix"]
+["タイプ: 5-セキュリティ修正"]
 color = "ff6666"
-name = "Type: 5-Security Fix"
+name = "タイプ: 5-セキュリティ修正"
 description = "セキュリティ問題の修正"
