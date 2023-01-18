@@ -1,11 +1,9 @@
----
 name: バグ報告
 description: バグが発生した際のテンプレート
 title: "バグ: "
 labels: [1-ステータス: 1-待機中]
 assignees: "Geusen"
 
----
 
 body:
   - type: markdown
