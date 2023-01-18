@@ -1,7 +1,8 @@
 name: "バグ報告"
 description: "バグが発生した際のテンプレート"
 title: "バグ: "
-assignees: "Geusen"
+labels: ["1-ステータス: 1-待機中"]
+assignees: ["Geusen"]
 
 
 body:
