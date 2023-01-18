@@ -1,6 +1,6 @@
 name: "バグ報告"
 description: "バグが発生した際のテンプレート"
-title: "バグ: "
+title: "Bug: "
 labels: ["1-ステータス: 1-待機中"]
 assignees: ["Geusen"]
 
@@ -21,7 +21,7 @@ body:
       description: >
         バグの概要を記入してください。
       placeholder: >
-        import pandas as pd
+        - news.pyにてpip installでエラー
     validations:
       required: true
 
@@ -32,7 +32,8 @@ body:
       description: >
         再現手順やエラーの内容などを記述してください。
       placeholder: >
-        import pandas as pd
+        - https://github.com/Geusen/Schedule_Bot/actions/runs/3579455799/jobs/6020667956
+          -  ```run python```の97行目～
     validations:
       required: true
 
@@ -42,7 +43,12 @@ body:
       description: >
         エラーコードがある場合は記述してください。
       placeholder: >
-        import pandas as pd
+        ```
+          Successfully installed PySocks-1.7.1 async-generator-1.10 attrs-22.1.0 h11-0.14.0 outcome-1.2.0 selenium-4.5.0 sniffio-1.3.0 sortedcontainers-2.4.0 trio-0.22.0 trio-websocket-0.9.2 wsproto-1.2.0
+          ERROR: Could not find a version that satisfies the requirement opencv (from versions: none)
+          ERROR: No matching distribution found for opencv
+          Error: Process completed with exit code 1.
+        ```
 
   - type: textarea
     attributes:
@@ -50,7 +56,7 @@ body:
       description: >
         関連するIssueがある場合は記述してください。
       placeholder: >
-        import pandas as pd
+        - #1
 
   - type: textarea
     attributes:
@@ -58,7 +64,7 @@ body:
       description: >
         原因が分かる場合は記述してください。
       placeholder: >
-        import pandas as pd
+        - パッケージのバージョン指定ミス
 
   - type: textarea
     attributes:
@@ -66,4 +72,4 @@ body:
       description: >
         修正案がある場合は記述してください。
       placeholder: >
-        import pandas as pd
+        - [ ] ```/.github/workflows/News.yml```の```pip install opencv==4.60.66```を```pip install opencv==4.6.0.66```に変更
