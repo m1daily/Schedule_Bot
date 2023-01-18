@@ -1,8 +1,8 @@
 ---
 name: バグ報告
-about: バグが発生した際のテンプレート
+description: バグが発生した際のテンプレート
 title: "バグ: "
-labels: "1-ステータス: 1-待機中"
+labels: [1-ステータス: 1-待機中]
 assignees: "Geusen"
 
 ---
