@@ -42,15 +42,3 @@ body:
         エラーコードがある場合は記述してください。
       placeholder: >
         import pandas as pd
-
-
-## 3.関連Issue
-- #
-
-
-## 4.原因
-- 
-
-
-## 5.修正案
-- 
