@@ -28,9 +28,9 @@ body:
 
   - type: textarea
     attributes:
-      label: 2.概要
+      label: 2.再現手順、エラー内容等
       description: >
-        再現手順やエラーの内容を記述してください。
+        再現手順やエラーの内容などを記述してください。
       placeholder: >
         import pandas as pd
     validations:
@@ -38,6 +38,7 @@ body:
 
   - type: textarea
     attributes:
+      label: エラーコード
       description: >
         エラーコードがある場合は記述してください。
       placeholder: >
