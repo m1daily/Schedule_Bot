@@ -25,27 +25,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # https://docs.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#using-a-specific-python-version
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      # https://pypi.org/project/labels/
       - name: Install Python dependencies
         run: pip install labels
-      ###
+
       # プルリクエスト時 (mainブランチ)
       # push時 (mainブランチ)
-      ###
       - name: Diff labels
         if: contains(github.event_name, 'pull_request') || contains(github.event_name, 'push')
         run: labels sync --dryrun -f .github/labels.toml
         env:
           LABELS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LABELS_USERNAME: ${{ github.repository_owner }}
-      ###
+
       # push時 (mainブランチ)
-      ###
       - name: Sync labels
         if: contains(github.event_name, 'push')
         run: labels --verbose sync -f .github/labels.toml
@@ -65,9 +61,7 @@ jobs:
           branch: sync-labels
           branch-suffix: ""
 
-      ###
-      # WHEN: Detected manual change or manual trigger
-      ###
+      # 手動変更または手動トリガーを検出時
       - name: Fetch labels
         if: contains(github.event_name, 'label') || contains(github.event_name, 'workflow_dispatch')
         run: labels fetch -f .github/labels.toml
