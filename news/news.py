@@ -42,11 +42,7 @@ gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.jso
 ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
 
 # 最後に投稿した予定を読み込み
-schedule_latest = ws.acell('D6')
-with codecs.open('./news/news.txt', 'w', 'utf-8') as f:
-    f.write(schedule_latest)
-with codecs.open('./news/news.txt', 'r', 'utf-8') as f:
-    schedule_latest = f.read()
+schedule_latest = ws.acell('D6').value
 
 # テキスト比較
 if schedule == schedule_latest:
