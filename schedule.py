@@ -143,10 +143,10 @@ subprocess.run([f'echo NOW={now} >> $GITHUB_OUTPUT'], shell=True)
 # Google SpreadSheetsにアクセス
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope))
-ws = gc.open_by_key('1NPmEDEI5RbHQW3Nngm7Z5Wr-FCpRlFWcgUYfua_Ednw').DB
+ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
 
 # 最後に投稿した画像のリストを読み込み
-imgs_url_latest = ws.acell('B2').value.split()    # URLリスト(過去)
+imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)
 print(imgs_url_latest)
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
@@ -181,7 +181,6 @@ for i in imgs_url_now:
 ws.update_acell('B2', ' \n'.join(imgs_url_now))
 
 # MARKDOWN編集
-ws = gc.open_by_key('1NPmEDEI5RbHQW3Nngm7Z5Wr-FCpRlFWcgUYfua_Ednw').Info
 ws.update_acell('C2', time_now)
 ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 
