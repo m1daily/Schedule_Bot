@@ -16,6 +16,7 @@ env:  # 環境変数から文字列(パスワードなど)を取得
   LINE_NOTIFY_13: ${{secrets.LINE_NOTIFY_13}}
   WEBHOOK: ${{secrets.WEBHOOK}}
   IMGUR: ${{secrets.IMGUR}}
+  JSON: ${{secrets.JSON}}
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
   RUN_NUMBER: ${{github.run_number}}
   RUN_ID: ${{github.run_id}}
