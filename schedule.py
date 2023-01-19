@@ -178,7 +178,7 @@ for i in imgs_url_now:
             local_file.write(data)
 
 # 上書き
-ws.update_acell('B2', ' \n'.join(imgs_url_now))
+ws.update_acell('C6', ' \n'.join(imgs_url_now))
 
 # MARKDOWN編集
 ws.update_acell('C2', time_now)
