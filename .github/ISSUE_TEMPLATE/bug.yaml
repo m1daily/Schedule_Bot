@@ -9,10 +9,12 @@ body:
   - type: checkboxes
     attributes:
       label: 0.ラベル付け
+      description: ラベルを付け終えたらチェックしてください。
       options:
         - label: ①ステータス  状態を表すラベル(Issue作成時は待機中で良い)
           required: true
-        - label: ②タイプ  作業の種別を表すラベル(必須)
+        - label: ②タイプ  作業の種別を表すラベル
+          required: true
         - label: ③優先度  優先度を表すラベル(任意)
         - label: ④作業量  想定される作業量を表すラベル(任意)
 
