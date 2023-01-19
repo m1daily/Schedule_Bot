@@ -46,7 +46,7 @@ ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
 schedule_latest = ws.acell('D6')
 
 # テキスト比較
-if schedule == schedule_latest:
+if schedule == str(schedule_latest):
     print('更新されていないので終了')
     exit()
 else:
