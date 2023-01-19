@@ -55,9 +55,9 @@ body:
 
   - type: textarea
     attributes:
-      label: 3.関連Issue(任意)
+      label: 3.関連Issue、Discussions(任意)
       description: >
-        関連するIssueがある場合は記入してください。
+        関連するIssue、PullRequests、Discussionsがある場合は記入してください。
       placeholder: >
         - #1
 

@@ -42,7 +42,15 @@ body:
 
   - type: textarea
     attributes:
-      label: 3.タスク(任意)
+      label: 3.関連Issue、Discussions(任意)
+      description: >
+        関連するIssue、PullRequests、Discussionsがある場合は記入してください。
+      placeholder: >
+        - #1
+
+  - type: textarea
+    attributes:
+      label: 4.タスク(任意)
       description: >
         想定されるタスクを記入してください。
       placeholder: >
