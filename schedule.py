@@ -2,6 +2,8 @@ import datetime    # 日付取得
 import os    # 環境変数用
 import time    # 待機
 import subprocess    # GitHubActionsの環境変数追加
+import ast
+import gspread
 import base64    # blob対策
 import numpy as np
 import cv2
@@ -15,6 +17,7 @@ from selenium import webdriver    # サイトから画像取得(以下略)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from oauth2client.service_account import ServiceAccountCredentials
 
 
 #----------------------------------------------------------------------------------------------------
@@ -31,6 +34,11 @@ consumer_key = os.environ['CONSUMER_KEY']    # TwitterAPI識別キー
 consumer_secret = os.environ['CONSUMER_SECRET']    # TwitterAPI識別シークレットキー
 access_token = os.environ['ACCESS_TOKEN']    # Twitterアカウントに対するアクセストークン
 access_token_secret = os.environ['ACCESS_TOKEN_SECRET']    # Twitterアカウントに対するアクセストークンシークレット
+
+# jsonファイル準備(SpreadSheetログイン用)
+dic = ast.literal_eval(os.environ['JSON'])
+with open('gss.json', mode='wt', encoding='utf-8') as file:
+    json.dump(dic, file, ensure_ascii=False, indent=2)
 
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -132,9 +140,13 @@ now = ','.join(imgs_url_now)
 subprocess.run([f'echo NOW={now} >> $GITHUB_OUTPUT'], shell=True)
 
 #----------------------------------------------------------------------------------------------------
+# Google SpreadSheetsにアクセス
+scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope))
+ws = gc.open_by_key('1NPmEDEI5RbHQW3Nngm7Z5Wr-FCpRlFWcgUYfua_Ednw').DB
+
 # 最後に投稿した画像のリストを読み込み
-with open('url.txt', 'r') as f:
-    imgs_url_latest = f.read().split()    # URLリスト(過去)
+imgs_url_latest = ws.acell('B2').value.split()    # URLリスト(過去)
 print(imgs_url_latest)
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
@@ -166,31 +178,27 @@ for i in imgs_url_now:
             local_file.write(data)
 
 # 上書き
-with open('url.txt', 'w') as f:
-    f.write(' \n'.join(imgs_url_now))
+ws.update_acell('B2', ' \n'.join(imgs_url_now))
 
 # MARKDOWN編集
-with open("README.md", encoding="utf-8") as f:
-    markdown_texts = f.readlines()
-url = 'img.shields.io/badge/最終時間割更新-#' + str(os.environ['RUN_NUMBER']) + ' ' + time_now + '-0374b5.svg'
-markdown_texts[2] = '<a href="https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']) + '"><img src="https://' + urllib.parse.quote(url) + '"></a>\n'
-with open("README.md", mode='w', encoding='utf-8')as f:
-    f.writelines(markdown_texts)
+ws = gc.open_by_key('1NPmEDEI5RbHQW3Nngm7Z5Wr-FCpRlFWcgUYfua_Ednw').Info
+ws.update_acell('C2', time_now)
+ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 
-#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------`
 # ツイート
 media_ids = []
 for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
-api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+# api.update_status(status='時間割が更新されました！', media_ids=media_ids)
 
 # LINEへ通知
 line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
 print('\n[LINE]')
-for key, value in line_dict.items():
-    for i, image in enumerate(imgs_path, 1):
-        print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
+# for key, value in line_dict.items():
+    # for i, image in enumerate(imgs_path, 1):
+        # print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
 
 # DiscordのWebhookを通して通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
@@ -204,6 +212,6 @@ for i in imgs_url_now:
     embed.append(img_embed)
 payload2['payload_json']['embeds'] = embed
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-res = requests.post(webhook_url, data=payload2)
-print('Discord_Webhook: ' + str(res.status_code))
+# res = requests.post(webhook_url, data=payload2)
+# print('Discord_Webhook: ' + str(res.status_code))
 finish('投稿完了')
