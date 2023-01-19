@@ -179,8 +179,6 @@ for i in imgs_url_now:
 
 # 上書き
 ws.update_acell('C6', ' \n'.join(imgs_url_now))
-
-# MARKDOWN編集
 ws.update_acell('C2', time_now)
 ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 

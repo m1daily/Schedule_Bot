@@ -1,12 +1,21 @@
 import os
 import codecs
 import json
+import ast
+import gspread
 import requests
 import tweepy
 from bs4 import BeautifulSoup
 from PIL import Image, ImageDraw, ImageFont
+from oauth2client.service_account import ServiceAccountCredentials
+
 
 #-----------------------------------------------------------------------------------------------------------------------------------
+# jsonファイル準備(SpreadSheetログイン用)
+dic = ast.literal_eval(os.environ['JSON'])
+with open('gss.json', mode='wt', encoding='utf-8') as file:
+    json.dump(dic, file, ensure_ascii=False, indent=2)
+
 # ユーザーエージェントを変更し、403エラー対策
 ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
 headers = {'User-Agent': ua}
@@ -27,9 +36,14 @@ schedule = schedule.replace('<p>', '')
 schedule = schedule.replace('<p style="text-align: left;">', '')
 schedule = schedule.replace('</p>', '')
 
+
+# Google SpreadSheetsにアクセス
+scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope))
+ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
+
 # 最後に投稿した予定を読み込み
-with codecs.open('./news/news.txt', 'r', 'utf-8') as f:
-    schedule_latest = f.read()
+schedule_latest = ws.acell('D6')
 
 # テキスト比較
 if schedule == schedule_latest:
@@ -37,8 +51,7 @@ if schedule == schedule_latest:
     exit()
 else:
     print('更新されているので続行')
-    with codecs.open('./news/news.txt', 'w', 'utf-8') as f:
-        f.write(schedule)
+    ws.update_acell('D6', schedule)
     schedule = schedule.split('\n')
 
 # 外観調整
@@ -80,7 +93,7 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # ツイート
-api.update_status_with_media(status='今月の予定です。', filename='image.png')
+# api.update_status_with_media(status='今月の予定です。', filename='image.png')
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Discordに投稿
 webhook_url = os.environ['WEBHOOK']
@@ -107,4 +120,4 @@ files_qiita = {
     'image' : ('image.png', file_bin_image),
 }
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-res = requests.post(webhook_url, files = files_qiita, data = payload2)
+# res = requests.post(webhook_url, files = files_qiita, data = payload2)
