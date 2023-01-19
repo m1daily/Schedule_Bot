@@ -143,7 +143,7 @@ subprocess.run([f'echo NOW={now} >> $GITHUB_OUTPUT'], shell=True)
 # Google SpreadSheetsにアクセス
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope))
-ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
+ws = gc.open_by_key('1NPmEDEI5RbHQW3Nngm7Z5Wr-FCpRlFWcgUYfua_Ednw').sheet1
 
 # 最後に投稿した画像のリストを読み込み
 imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)
