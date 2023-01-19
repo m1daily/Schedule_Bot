@@ -92,7 +92,7 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # ツイート
-# api.update_status_with_media(status='今月の予定です。', filename='image.png')
+api.update_status_with_media(status='今月の予定です。', filename='image.png')
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Discordに投稿
 webhook_url = os.environ['WEBHOOK']
@@ -119,4 +119,4 @@ files_qiita = {
     'image' : ('image.png', file_bin_image),
 }
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-# res = requests.post(webhook_url, files = files_qiita, data = payload2)
+res = requests.post(webhook_url, files = files_qiita, data = payload2)
