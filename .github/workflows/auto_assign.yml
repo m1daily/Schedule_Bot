@@ -1,0 +1,10 @@
+addAssignees: author
+
+addReviewers: true
+reviewers:
+  - geusen
+numberOfReviewers: 0
+
+skipKeywords:
+  - wip
+  - bump
