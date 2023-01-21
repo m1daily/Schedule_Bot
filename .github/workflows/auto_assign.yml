@@ -1,0 +1,15 @@
+name: Auto Assign
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+jobs:
+  add-reviews:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assignees and Reviewers to PR
+        uses: kentaro-m/auto-assign-action@v1.2.1
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          configuration-path: ".github/auto_assign_myteams.yml"
+      - name: Assign author to PR
+        uses: technote-space/assign-author@v1
