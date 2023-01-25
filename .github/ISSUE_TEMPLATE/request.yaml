@@ -56,3 +56,9 @@ body:
       placeholder: >
         - [ ] M1のサイトから月間予定を取得する機能の追加
         - [ ] テキスト(月間予定)の画像化
+
+  - type: textarea
+    attributes:
+      label: 5.補足(任意)
+      description: >
+        他に何かある場合は記入してください。

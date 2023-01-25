@@ -76,3 +76,9 @@ body:
         修正案がある場合は記入してください。
       placeholder: >
         - [ ] ```/.github/workflows/News.yml```の```pip install opencv==4.60.66```を```pip install opencv==4.6.0.66```に変更
+
+  - type: textarea
+    attributes:
+      label: 6.補足(任意)
+      description: >
+        他に何かある場合は記入してください。
