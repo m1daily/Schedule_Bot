@@ -44,7 +44,7 @@ Discussions、issue、PullRequestを利用する場合は、次のガイドラ�
 
 <br>
 
-## 3.PullRequestについて
+# 3.PullRequestについて
 
 機能追加などをした場合はPullRequest(以下PR)へお願いします。
 
