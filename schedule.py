@@ -1,23 +1,22 @@
-import datetime    # 日付取得
-import os    # 環境変数用
-import time    # 待機
-import subprocess    # GitHubActionsの環境変数追加
 import ast
-import gspread
-import base64    # blob対策
-import numpy as np
+import base64  # blob対策
+import datetime  # 日付取得
+import json  # webhook用
+import os  # 環境変数用
+import subprocess  # GitHubActionsの環境変数追加
+import time  # 待機
+import urllib.request  # 画像取得
 import cv2
-import cv2u    # 画像URLから読み込み
-import urllib.parse    # urlエンコード
-import tweepy    # Twitter送信
-import requests    # LINE・Discord送信
-import json    # webhook用
-import urllib.request    # 画像取得
-from selenium import webdriver    # サイトから画像取得(以下略)
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+import cv2u  # 画像URLから読み込み
+import gspread
+import numpy as np
+import requests  # LINE・Discord送信
+import tweepy  # Twitter送信
 from oauth2client.service_account import ServiceAccountCredentials
+from selenium import webdriver  # サイトから画像取得(以下略)
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 #----------------------------------------------------------------------------------------------------

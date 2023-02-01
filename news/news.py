@@ -1,13 +1,12 @@
-import os
-import codecs
-import json
 import ast
+import json
+import os
 import gspread
 import requests
 import tweepy
 from bs4 import BeautifulSoup
-from PIL import Image, ImageDraw, ImageFont
 from oauth2client.service_account import ServiceAccountCredentials
+from PIL import Image, ImageDraw, ImageFont
 
 
 #-----------------------------------------------------------------------------------------------------------------------------------

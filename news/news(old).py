@@ -1,14 +1,14 @@
-import os    # 環境変数用
-import time    # 待機
+import json  # webhook用
+import os  # 環境変数用
+import time  # 待機
 import cv2
 import numpy as np
-import tweepy    # Twitter送信
-import requests    # LINE・Discord送信
-import json    # webhook用
-from selenium import webdriver    # サイトから画像取得(以下略)
+import requests  # LINE・Discord送信
+import tweepy  # Twitter送信
+from selenium import webdriver  # サイトから画像取得(以下略)
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 # from selenium.webdriver.chrome.service import Service
 # from webdriver_manager.chrome import ChromeDriverManager
 
