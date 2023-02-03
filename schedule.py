@@ -28,21 +28,28 @@ print('\n' + time_now)
 subprocess.run([f'echo "TIME={time_now}" >> $GITHUB_OUTPUT'], shell=True)
 
 #----------------------------------------------------------------------------------------------------
+# jsonファイル準備(SpreadSheetログイン用)
+dic = ast.literal_eval(os.environ['JSON'])
+with open('gss.json', mode='wt', encoding='utf-8') as file:
+    json.dump(dic, file, ensure_ascii=False, indent=2)
+
 # keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = os.environ['CONSUMER_KEY']    # TwitterAPI識別キー
 consumer_secret = os.environ['CONSUMER_SECRET']    # TwitterAPI識別シークレットキー
 access_token = os.environ['ACCESS_TOKEN']    # Twitterアカウントに対するアクセストークン
 access_token_secret = os.environ['ACCESS_TOKEN_SECRET']    # Twitterアカウントに対するアクセストークンシークレット
 
-# jsonファイル準備(SpreadSheetログイン用)
-dic = ast.literal_eval(os.environ['JSON'])
-with open('gss.json', mode='wt', encoding='utf-8') as file:
-    json.dump(dic, file, ensure_ascii=False, indent=2)
-
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
+
+# LINE,Discordのtoken設定(伏せています)
+notify_group = os.environ['LINE_NOTIFY']    # 時間割LINEグループのトークン
+notify_27 = os.environ['LINE_NOTIFY_27']    # 自分のクラスのライングループのトークン
+notify_13 = os.environ['LINE_NOTIFY_13']    # 13組のライングループのトークン
+webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebhookのURL
+imgur = os.environ['IMGUR']    # 画像URL取得用
 
 # LINEの設定
 def line_notify(line_access_token, image):
@@ -52,13 +59,6 @@ def line_notify(line_access_token, image):
     files = {'imageFile': open(image, 'rb')}
     r = requests.post(line_url, headers=headers, params=payload, files=files)
     return str(r.status_code)
-
-# LINE,Discordのtoken設定(伏せています)
-notify_group = os.environ['LINE_NOTIFY']    # 時間割LINEグループのトークン
-notify_27 = os.environ['LINE_NOTIFY_27']    # 自分のクラスのライングループのトークン
-notify_13 = os.environ['LINE_NOTIFY_13']    # 13組のライングループのトークン
-webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebhookのURL
-imgur = os.environ['IMGUR']    # 画像URL取得用
 
 # 終了時用
 def finish(exit_message):
@@ -92,10 +92,10 @@ def get_blob_file(driver, url):
 #----------------------------------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
 options = webdriver.ChromeOptions()
-options.headless = True
+options.add_argument('--headless')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
-driver = webdriver.Chrome('chromedriver',options=options)
+driver = webdriver.Chrome('chromedriver', options=options)
 driver.implicitly_wait(5)
 
 # Googleスプレッドシートへ移動(URLは伏せています)
