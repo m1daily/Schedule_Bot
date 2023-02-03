@@ -27,7 +27,7 @@ jobs:
       - name: run python
         run: |
           echo "::group::pip install --upgrade pip"
-          python -m pip install --upgrade pip==22.3.1
+          python -m pip install --upgrade pip==23.0
           pip install beautifulsoup4==4.11.1
           pip install pillow==9.4.0
           pip install tweepy==4.12.1
