@@ -66,6 +66,16 @@ def finish(exit_message):
     subprocess.run([f'echo STATUS={exit_message} >> $GITHUB_OUTPUT'], shell=True)
     exit()
 
+# Imgurアップロード
+def imgur(image, local):
+    headers = {'authorization': f'Client-ID {imgur}'}
+    if local == 'local':
+        files = {'image': (open(image, 'rb'))}
+    else:
+        files = {'image' : requests.get(image).content}
+    r = requests.post('https://api.imgur.com/3/upload', headers=headers, files=files)
+    return json.loads(r.text)['data']['link']
+
 # blob形式のURLの対策
 def get_blob_file(driver, url):
     result = driver.execute_async_script("""
@@ -81,12 +91,10 @@ def get_blob_file(driver, url):
         """, url)
     if type(result) == int :
         raise Exception("Request failed with status %s" % result)
-    jpg=np.frombuffer(base64.b64decode(result), dtype=np.uint8)
+    jpg = np.frombuffer(base64.b64decode(result), dtype=np.uint8)
     cv2.imwrite('blob.png', cv2.imdecode(jpg, cv2.IMREAD_COLOR))
-    headers = {'authorization': f'Client-ID {imgur}'}
-    files = {'image': (open('blob.png', 'rb'))}
-    r = requests.post('https://api.imgur.com/3/upload', headers=headers, files=files)
-    return json.loads(r.text)['data']['link']
+    image = imgur('blob.png', 'local')
+    return image
 
 
 #----------------------------------------------------------------------------------------------------
@@ -101,7 +109,7 @@ driver.implicitly_wait(5)
 # Googleスプレッドシートへ移動(URLは伏せています)
 driver.get(os.environ['GOOGLE_URL'])    # 時間割の画像があるGoogleSpreadSheetのURL
 WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located)
-time.sleep(10)
+time.sleep(15)
 
 # imgタグを含むものを抽出
 imgs_tag = driver.find_elements(By.TAG_NAME, 'img')
@@ -115,19 +123,17 @@ print('[抽出画像]')
 for index, e in enumerate(imgs_tag, 1):
     img_url = e.get_attribute('src')
     print(str(index) + '枚目: ' + img_url)
-    # URLがBlob形式の場合はエラーを出して終了
-    if 'blob:' in img_url:
-        blob_url = get_blob_file(driver, img_url)
-        print(' → ' + blob_url)
-        if bool(str(cv2u.urlread(blob_url)) in imgs_cv2u_now) == False:
+    # URLがBlob形式又は「alr=yes」が含まれる場合はImgurに画像アップロード
+    if ('blob:' in img_url) or ('alr=yes' in img_url):
+        if 'blob:' in img_url:
+            img_url = get_blob_file(driver, img_url)
+        else:
+            img_url = imgur(img_url, 'url')
+        print(' → ' + img_url)
+        if bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
             print(' → append')
-            imgs_cv2u_now.append(str(cv2u.urlread(blob_url)))
-            imgs_url_now.append(blob_url)
-    # リストに既に同じ画像がない場合リストに追加
-    if 'alr=yes' in img_url and bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
-        print(' → append')
-        imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
-        imgs_url_now.append(img_url)
+            imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
+            imgs_url_now.append(img_url)
 # 時間割の画像が見つからなかった場合は終了
 if imgs_url_now == []:
     finish('画像が発見できなかったため終了(alr=yes無)')
@@ -182,32 +188,32 @@ ws.update_acell('C2', time_now)
 ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 
 #----------------------------------------------------------------------------------------------------`
-# ツイート
-media_ids = []
-for image in imgs_path:
-   img = api.media_upload(image)
-   media_ids.append(img.media_id)
-api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+# # ツイート
+# media_ids = []
+# for image in imgs_path:
+#    img = api.media_upload(image)
+#    media_ids.append(img.media_id)
+# api.update_status(status='時間割が更新されました！', media_ids=media_ids)
 
-# LINEへ通知
-line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
-print('\n[LINE]')
-for key, value in line_dict.items():
-    for i, image in enumerate(imgs_path, 1):
-        print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
+# # LINEへ通知
+# line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
+# print('\n[LINE]')
+# for key, value in line_dict.items():
+#     for i, image in enumerate(imgs_path, 1):
+#         print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
 
-# DiscordのWebhookを通して通知
-payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
-embed = []
-# 画像の枚数分"embed"の値追加
-for i in imgs_url_now:
-    if imgs_url_now.index(i) == 0:
-        img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-    else:
-        img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-    embed.append(img_embed)
-payload2['payload_json']['embeds'] = embed
-payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-res = requests.post(webhook_url, data=payload2)
-print('Discord_Webhook: ' + str(res.status_code))
-finish('投稿完了')
+# # DiscordのWebhookを通して通知
+# payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
+# embed = []
+# # 画像の枚数分"embed"の値追加
+# for i in imgs_url_now:
+#     if imgs_url_now.index(i) == 0:
+#         img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+#     else:
+#         img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+#     embed.append(img_embed)
+# payload2['payload_json']['embeds'] = embed
+# payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
+# res = requests.post(webhook_url, data=payload2)
+# print('Discord_Webhook: ' + str(res.status_code))
+# finish('投稿完了')
