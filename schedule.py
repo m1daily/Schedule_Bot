@@ -74,6 +74,7 @@ def imgur(image, local):
     else:
         files = {'image' : requests.get(image).content}
     r = requests.post('https://api.imgur.com/3/upload', headers=headers, files=files)
+    r.raise_for_status()
     return json.loads(r.text)['data']['link']
 
 # blob形式のURLの対策
@@ -216,4 +217,5 @@ payload2['payload_json']['embeds'] = embed
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
 res = requests.post(webhook_url, data=payload2)
 print('Discord_Webhook: ' + str(res.status_code))
+res.raise_for_status()
 finish('投稿完了')
