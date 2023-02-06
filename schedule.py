@@ -73,6 +73,7 @@ def imgur(image, local):
         files = {'image': (open(image, 'rb'))}
     else:
         files = {'image' : requests.get(image).content}
+    time.sleep(2)
     r = requests.post('https://api.imgur.com/3/upload', headers=headers, files=files)
     r.raise_for_status()
     return json.loads(r.text)['data']['link']
