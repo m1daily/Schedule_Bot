@@ -67,12 +67,16 @@ def finish(exit_message):
     exit()
 
 # Imgurアップロード
-def imgur(image, local):
+def upload_imgur(image):
     headers = {'authorization': f'Client-ID {imgur}'}
-    if local == 'local':
-        files = {'image': (open(image, 'rb'))}
-    else:
-        files = {'image' : requests.get(image).content}
+    if 'http' in image:
+        with urllib.request.urlopen(image) as web_file:
+            time.sleep(3)
+            image = 'imgur.png'
+            data = web_file.read()
+            with open(image, mode='wb') as local_file:
+                local_file.write(data)
+    files = {'image': (open(image, 'rb'))}
     time.sleep(2)
     r = requests.post('https://api.imgur.com/3/upload', headers=headers, files=files)
     r.raise_for_status()
@@ -95,7 +99,7 @@ def get_blob_file(driver, url):
         raise Exception("Request failed with status %s" % result)
     jpg = np.frombuffer(base64.b64decode(result), dtype=np.uint8)
     cv2.imwrite('blob.png', cv2.imdecode(jpg, cv2.IMREAD_COLOR))
-    image = imgur('blob.png', 'local')
+    image = upload_imgur('blob.png')
     return image
 
 
@@ -130,7 +134,7 @@ for index, e in enumerate(imgs_tag, 1):
         if 'blob:' in img_url:
             img_url = get_blob_file(driver, img_url)
         else:
-            img_url = imgur(img_url, 'url')
+            img_url = upload_imgur(img_url)
         print(' → ' + img_url)
         if bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
             print(' → append')
