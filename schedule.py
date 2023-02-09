@@ -129,6 +129,10 @@ for index, e in enumerate(imgs_tag, 1):
         else:
             img_url = upload_imgur(img_url)
         print(' → ' + img_url)
+        if 'png' in img_url:
+            cell = 'C6'
+        else:
+            cell = 'C7'
         if bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
             print(' → append')
             imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
@@ -150,7 +154,7 @@ gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.jso
 ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
 
 # 最後に投稿した画像のリストを読み込み
-imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)
+imgs_url_latest = ws.acell(cell).value.split()    # URLリスト(過去)
 print(imgs_url_latest)
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
@@ -182,8 +186,7 @@ for i in imgs_url_now:
             local_file.write(data)
 
 # 上書き
-ws.update_acell('C6', ' \n'.join(imgs_url_now))
-ws.update_acell('C2', time_now)
+ws.update_acell(cell, ' \n'.join(imgs_url_now))
 ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 
 #----------------------------------------------------------------------------------------------------`
