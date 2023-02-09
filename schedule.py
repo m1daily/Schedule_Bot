@@ -33,18 +33,11 @@ dic = ast.literal_eval(os.environ['JSON'])
 with open('gss.json', mode='wt', encoding='utf-8') as file:
     json.dump(dic, file, ensure_ascii=False, indent=2)
 
-# keyの指定(情報漏えいを防ぐため伏せています)
+# Twitter,LINE,Discordのtoken設定(情報漏えいを防ぐため伏せています)
 consumer_key = os.environ['CONSUMER_KEY']    # TwitterAPI識別キー
 consumer_secret = os.environ['CONSUMER_SECRET']    # TwitterAPI識別シークレットキー
 access_token = os.environ['ACCESS_TOKEN']    # Twitterアカウントに対するアクセストークン
 access_token_secret = os.environ['ACCESS_TOKEN_SECRET']    # Twitterアカウントに対するアクセストークンシークレット
-
-# tweepyの設定(認証情報を設定、APIインスタンスの作成)
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth, wait_on_rate_limit=True)
-
-# LINE,Discordのtoken設定(伏せています)
 notify_group = os.environ['LINE_NOTIFY']    # 時間割LINEグループのトークン
 notify_27 = os.environ['LINE_NOTIFY_27']    # 自分のクラスのライングループのトークン
 notify_13 = os.environ['LINE_NOTIFY_13']    # 13組のライングループのトークン
@@ -194,6 +187,11 @@ ws.update_acell('C2', time_now)
 ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 
 #----------------------------------------------------------------------------------------------------`
+# tweepyの設定(認証情報を設定、APIインスタンスの作成)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth, wait_on_rate_limit=True)
+
 # ツイート
 media_ids = []
 for image in imgs_path:
