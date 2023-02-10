@@ -1,24 +1,25 @@
+# 標準ライブラリ
 import ast
 import base64  # blob対策
 import datetime  # 日付取得
+import io
 import json  # webhook用
 import os  # 環境変数用
 import subprocess  # GitHubActionsの環境変数追加
 import time  # 待機
 import urllib.request  # 画像取得
+# サードパーティ製ライブラリ
 import cv2
 import gspread
 import numpy as np
 import requests  # LINE・Discord送信
 import tweepy  # Twitter送信
 from oauth2client.service_account import ServiceAccountCredentials
+from PIL import Image
 from selenium import webdriver  # サイトから画像取得(以下略)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
-from PIL import Image
-import io
-
 
 #----------------------------------------------------------------------------------------------------
 # バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
@@ -190,38 +191,38 @@ ws.update_acell('C6', ' \n'.join(imgs_url_now))
 ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 
 #----------------------------------------------------------------------------------------------------`
-# # tweepyの設定(認証情報を設定、APIインスタンスの作成)
-# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-# auth.set_access_token(access_token, access_token_secret)
-# api = tweepy.API(auth, wait_on_rate_limit=True)
+# tweepyの設定(認証情報を設定、APIインスタンスの作成)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth, wait_on_rate_limit=True)
 
-# # ツイート
-# media_ids = []
-# for image in imgs_path:
-#    img = api.media_upload(image)
-#    media_ids.append(img.media_id)
-# api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+# ツイート
+media_ids = []
+for image in imgs_path:
+   img = api.media_upload(image)
+   media_ids.append(img.media_id)
+api.update_status(status='時間割が更新されました！', media_ids=media_ids)
 
-# # LINEへ通知
-# line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
-# print('\n[LINE]')
-# for key, value in line_dict.items():
-#     for i, image in enumerate(imgs_path, 1):
-#         print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
+# LINEへ通知
+line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
+print('\n[LINE]')
+for key, value in line_dict.items():
+    for i, image in enumerate(imgs_path, 1):
+        print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
 
-# # DiscordのWebhookを通して通知
-# payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
-# embed = []
-# # 画像の枚数分"embed"の値追加
-# for i in imgs_url_now:
-#     if imgs_url_now.index(i) == 0:
-#         img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-#     else:
-#         img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-#     embed.append(img_embed)
-# payload2['payload_json']['embeds'] = embed
-# payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-# res = requests.post(webhook_url, data=payload2)
-# print('Discord_Webhook: ' + str(res.status_code))
-# res.raise_for_status()
-# finish('投稿完了')
+# DiscordのWebhookを通して通知
+payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
+embed = []
+# 画像の枚数分"embed"の値追加
+for i in imgs_url_now:
+    if imgs_url_now.index(i) == 0:
+        img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+    else:
+        img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+    embed.append(img_embed)
+payload2['payload_json']['embeds'] = embed
+payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
+res = requests.post(webhook_url, data=payload2)
+print('Discord_Webhook: ' + str(res.status_code))
+res.raise_for_status()
+finish('投稿完了')
