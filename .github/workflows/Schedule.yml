@@ -28,7 +28,7 @@ concurrency:  # 同時にworkflowが実行されたらキャンセル
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 5    # 5分過ぎたら強制終了
+    timeout-minutes: 10    # 10分過ぎたら強制終了
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4

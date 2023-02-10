@@ -17,6 +17,8 @@ from selenium import webdriver  # サイトから画像取得(以下略)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+from PIL import Image
+import io
 
 
 #----------------------------------------------------------------------------------------------------
@@ -130,9 +132,9 @@ for index, e in enumerate(imgs_tag, 1):
             img_url = upload_imgur(img_url)
         print(' → ' + img_url)
         if 'png' in img_url:
-            cell = 'C6'
+            ext = 'png'
         else:
-            cell = 'C7'
+            ext = 'jpeg'
         if bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
             print(' → append')
             imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
@@ -154,10 +156,14 @@ gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.jso
 ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
 
 # 最後に投稿した画像のリストを読み込み
-imgs_url_latest = ws.acell(cell).value.split()    # URLリスト(過去)
+imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)
 print(imgs_url_latest)
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
+    if 'png' in e:
+        ext = 'png'
+    else:
+        ext = 'jpeg'
     imgs_cv2u_latest.append(str(cv2u.urlread(e)))
 
 # $GITHUB_OUTPUTに追加
@@ -166,6 +172,15 @@ subprocess.run([f'echo BEFORE={before} >> $GITHUB_OUTPUT'], shell=True)
 
 # 比較
 if len(imgs_url_now) == len(imgs_url_latest):
+    if ext == 'jpeg':
+        imgs_cv2u_now = []
+        imgs_cv2u_latest = []
+        for i in imgs_url_now:
+            Image.open(io.BytesIO(requests.get(i).content)).save('now.eps', lossless = True)
+            imgs_cv2u_now.append(cv2.imread('now.eps'))
+        for i in imgs_url_latest:
+            Image.open(io.BytesIO(requests.get(i).content)).save('latest.eps', lossless = True)
+            imgs_cv2u_latest.append(cv2.imread('latest.eps'))
     if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
         finish('画像が一致した為、終了')
     else:
@@ -186,7 +201,7 @@ for i in imgs_url_now:
             local_file.write(data)
 
 # 上書き
-ws.update_acell(cell, ' \n'.join(imgs_url_now))
+ws.update_acell('C6', ' \n'.join(imgs_url_now))
 ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 
 #----------------------------------------------------------------------------------------------------`
