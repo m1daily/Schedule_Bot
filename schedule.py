@@ -173,6 +173,7 @@ subprocess.run([f'echo BEFORE={before} >> $GITHUB_OUTPUT'], shell=True)
 # 比較
 if len(imgs_url_now) == len(imgs_url_latest):
     if ext == 'jpeg':
+        print('jpeg')
         imgs_cv2u_now = []
         imgs_cv2u_latest = []
         for i in imgs_url_now:
@@ -181,6 +182,7 @@ if len(imgs_url_now) == len(imgs_url_latest):
         for i in imgs_url_latest:
             Image.open(io.BytesIO(requests.get(i).content)).save('latest.eps', lossless = True)
             imgs_cv2u_latest.append(cv2.imread('latest.eps'))
+            print('jpeg → eps')
     if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
         finish('画像が一致した為、終了')
     else:
