@@ -7,7 +7,6 @@ import subprocess  # GitHubActionsの環境変数追加
 import time  # 待機
 import urllib.request  # 画像取得
 import cv2
-import cv2u  # 画像URLから読み込み
 import gspread
 import numpy as np
 import requests  # LINE・Discord送信
@@ -131,13 +130,11 @@ for index, e in enumerate(imgs_tag, 1):
         else:
             img_url = upload_imgur(img_url)
         print(' → ' + img_url)
-        if 'png' in img_url:
-            ext = 'png'
-        else:
-            ext = 'jpeg'
-        if bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
+        Image.open(io.BytesIO(requests.get(img_url).content)).save('now.eps', lossless = True)
+        # 画像が重複していないか確認
+        if bool(str(cv2.imread('now.eps')) in imgs_cv2u_now) == False:
             print(' → append')
-            imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
+            imgs_cv2u_now.append(str(cv2.imread('now.eps')))
             imgs_url_now.append(img_url)
 # 時間割の画像が見つからなかった場合は終了
 if imgs_url_now == []:
@@ -160,11 +157,8 @@ imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)
 print(imgs_url_latest)
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
-    if 'png' in e:
-        ext = 'png'
-    else:
-        ext = 'jpeg'
-    imgs_cv2u_latest.append(str(cv2u.urlread(e)))
+    Image.open(io.BytesIO(requests.get(e).content)).save('latest.eps', lossless = True)
+    imgs_cv2u_latest.append(str(cv2.imread('latest.eps')))
 
 # $GITHUB_OUTPUTに追加
 before = ','.join(imgs_url_latest)
@@ -172,17 +166,6 @@ subprocess.run([f'echo BEFORE={before} >> $GITHUB_OUTPUT'], shell=True)
 
 # 比較
 if len(imgs_url_now) == len(imgs_url_latest):
-    if ext == 'jpeg':
-        print('jpeg')
-        imgs_cv2u_now = []
-        imgs_cv2u_latest = []
-        for i in imgs_url_now:
-            Image.open(io.BytesIO(requests.get(i).content)).save('now.eps', lossless = True)
-            imgs_cv2u_now.append(cv2.imread('now.eps'))
-        for i in imgs_url_latest:
-            Image.open(io.BytesIO(requests.get(i).content)).save('latest.eps', lossless = True)
-            imgs_cv2u_latest.append(cv2.imread('latest.eps'))
-            print('jpeg → eps')
     if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
         finish('画像が一致した為、終了')
     else:
