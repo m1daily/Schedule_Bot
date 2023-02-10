@@ -1,23 +1,25 @@
+# 標準ライブラリ
 import ast
 import base64  # blob対策
 import datetime  # 日付取得
+import io
 import json  # webhook用
 import os  # 環境変数用
 import subprocess  # GitHubActionsの環境変数追加
 import time  # 待機
 import urllib.request  # 画像取得
+# サードパーティ製ライブラリ
 import cv2
-import cv2u  # 画像URLから読み込み
 import gspread
 import numpy as np
 import requests  # LINE・Discord送信
 import tweepy  # Twitter送信
 from oauth2client.service_account import ServiceAccountCredentials
+from PIL import Image
 from selenium import webdriver  # サイトから画像取得(以下略)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
-
 
 #----------------------------------------------------------------------------------------------------
 # バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
@@ -129,9 +131,11 @@ for index, e in enumerate(imgs_tag, 1):
         else:
             img_url = upload_imgur(img_url)
         print(' → ' + img_url)
-        if bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
+        Image.open(io.BytesIO(requests.get(img_url).content)).save('now.eps', lossless = True)
+        # 画像が重複していないか確認
+        if bool(str(cv2.imread('now.eps')) in imgs_cv2u_now) == False:
             print(' → append')
-            imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
+            imgs_cv2u_now.append(str(cv2.imread('now.eps')))
             imgs_url_now.append(img_url)
 # 時間割の画像が見つからなかった場合は終了
 if imgs_url_now == []:
@@ -154,7 +158,8 @@ imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)
 print(imgs_url_latest)
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
-    imgs_cv2u_latest.append(str(cv2u.urlread(e)))
+    Image.open(io.BytesIO(requests.get(e).content)).save('latest.eps', lossless = True)
+    imgs_cv2u_latest.append(str(cv2.imread('latest.eps')))
 
 # $GITHUB_OUTPUTに追加
 before = ','.join(imgs_url_latest)
@@ -183,7 +188,6 @@ for i in imgs_url_now:
 
 # 上書き
 ws.update_acell('C6', ' \n'.join(imgs_url_now))
-ws.update_acell('C2', time_now)
 ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 
 #----------------------------------------------------------------------------------------------------`
