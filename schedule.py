@@ -76,7 +76,7 @@ def upload_imgur(image):
             data = web_file.read()
             with open(path, mode='wb') as local_file:
                 local_file.write(data)
-    files = {'image': (open(image, 'rb'))}
+    files = {'image': (open(path, 'rb'))}
     time.sleep(2)
     r = requests.post('https://api.imgur.com/3/upload', headers=headers, files=files)
     r.raise_for_status()
