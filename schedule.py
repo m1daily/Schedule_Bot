@@ -102,9 +102,8 @@ def get_blob_file(driver, url):
     }
     """
     js += "return getBinaryResourceText(\"{url}\");".format(url=url)
-
     data_bytes = driver.execute_script(js)
-    with open('blob.jpeg', 'wb') as bin_out:
+    with open('blob.png', 'wb') as bin_out:
         bin_out.write(bytes(data_bytes))
     # result = driver.execute_async_script("""
     #     var url = arguments[0];
@@ -121,7 +120,7 @@ def get_blob_file(driver, url):
     #     raise Exception("Request failed with status %s" % result)
     # jpg = np.frombuffer(base64.b64decode(result), dtype=np.uint8)
     # cv2.imwrite('blob.jpeg', cv2.imdecode(jpg, cv2.IMREAD_COLOR))
-    image = upload_imgur('blob.jpeg')
+    image = upload_imgur('blob.png')
     return image
 
 
