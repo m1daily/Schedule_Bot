@@ -63,7 +63,7 @@ def line_notify(line_access_token, image):
 
 # 終了時用
 def finish(exit_message):
-    logger.info(exit_message)
+    logger.info(f'{exit_message}\n')
     subprocess.run([f'echo STATUS={exit_message} >> $GITHUB_OUTPUT'], shell=True)
     exit()
 
@@ -148,7 +148,7 @@ for index, e in enumerate(imgs_tag, 1):
 # 時間割の画像が見つからなかった場合は終了
 if imgs_url_now == []:
     finish('画像が発見できなかったため終了(alr=yes無)')
-logger.info(f'\n現在の画像:{imgs_url_now}')
+logger.info(f'現在の画像:{imgs_url_now}')
 
 # $GITHUB_OUTPUTに追加
 now = ','.join(imgs_url_now)
