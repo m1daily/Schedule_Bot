@@ -1,25 +1,23 @@
-# 標準ライブラリ
 import ast
 import base64  # blob対策
 import datetime  # 日付取得
-import io
 import json  # webhook用
 import os  # 環境変数用
 import subprocess  # GitHubActionsの環境変数追加
 import time  # 待機
 import urllib.request  # 画像取得
-# サードパーティ製ライブラリ
 import cv2
+import cv2u  # 画像URLから読み込み
 import gspread
 import numpy as np
 import requests  # LINE・Discord送信
 import tweepy  # Twitter送信
 from oauth2client.service_account import ServiceAccountCredentials
-from PIL import Image
 from selenium import webdriver  # サイトから画像取得(以下略)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+
 
 #----------------------------------------------------------------------------------------------------
 # バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
@@ -35,11 +33,18 @@ dic = ast.literal_eval(os.environ['JSON'])
 with open('gss.json', mode='wt', encoding='utf-8') as file:
     json.dump(dic, file, ensure_ascii=False, indent=2)
 
-# Twitter,LINE,Discordのtoken設定(情報漏えいを防ぐため伏せています)
+# keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = os.environ['CONSUMER_KEY']    # TwitterAPI識別キー
 consumer_secret = os.environ['CONSUMER_SECRET']    # TwitterAPI識別シークレットキー
 access_token = os.environ['ACCESS_TOKEN']    # Twitterアカウントに対するアクセストークン
 access_token_secret = os.environ['ACCESS_TOKEN_SECRET']    # Twitterアカウントに対するアクセストークンシークレット
+
+# tweepyの設定(認証情報を設定、APIインスタンスの作成)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth, wait_on_rate_limit=True)
+
+# LINE,Discordのtoken設定(伏せています)
 notify_group = os.environ['LINE_NOTIFY']    # 時間割LINEグループのトークン
 notify_27 = os.environ['LINE_NOTIFY_27']    # 自分のクラスのライングループのトークン
 notify_13 = os.environ['LINE_NOTIFY_13']    # 13組のライングループのトークン
@@ -67,9 +72,9 @@ def upload_imgur(image):
     if 'http' in image:
         with urllib.request.urlopen(image) as web_file:
             time.sleep(3)
-            image = 'imgur.png'
+            path = 'imgur.png'
             data = web_file.read()
-            with open(image, mode='wb') as local_file:
+            with open(path, mode='wb') as local_file:
                 local_file.write(data)
     files = {'image': (open(image, 'rb'))}
     time.sleep(2)
@@ -131,11 +136,9 @@ for index, e in enumerate(imgs_tag, 1):
         else:
             img_url = upload_imgur(img_url)
         print(' → ' + img_url)
-        Image.open(io.BytesIO(requests.get(img_url).content)).save('now.eps', lossless = True)
-        # 画像が重複していないか確認
-        if bool(str(cv2.imread('now.eps')) in imgs_cv2u_now) == False:
+        if bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
             print(' → append')
-            imgs_cv2u_now.append(str(cv2.imread('now.eps')))
+            imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
             imgs_url_now.append(img_url)
 # 時間割の画像が見つからなかった場合は終了
 if imgs_url_now == []:
@@ -158,8 +161,7 @@ imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)
 print(imgs_url_latest)
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
-    Image.open(io.BytesIO(requests.get(e).content)).save('latest.eps', lossless = True)
-    imgs_cv2u_latest.append(str(cv2.imread('latest.eps')))
+    imgs_cv2u_latest.append(str(cv2u.urlread(e)))
 
 # $GITHUB_OUTPUTに追加
 before = ','.join(imgs_url_latest)
@@ -191,38 +193,33 @@ ws.update_acell('C6', ' \n'.join(imgs_url_now))
 ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 
 #----------------------------------------------------------------------------------------------------`
-# tweepyの設定(認証情報を設定、APIインスタンスの作成)
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth, wait_on_rate_limit=True)
-
 # ツイート
-media_ids = []
-for image in imgs_path:
-   img = api.media_upload(image)
-   media_ids.append(img.media_id)
-api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+# media_ids = []
+# for image in imgs_path:
+#    img = api.media_upload(image)
+#    media_ids.append(img.media_id)
+# api.update_status(status='時間割が更新されました！', media_ids=media_ids)
 
-# LINEへ通知
-line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
-print('\n[LINE]')
-for key, value in line_dict.items():
-    for i, image in enumerate(imgs_path, 1):
-        print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
+# # LINEへ通知
+# line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
+# print('\n[LINE]')
+# for key, value in line_dict.items():
+#     for i, image in enumerate(imgs_path, 1):
+#         print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
 
-# DiscordのWebhookを通して通知
-payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
-embed = []
-# 画像の枚数分"embed"の値追加
-for i in imgs_url_now:
-    if imgs_url_now.index(i) == 0:
-        img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-    else:
-        img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-    embed.append(img_embed)
-payload2['payload_json']['embeds'] = embed
-payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-res = requests.post(webhook_url, data=payload2)
-print('Discord_Webhook: ' + str(res.status_code))
-res.raise_for_status()
-finish('投稿完了')
+# # DiscordのWebhookを通して通知
+# payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
+# embed = []
+# # 画像の枚数分"embed"の値追加
+# for i in imgs_url_now:
+#     if imgs_url_now.index(i) == 0:
+#         img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+#     else:
+#         img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+#     embed.append(img_embed)
+# payload2['payload_json']['embeds'] = embed
+# payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
+# res = requests.post(webhook_url, data=payload2)
+# print('Discord_Webhook: ' + str(res.status_code))
+# res.raise_for_status()
+# finish('投稿完了')
