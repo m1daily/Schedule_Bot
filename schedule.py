@@ -72,11 +72,11 @@ def upload_imgur(image):
     if 'http' in image:
         with urllib.request.urlopen(image) as web_file:
             time.sleep(3)
-            path = 'imgur.png'
             data = web_file.read()
-            with open(path, mode='wb') as local_file:
+            with open('imgur.png', mode='wb') as local_file:
                 local_file.write(data)
-    files = {'image': (open(path, 'rb'))}
+            image = 'imgur.png'
+    files = {'image': (open(image, 'rb'))}
     time.sleep(2)
     r = requests.post('https://api.imgur.com/3/upload', headers=headers, files=files)
     r.raise_for_status()
