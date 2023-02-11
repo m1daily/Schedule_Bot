@@ -97,8 +97,10 @@ def get_blob_file(driver, url):
         """, url)
     if type(result) == int :
         raise Exception("Request failed with status %s" % result)
-    jpg = np.frombuffer(base64.b64decode(result), dtype=np.uint16)
-    cv2.imwrite('blob.jpeg', cv2.imdecode(jpg, cv2.IMREAD_COLOR))
+    jpg = np.frombuffer(base64.b64decode(result), dtype=np.uint8)
+    # cv2.imwrite('blob.jpeg', cv2.imdecode(jpg, cv2.IMREAD_COLOR))
+    with open("blob.jpeg", "wb") as fh:
+        fh.write(base64.decodebytes(url))
     image = upload_imgur('blob.jpeg')
     return image
 
