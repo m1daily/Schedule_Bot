@@ -205,33 +205,33 @@ ws.update_acell('C3', 'https://github.com/m1daily/Schedule_Bot/actions/runs/' + 
 logger.info('画像DL完了、セル上書き完了\n')
 
 #----------------------------------------------------------------------------------------------------`
-# ツイート
-media_ids = []
-for image in imgs_path:
-   img = api.media_upload(image)
-   media_ids.append(img.media_id)
-api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+# # ツイート
+# media_ids = []
+# for image in imgs_path:
+#    img = api.media_upload(image)
+#    media_ids.append(img.media_id)
+# api.update_status(status='時間割が更新されました！', media_ids=media_ids)
 
-# LINEへ通知
-line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
-logger.info('・LINE')
-for key, value in line_dict.items():
-    for i, image in enumerate(imgs_path, 1):
-        logger.info(f'{key}-{i}枚目: {line_notify(value, image)}')
+# # LINEへ通知
+# line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
+# logger.info('・LINE')
+# for key, value in line_dict.items():
+#     for i, image in enumerate(imgs_path, 1):
+#         logger.info(f'{key}-{i}枚目: {line_notify(value, image)}')
 
-# DiscordのWebhookを通して通知
-payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
-embed = []
-# 画像の枚数分"embed"の値追加
-for i in imgs_url_now:
-    if imgs_url_now.index(i) == 0:
-        img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-    else:
-        img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-    embed.append(img_embed)
-payload2['payload_json']['embeds'] = embed
-payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-res = requests.post(webhook_url, data=payload2)
-logger.info(f'Discord_Webhook: {res.status_code}')
-res.raise_for_status()
-finish('投稿完了')
+# # DiscordのWebhookを通して通知
+# payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
+# embed = []
+# # 画像の枚数分"embed"の値追加
+# for i in imgs_url_now:
+#     if imgs_url_now.index(i) == 0:
+#         img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+#     else:
+#         img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+#     embed.append(img_embed)
+# payload2['payload_json']['embeds'] = embed
+# payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
+# res = requests.post(webhook_url, data=payload2)
+# logger.info(f'Discord_Webhook: {res.status_code}')
+# res.raise_for_status()
+# finish('投稿完了')
