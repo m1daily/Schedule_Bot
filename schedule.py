@@ -1,3 +1,4 @@
+# 標準ライブラリ
 import ast
 import datetime  # 日付取得
 import json  # webhook用
@@ -5,9 +6,10 @@ import os  # 環境変数用
 import subprocess  # GitHubActionsの環境変数追加
 import time  # 待機
 import urllib.request  # 画像取得
+from logging import DEBUG, Formatter, StreamHandler, getLogger
+# サードパーティライブラリ
 import cv2u  # 画像URLから読み込み
 import gspread
-import numpy as np
 import requests  # LINE・Discord送信
 import tweepy  # Twitter送信
 from oauth2client.service_account import ServiceAccountCredentials
@@ -16,14 +18,20 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-
 #----------------------------------------------------------------------------------------------------
 # バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
 date = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 weekdays = ['月', '火', '水', '木', '金', '土', '日']
 time_now = date.strftime('[%Y年%m月%d日(' + weekdays[date.weekday()] + ') %H:%M:%S]')
-print('\n' + time_now)
 subprocess.run([f'echo "TIME={time_now}" >> $GITHUB_OUTPUT'], shell=True)
+
+# loggerの設定
+logger = getLogger(__name__)
+logger.setLevel(DEBUG)
+handler = StreamHandler()
+format = Formatter('[%(asctime)s] [%(levelname)s] %(message)s')
+handler.setFormatter(format)
+logger.addHandler(handler)
 
 #----------------------------------------------------------------------------------------------------
 # jsonファイル準備(SpreadSheetログイン用)
@@ -60,7 +68,7 @@ def line_notify(line_access_token, image):
 
 # 終了時用
 def finish(exit_message):
-    print(exit_message)
+    logger.info(exit_message)
     subprocess.run([f'echo STATUS={exit_message} >> $GITHUB_OUTPUT'], shell=True)
     exit()
 
@@ -105,6 +113,8 @@ def get_blob_file(driver, url):
     return image
 
 
+logger.info('セットアップ完了')
+
 #----------------------------------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
 options = webdriver.ChromeOptions()
@@ -123,30 +133,29 @@ time.sleep(15)
 imgs_tag = driver.find_elements(By.TAG_NAME, 'img')
 if imgs_tag == []:
     finish('画像が発見できなかったため終了(img無)')
+logger.info('imgタグ抽出\n')
 
 # 時間割の画像以外も取り出している場合があるため時間割の画像のみ抽出(GoogleSpreadSheet上の画像は画像URLの末尾が「alr=yes」)
 imgs_cv2u_now = []    # cv2u用リスト(現在)
 imgs_url_now = []     # URLリスト(現在)
-print('[抽出画像]')
 for index, e in enumerate(imgs_tag, 1):
     img_url = e.get_attribute('src')
-    print(str(index) + '枚目: ' + img_url)
+    logger.info(f'{index}枚目: {img_url}')
     # URLがBlob形式又は「alr=yes」が含まれる場合はImgurに画像アップロード
     if ('blob:' in img_url) or ('alr=yes' in img_url):
         if 'blob:' in img_url:
             img_url = get_blob_file(driver, img_url)
         else:
             img_url = upload_imgur(img_url)
-        print(' → ' + img_url)
+        logger.info(f' → {img_url}')
         if bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
-            print(' → append')
+            logger.info(' → append')
             imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
             imgs_url_now.append(img_url)
 # 時間割の画像が見つからなかった場合は終了
 if imgs_url_now == []:
     finish('画像が発見できなかったため終了(alr=yes無)')
-print('\n-------------------------------------------------------------------------------------------------------------------------------------------------')
-print(imgs_url_now)
+logger.info(f'現在の画像:\n{imgs_url_now}')
 
 # $GITHUB_OUTPUTに追加
 now = ','.join(imgs_url_now)
@@ -160,7 +169,7 @@ ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
 
 # 最後に投稿した画像のリストを読み込み
 imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)
-print(imgs_url_latest)
+logger.info(f'過去の画像:\n{imgs_url_latest}\n')
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
     imgs_cv2u_latest.append(str(cv2u.urlread(e)))
@@ -174,9 +183,9 @@ if len(imgs_url_now) == len(imgs_url_latest):
     if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
         finish('画像が一致した為、終了')
     else:
-        print('画像が一致しないので続行')
+        logger.info('画像が一致しないので続行')
 else:
-    print('画像の枚数が異なるので続行')
+    logger.info('画像の枚数が異なるので続行')
 
 #----------------------------------------------------------------------------------------------------
 # 画像URLを使って画像をダウンロード
@@ -193,6 +202,7 @@ for i in imgs_url_now:
 # 上書き
 ws.update_acell('C6', ' \n'.join(imgs_url_now))
 ws.update_acell('C3', 'https://github.com/m1daily/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
+logger.info('画像DL完了、セル上書き完了\n')
 
 #----------------------------------------------------------------------------------------------------`
 # ツイート
@@ -204,10 +214,10 @@ api.update_status(status='時間割が更新されました！', media_ids=media
 
 # LINEへ通知
 line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
-print('\n[LINE]')
+logger.info('・LINE')
 for key, value in line_dict.items():
     for i, image in enumerate(imgs_path, 1):
-        print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
+        logger.info(f'{key}-{i}枚目: {line_notify(value, image)}')
 
 # DiscordのWebhookを通して通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
@@ -222,6 +232,6 @@ for i in imgs_url_now:
 payload2['payload_json']['embeds'] = embed
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
 res = requests.post(webhook_url, data=payload2)
-print('Discord_Webhook: ' + str(res.status_code))
+logger.info(f'Discord_Webhook: {res.status_code}')
 res.raise_for_status()
 finish('投稿完了')
