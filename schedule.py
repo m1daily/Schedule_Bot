@@ -1,29 +1,37 @@
-import ast
+# 標準ライブラリ
+import ast  # 文字列→JSON
 import datetime  # 日付取得
-import json  # webhook用
-import os  # 環境変数用
+import json  # JSONファイル読み込み
+import os  # GitHubActionsの環境変数追加
 import subprocess  # GitHubActionsの環境変数追加
-import time  # 待機
+import time  # スリープ用
 import urllib.request  # 画像取得
+from logging import DEBUG, Formatter, StreamHandler, getLogger
+# サードパーティライブラリ
 import cv2u  # 画像URLから読み込み
-import gspread
-import numpy as np
+import gspread  # SpreadSheet操作
 import requests  # LINE・Discord送信
 import tweepy  # Twitter送信
-from oauth2client.service_account import ServiceAccountCredentials
-from selenium import webdriver  # サイトから画像取得(以下略)
+from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
+from selenium import webdriver  # ブラウザ操作
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-
 #----------------------------------------------------------------------------------------------------
-# バグが発生した場合様々が情報が必要になるため、日付を取得(日本時間)
+# 日付取得
 date = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 weekdays = ['月', '火', '水', '木', '金', '土', '日']
 time_now = date.strftime('[%Y年%m月%d日(' + weekdays[date.weekday()] + ') %H:%M:%S]')
-print('\n' + time_now)
 subprocess.run([f'echo "TIME={time_now}" >> $GITHUB_OUTPUT'], shell=True)
+
+# ログ設定
+logger = getLogger(__name__)
+logger.setLevel(DEBUG)
+handler = StreamHandler()
+format = Formatter('[%(asctime)s] [%(levelname)s] %(message)s')
+handler.setFormatter(format)
+logger.addHandler(handler)
 
 #----------------------------------------------------------------------------------------------------
 # jsonファイル準備(SpreadSheetログイン用)
@@ -36,11 +44,6 @@ consumer_key = os.environ['CONSUMER_KEY']    # TwitterAPI識別キー
 consumer_secret = os.environ['CONSUMER_SECRET']    # TwitterAPI識別シークレットキー
 access_token = os.environ['ACCESS_TOKEN']    # Twitterアカウントに対するアクセストークン
 access_token_secret = os.environ['ACCESS_TOKEN_SECRET']    # Twitterアカウントに対するアクセストークンシークレット
-
-# tweepyの設定(認証情報を設定、APIインスタンスの作成)
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # LINE,Discordのtoken設定(伏せています)
 notify_group = os.environ['LINE_NOTIFY']    # 時間割LINEグループのトークン
@@ -60,7 +63,7 @@ def line_notify(line_access_token, image):
 
 # 終了時用
 def finish(exit_message):
-    print(exit_message)
+    logger.info(exit_message)
     subprocess.run([f'echo STATUS={exit_message} >> $GITHUB_OUTPUT'], shell=True)
     exit()
 
@@ -104,7 +107,6 @@ def get_blob_file(driver, url):
     image = upload_imgur('blob.png')
     return image
 
-
 #----------------------------------------------------------------------------------------------------
 # Chromeヘッドレスモード起動
 options = webdriver.ChromeOptions()
@@ -113,54 +115,54 @@ options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome('chromedriver', options=options)
 driver.implicitly_wait(5)
+logger.info('セットアップ完了')
 
 # Googleスプレッドシートへ移動(URLは伏せています)
 driver.get(os.environ['GOOGLE_URL'])    # 時間割の画像があるGoogleSpreadSheetのURL
 WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located)
-time.sleep(15)
+time.sleep(10)
 
 # imgタグを含むものを抽出
 imgs_tag = driver.find_elements(By.TAG_NAME, 'img')
 if imgs_tag == []:
     finish('画像が発見できなかったため終了(img無)')
+logger.info('imgタグ抽出\n')
 
-# 時間割の画像以外も取り出している場合があるため時間割の画像のみ抽出(GoogleSpreadSheet上の画像は画像URLの末尾が「alr=yes」)
+# 時間割の画像のみ抽出
 imgs_cv2u_now = []    # cv2u用リスト(現在)
 imgs_url_now = []     # URLリスト(現在)
-print('[抽出画像]')
 for index, e in enumerate(imgs_tag, 1):
     img_url = e.get_attribute('src')
-    print(str(index) + '枚目: ' + img_url)
+    logger.info(f'{index}枚目: {img_url}')
     # URLがBlob形式又は「alr=yes」が含まれる場合はImgurに画像アップロード
     if ('blob:' in img_url) or ('alr=yes' in img_url):
         if 'blob:' in img_url:
             img_url = get_blob_file(driver, img_url)
         else:
             img_url = upload_imgur(img_url)
-        print(' → ' + img_url)
+        logger.info(f' → {img_url}')
         if bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
-            print(' → append')
+            logger.info(' → append')
             imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
             imgs_url_now.append(img_url)
 # 時間割の画像が見つからなかった場合は終了
 if imgs_url_now == []:
     finish('画像が発見できなかったため終了(alr=yes無)')
-print('\n-------------------------------------------------------------------------------------------------------------------------------------------------')
-print(imgs_url_now)
+logger.info(f'\n現在の画像:{imgs_url_now}')
 
 # $GITHUB_OUTPUTに追加
 now = ','.join(imgs_url_now)
 subprocess.run([f'echo NOW={now} >> $GITHUB_OUTPUT'], shell=True)
 
 #----------------------------------------------------------------------------------------------------
-# Google SpreadSheetsにアクセス
+# Googleスプレッドシートへのアクセス
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope))
 ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
 
 # 最後に投稿した画像のリストを読み込み
 imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)
-print(imgs_url_latest)
+logger.info(f'過去の画像:{imgs_url_latest}\n')
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
     imgs_cv2u_latest.append(str(cv2u.urlread(e)))
@@ -174,42 +176,49 @@ if len(imgs_url_now) == len(imgs_url_latest):
     if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
         finish('画像が一致した為、終了')
     else:
-        print('画像が一致しないので続行')
+        logger.info('画像が一致しないので続行')
 else:
-    print('画像の枚数が異なるので続行')
+    logger.info('画像の枚数が異なるので続行')
 
 #----------------------------------------------------------------------------------------------------
 # 画像URLを使って画像をダウンロード
-imgs_path = []    # 画像のファイル名用リスト
+imgs_path = []    # ダウンロードする画像のパスを格納するリスト
 for i in imgs_url_now:
     with urllib.request.urlopen(i) as web_file:
         time.sleep(5)
         data = web_file.read()
-        img = str(imgs_url_now.index(i) + 1) + '.png'    # ファイル名を"リストの順番.png"に
+        img = str(imgs_url_now.index(i) + 1) + '.png'    # 画像の名前を1.png,2.png,...とする
         imgs_path.append(img)
         with open(img, mode='wb') as local_file:
             local_file.write(data)
 
-# 上書き
+# GoogleSpreadSheetsに画像URLを書き込み
 ws.update_acell('C6', ' \n'.join(imgs_url_now))
 ws.update_acell('C3', 'https://github.com/m1daily/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
+logger.info('画像DL完了、セル上書き完了\n')
 
-#----------------------------------------------------------------------------------------------------`
-# ツイート
+#----------------------------------------------------------------------------------------------------
+# tweepyの設定(認証情報を設定、APIインスタンスの作成)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth, wait_on_rate_limit=True)
+
+# Twitterに投稿
 media_ids = []
 for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
 api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+logger.info('・Twitter: ツイート完了')
 
-# LINEへ通知
+# LINE Notifyに通知
 line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
-print('\n[LINE]')
+logger.info('・LINE:')
 for key, value in line_dict.items():
     for i, image in enumerate(imgs_path, 1):
-        print(key + '-' + str(i) + '枚目: ' + line_notify(value, image))
+        logger.info(f'{key}-{i}枚目: {line_notify(value, image)}')
 
-# DiscordのWebhookを通して通知
+# Discordに通知
 payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
 embed = []
 # 画像の枚数分"embed"の値追加
@@ -222,6 +231,6 @@ for i in imgs_url_now:
 payload2['payload_json']['embeds'] = embed
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
 res = requests.post(webhook_url, data=payload2)
-print('Discord_Webhook: ' + str(res.status_code))
+logger.info(f'・Discord: {res.status_code}')
 res.raise_for_status()
 finish('投稿完了')
