@@ -89,13 +89,11 @@ def get_blob_file(driver, url):
         req.overrideMimeType('text/plain; charset=x-user-defined');
         req.send(null);
         if (req.status != 200) return '';
-
         var filestream = req.responseText;
         var bytes = [];
         for (var i = 0; i < filestream.length; i++){
             bytes[i] = filestream.charCodeAt(i) & 0xff;
         }
-
         return bytes;
     }
     """
