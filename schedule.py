@@ -84,25 +84,46 @@ def upload_imgur(image):
 
 # blob形式のURLの対策
 def get_blob_file(driver, url):
-    result = driver.execute_async_script("""
-        var url = arguments[0];
-        var callback = arguments[1];
-        var toBase64 = function(buffer){for(var r,n=new Uint8Array(buffer),t=n.length,a=new Uint8Array(4*Math.ceil(t/3)),i=new Uint8Array(64),o=0,c=0;64>c;++c)i[c]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".charCodeAt(c);for(c=0;t-t%3>c;c+=3,o+=4)r=n[c]<<16|n[c+1]<<8|n[c+2],a[o]=i[r>>18],a[o+1]=i[r>>12&63],a[o+2]=i[r>>6&63],a[o+3]=i[63&r];return t%3===1?(r=n[t-1],a[o]=i[r>>2],a[o+1]=i[r<<4&63],a[o+2]=61,a[o+3]=61):t%3===2&&(r=(n[t-2]<<8)+n[t-1],a[o]=i[r>>10],a[o+1]=i[r>>4&63],a[o+2]=i[r<<2&63],a[o+3]=61),new TextDecoder("ascii").decode(a)};
-        var xhr = new XMLHttpRequest();
-        xhr.responseType = 'arraybuffer';
-        xhr.onload = function(){ callback(toBase64(xhr.response)) };
-        xhr.onerror = function(){ callback(xhr.status) };
-        xhr.open('GET', url);
-        xhr.send();
-        """, url)
-    if type(result) == int :
-        raise Exception("Request failed with status %s" % result)
-    jpg = np.frombuffer(base64.b64decode(result), dtype=np.uint8)
+    js = """
+    var getBinaryResourceText = function(url) {
+        var req = new XMLHttpRequest();
+        req.open('GET', url, false);
+        req.overrideMimeType('text/plain; charset=x-user-defined');
+        req.send(null);
+        if (req.status != 200) return '';
+
+        var filestream = req.responseText;
+        var bytes = [];
+        for (var i = 0; i < filestream.length; i++){
+            bytes[i] = filestream.charCodeAt(i) & 0xff;
+        }
+
+        return bytes;
+    }
+    """
+    js += "return getBinaryResourceText(\"{url}\");".format(url=url)
+
+    data_bytes = driver.execute_script(js)
+    with open('blob.jpeg', 'wb') as bin_out:
+        bin_out.write(bytes(data_bytes))
+    # result = driver.execute_async_script("""
+    #     var url = arguments[0];
+    #     var callback = arguments[1];
+    #     var toBase64 = function(buffer){for(var r,n=new Uint8Array(buffer),t=n.length,a=new Uint8Array(4*Math.ceil(t/3)),i=new Uint8Array(64),o=0,c=0;64>c;++c)i[c]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".charCodeAt(c);for(c=0;t-t%3>c;c+=3,o+=4)r=n[c]<<16|n[c+1]<<8|n[c+2],a[o]=i[r>>18],a[o+1]=i[r>>12&63],a[o+2]=i[r>>6&63],a[o+3]=i[63&r];return t%3===1?(r=n[t-1],a[o]=i[r>>2],a[o+1]=i[r<<4&63],a[o+2]=61,a[o+3]=61):t%3===2&&(r=(n[t-2]<<8)+n[t-1],a[o]=i[r>>10],a[o+1]=i[r>>4&63],a[o+2]=i[r<<2&63],a[o+3]=61),new TextDecoder("ascii").decode(a)};
+    #     var xhr = new XMLHttpRequest();
+    #     xhr.responseType = 'arraybuffer';
+    #     xhr.onload = function(){ callback(toBase64(xhr.response)) };
+    #     xhr.onerror = function(){ callback(xhr.status) };
+    #     xhr.open('GET', url);
+    #     xhr.send();
+    #     """, url)
+    # if type(result) == int :
+    #     raise Exception("Request failed with status %s" % result)
+    # jpg = np.frombuffer(base64.b64decode(result), dtype=np.uint8)
     # cv2.imwrite('blob.jpeg', cv2.imdecode(jpg, cv2.IMREAD_COLOR))
-    with open("blob.jpeg", "wb") as fh:
-        fh.write(base64.decodebytes(url))
     image = upload_imgur('blob.jpeg')
     return image
+
 
 
 #----------------------------------------------------------------------------------------------------
