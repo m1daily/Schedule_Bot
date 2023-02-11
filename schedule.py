@@ -1,12 +1,10 @@
 import ast
-import base64  # blob対策
 import datetime  # 日付取得
 import json  # webhook用
 import os  # 環境変数用
 import subprocess  # GitHubActionsの環境変数追加
 import time  # 待機
 import urllib.request  # 画像取得
-import cv2
 import cv2u  # 画像URLから読み込み
 import gspread
 import numpy as np
@@ -105,24 +103,8 @@ def get_blob_file(driver, url):
     data_bytes = driver.execute_script(js)
     with open('blob.png', 'wb') as bin_out:
         bin_out.write(bytes(data_bytes))
-    # result = driver.execute_async_script("""
-    #     var url = arguments[0];
-    #     var callback = arguments[1];
-    #     var toBase64 = function(buffer){for(var r,n=new Uint8Array(buffer),t=n.length,a=new Uint8Array(4*Math.ceil(t/3)),i=new Uint8Array(64),o=0,c=0;64>c;++c)i[c]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".charCodeAt(c);for(c=0;t-t%3>c;c+=3,o+=4)r=n[c]<<16|n[c+1]<<8|n[c+2],a[o]=i[r>>18],a[o+1]=i[r>>12&63],a[o+2]=i[r>>6&63],a[o+3]=i[63&r];return t%3===1?(r=n[t-1],a[o]=i[r>>2],a[o+1]=i[r<<4&63],a[o+2]=61,a[o+3]=61):t%3===2&&(r=(n[t-2]<<8)+n[t-1],a[o]=i[r>>10],a[o+1]=i[r>>4&63],a[o+2]=i[r<<2&63],a[o+3]=61),new TextDecoder("ascii").decode(a)};
-    #     var xhr = new XMLHttpRequest();
-    #     xhr.responseType = 'arraybuffer';
-    #     xhr.onload = function(){ callback(toBase64(xhr.response)) };
-    #     xhr.onerror = function(){ callback(xhr.status) };
-    #     xhr.open('GET', url);
-    #     xhr.send();
-    #     """, url)
-    # if type(result) == int :
-    #     raise Exception("Request failed with status %s" % result)
-    # jpg = np.frombuffer(base64.b64decode(result), dtype=np.uint8)
-    # cv2.imwrite('blob.jpeg', cv2.imdecode(jpg, cv2.IMREAD_COLOR))
     image = upload_imgur('blob.png')
     return image
-
 
 
 #----------------------------------------------------------------------------------------------------
@@ -212,7 +194,7 @@ for i in imgs_url_now:
 
 # 上書き
 ws.update_acell('C6', ' \n'.join(imgs_url_now))
-ws.update_acell('C3', 'https://github.com/Geusen/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
+ws.update_acell('C3', 'https://github.com/m1daily/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 
 #----------------------------------------------------------------------------------------------------`
 # ツイート
