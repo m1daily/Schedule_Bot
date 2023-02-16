@@ -59,6 +59,7 @@ def line_notify(line_access_token, image):
     payload = {'message': '時間割が更新されました。'}
     files = {'imageFile': open(image, 'rb')}
     r = requests.post(line_url, headers=headers, params=payload, files=files)
+    r.raise_for_status()
     return str(r.status_code)
 
 # 終了時用

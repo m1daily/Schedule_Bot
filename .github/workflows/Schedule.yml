@@ -41,11 +41,11 @@ jobs:
           echo '::group::pip install --upgrade pip'
           python -m pip install --upgrade pip==23.0
           pip install get-chrome-driver==1.3.10
-          pip install selenium==4.8.0
-          pip install python-opencv-utils==0.0.4
-          pip install tweepy==4.12.1
           pip install gspread==5.7.2
           pip install oauth2client==4.1.3
+          pip install python-opencv-utils==0.0.4
+          pip install selenium==4.8.0
+          pip install tweepy==4.12.1
           echo '::endgroup::'
           python -B schedule.py
       - name: GitHub Summary
