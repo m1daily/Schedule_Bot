@@ -5,14 +5,14 @@ on:
     - cron: '0 7 * * *'
 
 env:  #環境変数から文字列(パスワードなど)を取得
-  ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
-  ACCESS_TOKEN_SECRET: ${{secrets.ACCESS_TOKEN_SECRET}}
-  CONSUMER_KEY: ${{secrets.CONSUMER_KEY}}
-  CONSUMER_SECRET: ${{secrets.CONSUMER_SECRET}}
-  WEBHOOK: ${{secrets.WEBHOOK_NEWS}}
-  JSON: ${{secrets.JSON}}
-  SHEET_ID: ${{secrets.SHEET_ID}}
-  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+  CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
+  CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
+  WEBHOOK: ${{ secrets.WEBHOOK_NEWS }}
+  JSON: ${{ secrets.JSON }}
+  SHEET_ID: ${{ secrets.SHEET_ID }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   TZ: 'Asia/Tokyo'
 concurrency:  # 同時にworkflowが実行されたらキャンセル
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,6 +20,7 @@ concurrency:  # 同時にworkflowが実行されたらキャンセル
 jobs:
   python:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3

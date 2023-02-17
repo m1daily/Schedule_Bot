@@ -46,9 +46,7 @@ access_token = os.environ['ACCESS_TOKEN']    # Twitterアカウントに対す�
 access_token_secret = os.environ['ACCESS_TOKEN_SECRET']    # Twitterアカウントに対するアクセストークンシークレット
 
 # LINE,Discordのtoken設定(伏せています)
-notify_group = os.environ['LINE_NOTIFY']    # 時間割LINEグループのトークン
-notify_27 = os.environ['LINE_NOTIFY_27']    # 自分のクラスのライングループのトークン
-notify_13 = os.environ['LINE_NOTIFY_13']    # 13組のライングループのトークン
+line_dict = ast.literal_eval(os.environ['LINE_NOTIFY'])    # 時間割LINEグループのトークン
 webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebhookのURL
 imgur = os.environ['IMGUR']    # 画像URL取得用
 
@@ -86,7 +84,7 @@ def upload_imgur(image):
 
 # blob形式のURLの対策
 def get_blob_file(driver, url):
-    js = """
+    js = '''
     var getBinaryResourceText = function(url) {
         var req = new XMLHttpRequest();
         req.open('GET', url, false);
@@ -100,8 +98,8 @@ def get_blob_file(driver, url):
         }
         return bytes;
     }
-    """
-    js += "return getBinaryResourceText(\"{url}\");".format(url=url)
+    '''
+    js += 'return getBinaryResourceText("{url}");'.format(url=url)
     data_bytes = driver.execute_script(js)
     with open('blob.png', 'wb') as bin_out:
         bin_out.write(bytes(data_bytes))
@@ -213,7 +211,6 @@ api.update_status(status='時間割が更新されました！', media_ids=media
 logger.info('Twitter: ツイート完了')
 
 # LINE Notifyに通知
-line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
 logger.info('LINE:')
 for key, value in line_dict.items():
     for i, image in enumerate(imgs_path, 1):
