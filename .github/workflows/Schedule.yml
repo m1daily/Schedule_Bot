@@ -15,6 +15,8 @@ env:  # 環境変数から文字列(パスワードなど)を取得
   CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
   GOOGLE_URL: ${{ secrets.GOOGLE_URL }}
   LINE_NOTIFY: ${{ secrets.LINE_NOTIFY }}
+  LINE_NOTIFY_27: ${{ secrets.LINE_NOTIFY_27 }}
+  LINE_NOTIFY_13: ${{ secrets.LINE_NOTIFY_13 }}
   WEBHOOK: ${{ secrets.WEBHOOK }}
   IMGUR: ${{ secrets.IMGUR }}
   JSON: ${{ secrets.JSON }}
