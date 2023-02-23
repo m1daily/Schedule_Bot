@@ -194,6 +194,7 @@ for i in imgs_url_now:
             local_file.write(data)
 
 # GoogleSpreadSheetsに画像URLを書き込み
+ws.update.acell('C2', time_now)
 ws.update_acell('C6', ' \n'.join(imgs_url_now))
 ws.update_acell('C3', 'https://github.com/m1daily/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 logger.info('画像DL完了、セル上書き完了\n')
