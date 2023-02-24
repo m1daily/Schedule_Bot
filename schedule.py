@@ -236,8 +236,8 @@ r = requests.post(webhook_url, data=payload2)
 logger.info(f'Discord: {r.status_code}')
 r.raise_for_status()
 
+# One SignalでWeb Push通知
 headers = {'Authorization': 'Basic ' + os.environ['API_KEY'], 'accept': 'application/json', 'content-type': 'application/json'}
-
 json_data = {
     'included_segments': [
         'Subscribed Users',
