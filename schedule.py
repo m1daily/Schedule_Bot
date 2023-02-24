@@ -194,7 +194,7 @@ for i in imgs_url_now:
             local_file.write(data)
 
 # GoogleSpreadSheetsに画像URLを書き込み
-ws.update.acell('C2', time_now)
+ws.update_acell('C2', time_now)
 ws.update_acell('C6', ' \n'.join(imgs_url_now))
 ws.update_acell('C3', 'https://github.com/m1daily/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
 logger.info('画像DL完了、セル上書き完了\n')
@@ -232,7 +232,26 @@ for i in imgs_url_now:
     embed.append(img_embed)
 payload2['payload_json']['embeds'] = embed
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-res = requests.post(webhook_url, data=payload2)
-logger.info(f'Discord: {res.status_code}')
-res.raise_for_status()
+r = requests.post(webhook_url, data=payload2)
+logger.info(f'Discord: {r.status_code}')
+r.raise_for_status()
+
+headers = {'Authorization': 'Basic ' + os.environ['API_KEY'], 'accept': 'application/json', 'content-type': 'application/json'}
+
+json_data = {
+    'included_segments': [
+        'Subscribed Users',
+        'Active Users',
+        'Inactive Users',
+    ],
+    'contents': {
+        'en': '時間割が更新されました。',
+        'ja': '時間割が更新されました。',
+    },
+    'name': 'mito1daily',
+    'app_id': os.environ['APP_ID'],
+}
+r = requests.post('https://onesignal.com/api/v1/notifications', headers=headers, json=json_data)
+logger.info(f'One Signal: {r.status_code}')
+r.raise_for_status()
 finish('投稿完了')

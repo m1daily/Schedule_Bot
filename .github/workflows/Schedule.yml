@@ -11,16 +11,18 @@ on:
 env:  # 環境変数から文字列(パスワードなど)を取得
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
   ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+  API_KEY: ${{ secrets.API_KEY }}
+  APP_ID: ${{ secrets.APP_ID }}
   CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
   CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
   GOOGLE_URL: ${{ secrets.GOOGLE_URL }}
+  IMGUR: ${{ secrets.IMGUR }}
+  JSON: ${{ secrets.JSON }}
   LINE_NOTIFY: ${{ secrets.LINE_NOTIFY }}
   LINE_NOTIFY_27: ${{ secrets.LINE_NOTIFY_27 }}
   LINE_NOTIFY_13: ${{ secrets.LINE_NOTIFY_13 }}
-  WEBHOOK: ${{ secrets.WEBHOOK }}
-  IMGUR: ${{ secrets.IMGUR }}
-  JSON: ${{ secrets.JSON }}
   SHEET_ID: ${{ secrets.SHEET_ID }}
+  WEBHOOK: ${{ secrets.WEBHOOK }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   RUN_NUMBER: ${{ github.run_number }}
   RUN_ID: ${{ github.run_id }}
@@ -58,14 +60,4 @@ jobs:
           echo -e '- #### ステータス: ${{ steps.results.outputs.STATUS }}' >> $GITHUB_STEP_SUMMARY
           echo -e '- #### 現在の時間割:\n${{ steps.results.outputs.NOW }}' >> $GITHUB_STEP_SUMMARY
           echo -e '- #### 過去の時間割:\n${{ steps.results.outputs.BEFORE }}' >> $GITHUB_STEP_SUMMARY
-      - name: Web Notify
-        if: ${{ steps.results.outputs.STATUS == '投稿完了' }}
-        run: |
-          curl \
-            -X POST \
-            -H "Authorization: token ${{ secrets.TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/m1daily/m1notify/dispatches \
-            -d '{"event_type":"from-m1schedule", "client_payload":{"url": steps.results.outputs.NOW}}'
-        env:
-          TOKEN: ${{ secrets.TOKEN }}
+
