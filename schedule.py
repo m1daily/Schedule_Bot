@@ -46,7 +46,7 @@ access_token = os.environ['ACCESS_TOKEN']    # Twitterアカウントに対す�
 access_token_secret = os.environ['ACCESS_TOKEN_SECRET']    # Twitterアカウントに対するアクセストークンシークレット
 
 # LINE,Discordのtoken設定(伏せています)
-line_dict = ast.literal_eval(os.environ['LINE_NOTIFY'])    # INEグループのトークン
+line_dict = ast.literal_eval(os.environ['LINE_NOTIFY'])    # LINEグループのトークン(JSON形式)
 webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebhookのURL
 imgur = os.environ['IMGUR']    # 画像URL取得用
 
