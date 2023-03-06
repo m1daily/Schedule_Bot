@@ -136,58 +136,58 @@ ws.update_acell('C6', ' \n'.join(imgs_url_now))
 logger.info('画像DL完了、セル上書き完了\n')
 
 #----------------------------------------------------------------------------------------------------
-# # tweepyの設定(認証情報を設定、APIインスタンスの作成)
-# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-# auth.set_access_token(access_token, access_token_secret)
-# api = tweepy.API(auth, wait_on_rate_limit=True)
+# tweepyの設定(認証情報を設定、APIインスタンスの作成)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth, wait_on_rate_limit=True)
 
-# # Twitterに投稿
-# media_ids = []
-# for image in imgs_path:
-#    img = api.media_upload(image)
-#    media_ids.append(img.media_id)
-# api.update_status(status='時間割が更新されました！', media_ids=media_ids)
-# logger.info('Twitter: ツイート完了')
+# Twitterに投稿
+media_ids = []
+for image in imgs_path:
+   img = api.media_upload(image)
+   media_ids.append(img.media_id)
+api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+logger.info('Twitter: ツイート完了')
 
-# # LINE Notifyに通知
-# line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
-# logger.info('LINE:')
-# for key, value in line_dict.items():
-#     for i, image in enumerate(imgs_path, 1):
-#         logger.info(f'{key}-{i}枚目: {line_notify(value, image)}')
+# LINE Notifyに通知
+line_dict = {'公式グループ' : notify_group, '27組' : notify_27, '13組' : notify_13}
+logger.info('LINE:')
+for key, value in line_dict.items():
+    for i, image in enumerate(imgs_path, 1):
+        logger.info(f'{key}-{i}枚目: {line_notify(value, image)}')
 
-# # Discordに通知
-# payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
-# embed = []
-# # 画像の枚数分"embed"の値追加
-# for i in imgs_url_now:
-#     if imgs_url_now.index(i) == 0:
-#         img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-#     else:
-#         img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
-#     embed.append(img_embed)
-# payload2['payload_json']['embeds'] = embed
-# payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
-# r = requests.post(webhook_url, data=payload2)
-# logger.info(f'Discord: {r.status_code}')
-# r.raise_for_status()
+# Discordに通知
+payload2 = {'payload_json' : {'content' : '@everyone\n時間割が更新されました。'}}
+embed = []
+# 画像の枚数分"embed"の値追加
+for i in imgs_url_now:
+    if imgs_url_now.index(i) == 0:
+        img_embed = {'color' : 10931421, 'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+    else:
+        img_embed = {'url' : 'https://www.google.com/', 'image' : {'url' : i}}
+    embed.append(img_embed)
+payload2['payload_json']['embeds'] = embed
+payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
+r = requests.post(webhook_url, data=payload2)
+logger.info(f'Discord: {r.status_code}')
+r.raise_for_status()
 
-# # One SignalでWeb Push通知
-# headers = {'Authorization': 'Basic ' + os.environ['API_KEY'], 'accept': 'application/json', 'content-type': 'application/json'}
-# json_data = {
-#     'included_segments': [
-#         'Subscribed Users',
-#         'Active Users',
-#         'Inactive Users',
-#     ],
-#     'contents': {
-#         'en': '時間割が更新されました。',
-#         'ja': '時間割が更新されました。',
-#     },
-#     'name': 'mito1daily',
-#     'app_id': os.environ['APP_ID'],
-# }
-# r = requests.post('https://onesignal.com/api/v1/notifications', headers=headers, json=json_data)
-# logger.info(f'One Signal: {r.status_code}')
-# r.raise_for_status()
-# finish('投稿完了')
+# One SignalでWeb Push通知
+headers = {'Authorization': 'Basic ' + os.environ['API_KEY'], 'accept': 'application/json', 'content-type': 'application/json'}
+json_data = {
+    'included_segments': [
+        'Subscribed Users',
+        'Active Users',
+        'Inactive Users',
+    ],
+    'contents': {
+        'en': '時間割が更新されました。',
+        'ja': '時間割が更新されました。',
+    },
+    'name': 'mito1daily',
+    'app_id': os.environ['APP_ID'],
+}
+r = requests.post('https://onesignal.com/api/v1/notifications', headers=headers, json=json_data)
+logger.info(f'One Signal: {r.status_code}')
+r.raise_for_status()
+finish('投稿完了')
