@@ -12,7 +12,7 @@ import cv2u  # 画像URLから読み込み
 import gspread  # SpreadSheet操作
 import requests  # LINE・Discord送信
 import tweepy  # Twitter送信
-from bs4 import BeautifulSoup  # BeautifulSoupクラスをインポート
+from bs4 import BeautifulSoup  # 画像取得
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
 
 #----------------------------------------------------------------------------------------------------
