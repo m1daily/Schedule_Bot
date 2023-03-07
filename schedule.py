@@ -12,11 +12,8 @@ import cv2u  # 画像URLから読み込み
 import gspread  # SpreadSheet操作
 import requests  # LINE・Discord送信
 import tweepy  # Twitter送信
+from bs4 import BeautifulSoup  # 画像取得
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
-from selenium import webdriver  # ブラウザ操作
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
 
 #----------------------------------------------------------------------------------------------------
 # 日付取得
@@ -48,7 +45,6 @@ access_token_secret = os.environ['ACCESS_TOKEN_SECRET']    # Twitterアカウン
 # LINE,Discordのtoken設定(伏せています)
 line_dict = ast.literal_eval(os.environ['LINE_NOTIFY'])    # LINEグループのトークン(JSON形式)
 webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebhookのURL
-imgur = os.environ['IMGUR']    # 画像URL取得用
 
 # LINEの設定
 def line_notify(line_access_token, image):
@@ -66,63 +62,14 @@ def finish(exit_message):
     subprocess.run([f'echo STATUS={exit_message} >> $GITHUB_OUTPUT'], shell=True)
     exit()
 
-# Imgurアップロード
-def upload_imgur(image):
-    headers = {'authorization': f'Client-ID {imgur}'}
-    if 'http' in image:
-        with urllib.request.urlopen(image) as web_file:
-            time.sleep(3)
-            data = web_file.read()
-            with open('imgur.png', mode='wb') as local_file:
-                local_file.write(data)
-            image = 'imgur.png'
-    files = {'image': (open(image, 'rb'))}
-    time.sleep(2)
-    r = requests.post('https://api.imgur.com/3/upload', headers=headers, files=files)
-    r.raise_for_status()
-    return json.loads(r.text)['data']['link']
-
-# blob形式のURLの対策
-def get_blob_file(driver, url):
-    js = '''
-    var getBinaryResourceText = function(url) {
-        var req = new XMLHttpRequest();
-        req.open('GET', url, false);
-        req.overrideMimeType('text/plain; charset=x-user-defined');
-        req.send(null);
-        if (req.status != 200) return '';
-        var filestream = req.responseText;
-        var bytes = [];
-        for (var i = 0; i < filestream.length; i++){
-            bytes[i] = filestream.charCodeAt(i) & 0xff;
-        }
-        return bytes;
-    }
-    '''
-    js += 'return getBinaryResourceText("{url}");'.format(url=url)
-    data_bytes = driver.execute_script(js)
-    with open('blob.png', 'wb') as bin_out:
-        bin_out.write(bytes(data_bytes))
-    image = upload_imgur('blob.png')
-    return image
-
-#----------------------------------------------------------------------------------------------------
-# Chromeヘッドレスモード起動
-options = webdriver.ChromeOptions()
-options.add_argument('--headless')
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage')
-driver = webdriver.Chrome('chromedriver', options=options)
-driver.implicitly_wait(5)
 logger.info('セットアップ完了')
 
-# Googleスプレッドシートへ移動(URLは伏せています)
-driver.get(os.environ['GOOGLE_URL'])    # 時間割の画像があるGoogleSpreadSheetのURL
-WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located)
-time.sleep(10)
-
+#----------------------------------------------------------------------------------------------------
 # imgタグを含むものを抽出
-imgs_tag = driver.find_elements(By.TAG_NAME, 'img')
+imgs_tag = []
+soup = BeautifulSoup(requests.get(os.environ['GOOGLE_URL'],).text, 'html.parser')
+for i in soup.find('div', id='0').select('img'):
+    imgs_tag.append(i.get('src'))
 if imgs_tag == []:
     finish('画像が発見できなかったため終了(img無)')
 logger.info('imgタグ抽出\n')
@@ -131,22 +78,11 @@ logger.info('imgタグ抽出\n')
 imgs_cv2u_now = []    # cv2u用リスト(現在)
 imgs_url_now = []     # URLリスト(現在)
 for index, e in enumerate(imgs_tag, 1):
-    img_url = e.get_attribute('src')
-    logger.info(f'{index}枚目: {img_url}')
-    # URLがBlob形式又は「alr=yes」が含まれる場合はImgurに画像アップロード
-    if ('blob:' in img_url) or ('alr=yes' in img_url):
-        if 'blob:' in img_url:
-            img_url = get_blob_file(driver, img_url)
-        else:
-            img_url = upload_imgur(img_url)
-        logger.info(f' → {img_url}')
-        if bool(str(cv2u.urlread(img_url)) in imgs_cv2u_now) == False:
-            logger.info(' → append')
-            imgs_cv2u_now.append(str(cv2u.urlread(img_url)))
-            imgs_url_now.append(img_url)
-# 時間割の画像が見つからなかった場合は終了
-if imgs_url_now == []:
-    finish('画像が発見できなかったため終了(alr=yes無)')
+    logger.info(f'{index}枚目: {e}')
+    if bool(str(cv2u.urlread(e)) in imgs_cv2u_now) == False:
+        logger.info(' → append')
+        imgs_cv2u_now.append(str(cv2u.urlread(e)))
+        imgs_url_now.append(e)
 logger.info(f'現在の画像:{imgs_url_now}')
 
 # $GITHUB_OUTPUTに追加
@@ -157,7 +93,12 @@ subprocess.run([f'echo NOW={now} >> $GITHUB_OUTPUT'], shell=True)
 # Googleスプレッドシートへのアクセス
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope))
-ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
+try:
+    ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
+except:
+    logger.warning('Googleスプレッドシートへのアクセス失敗\n')
+    subprocess.run(['echo STATUS=Googleスプレッドシートへのアクセス失敗 >> $GITHUB_OUTPUT'], shell=True)
+    exit()
 
 # 最後に投稿した画像のリストを読み込み
 imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)
@@ -193,8 +134,8 @@ for i in imgs_url_now:
 
 # GoogleSpreadSheetsに画像URLを書き込み
 ws.update_acell('C2', time_now)
-ws.update_acell('C6', ' \n'.join(imgs_url_now))
 ws.update_acell('C3', 'https://github.com/m1daily/Schedule_Bot/actions/runs/' + str(os.environ['RUN_ID']))
+ws.update_acell('C6', ' \n'.join(imgs_url_now))
 logger.info('画像DL完了、セル上書き完了\n')
 
 #----------------------------------------------------------------------------------------------------
