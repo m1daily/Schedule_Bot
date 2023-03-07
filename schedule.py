@@ -69,7 +69,7 @@ logger.info('セットアップ完了')
 #----------------------------------------------------------------------------------------------------
 # imgタグを含むものを抽出
 imgs_tag = []
-soup = BeautifulSoup(requests.get(os.environ['GOOGLE_URL']).text, 'lxml')
+soup = BeautifulSoup(requests.get(os.environ['GOOGLE_URL'],).text, 'html.parser')
 for i in soup.find('div', id='0').select('img'):
     imgs_tag.append(i.get('src'))
 if imgs_tag == []:
@@ -95,7 +95,12 @@ subprocess.run([f'echo NOW={now} >> $GITHUB_OUTPUT'], shell=True)
 # Googleスプレッドシートへのアクセス
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope))
-ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
+try:
+    ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
+except:
+    logger.warning('Googleスプレッドシートへのアクセス失敗\n')
+    subprocess.run(['echo STATUS=Googleスプレッドシートへのアクセス失敗 >> $GITHUB_OUTPUT'], shell=True)
+    exit()
 
 # 最後に投稿した画像のリストを読み込み
 imgs_url_latest = ws.acell('C6').value.split()    # URLリスト(過去)

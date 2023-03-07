@@ -49,7 +49,11 @@ schedule = schedule.replace('</p>', '')
 # Google SpreadSheetsにアクセス
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope))
-ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
+try:
+    ws = gc.open_by_key(os.environ['SHEET_ID']).sheet1
+except:
+    logger.warning('Googleスプレッドシートへのアクセス失敗\n')
+    exit()
 
 # 最後に投稿した予定を読み込み
 schedule_latest = ws.acell('D6').value
