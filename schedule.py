@@ -67,7 +67,7 @@ logger.info('セットアップ完了')
 #----------------------------------------------------------------------------------------------------
 # imgタグを含むものを抽出
 imgs_tag = []
-soup = BeautifulSoup(requests.get(os.environ['GOOGLE_URL'],).text, 'html.parser')
+soup = BeautifulSoup(requests.get(os.environ['GOOGLE_URL']).text, 'html.parser')
 for i in soup.find('div', id='0').select('img'):
     imgs_tag.append(i.get('src'))
 if imgs_tag == []:
