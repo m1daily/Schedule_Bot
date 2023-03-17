@@ -32,7 +32,6 @@ concurrency:  # 同時にworkflowが実行されたらキャンセル
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
     timeout-minutes: 10    # 10分過ぎたら強制終了
     steps:
       - uses: actions/checkout@v3
