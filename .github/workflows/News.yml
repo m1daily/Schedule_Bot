@@ -20,7 +20,6 @@ concurrency:  # 同時にworkflowが実行されたらキャンセル
 jobs:
   python:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
