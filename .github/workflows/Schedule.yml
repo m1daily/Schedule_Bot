@@ -18,8 +18,6 @@ env:  # 環境変数から文字列(パスワードなど)を取得
   GOOGLE_URL: ${{ secrets.GOOGLE_URL }}
   JSON: ${{ secrets.JSON }}
   LINE_NOTIFY: ${{ secrets.LINE_NOTIFY }}
-  LINE_NOTIFY_27: ${{ secrets.LINE_NOTIFY_27 }}
-  LINE_NOTIFY_13: ${{ secrets.LINE_NOTIFY_13 }}
   SHEET_ID: ${{ secrets.SHEET_ID }}
   WEBHOOK: ${{ secrets.WEBHOOK }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
