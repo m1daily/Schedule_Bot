@@ -1,0 +1,26 @@
+name: Workflows
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 15 1,15 * *'    # 0時に動作
+concurrency:  # 同時にworkflowが実行されたらキャンセル
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REPO: ${{ github.repository }}
+    timeout-minutes: 3    # 10分過ぎたら強制終了
+    steps:
+      - uses: actions/checkout@v3
+      - name: GitHub Actions Update
+        run: |
+          gh workflow list
+          gh workflow disable 21510464
+          gh workflow enable 21510464
+          gh workflow disable 32896159
+          gh workflow enable 32896159
+          gh workflow disable 51686427
+          gh workflow enable 51686427
