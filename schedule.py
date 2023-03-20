@@ -44,6 +44,7 @@ access_token_secret = os.environ['ACCESS_TOKEN_SECRET']    # Twitterアカウン
 
 # LINE,Discordのtoken設定(伏せています)
 line_dict = ast.literal_eval(os.environ['LINE_NOTIFY'])    # LINEグループのトークン(JSON形式)
+print(line_dict)
 webhook_url = os.environ['WEBHOOK']    # Discordの時間割サーバーのWebhookのURL
 
 # LINEの設定
