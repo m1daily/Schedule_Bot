@@ -16,7 +16,6 @@ jobs:
     steps:
       - name: GitHub Actions Update
         run: |
-          git init
           gh workflow list
           gh workflow disable 21510464
           gh workflow enable 21510464
