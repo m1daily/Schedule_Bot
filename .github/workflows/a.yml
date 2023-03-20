@@ -1,7 +1,6 @@
 name: grhueiwtghrtwi
 on:
   workflow_dispatch:
-
 env:  #環境変数から文字列(パスワードなど)を取得
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -15,11 +14,11 @@ jobs:
         with:
           python-version: '3.x'
           architecture: 'x64'
-  - name: Set env as secret
-      env:
-        MY_VAL: ${{ secrets.LINE_NOTIFY_13 }}
-      run: |
-        import os
-        for q in (os.getenv("MY_VAL")):
-          print(q)
-      shell: python
+      - name: Set env as secret
+        env:
+          MY_VAL: ${{ secrets.LINE_NOTIFY_13 }}
+        run: |
+          import os
+          for q in (os.getenv("MY_VAL")):
+            print(q)
+        shell: python
