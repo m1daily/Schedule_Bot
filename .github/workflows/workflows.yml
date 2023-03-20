@@ -22,3 +22,5 @@ jobs:
           gh workflow enable 21510464
           gh workflow disable 32896159
           gh workflow enable 32896159
+          gh workflow disable 51686427
+          gh workflow enable 51686427
