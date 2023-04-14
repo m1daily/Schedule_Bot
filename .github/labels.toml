@@ -117,3 +117,8 @@ description = "機能に関する質問"
 color = "ec79a1"
 name = "5-フィードバック: 3-提案"
 description = "機能に関する提案"
+
+[dependencies]
+color = "0366d6"
+name = "dependencies"
+description = "Pull requests that update a dependency file"
