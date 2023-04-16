@@ -41,7 +41,6 @@ jobs:
         id: results
         run: |
           echo '::group::pip install --upgrade pip'
-          python -m pip install --upgrade pip==23.0
           pip install -r ./requirements.txt
           echo '::endgroup::'
           python -B schedule.py
