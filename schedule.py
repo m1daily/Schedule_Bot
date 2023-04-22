@@ -30,27 +30,6 @@ format = Formatter('[%(asctime)s] [%(levelname)s] %(message)s')
 handler.setFormatter(format)
 logger.addHandler(handler)
 
-# 月間予定取得
-json_data = requests.get(os.environ['GAS']).json()
-month_data = month_data = json_data[0]['month'].split('\n')
-days, schedules = [], []
-
-for i, day_data in enumerate(month_data):
-    day_parts = day_data.split(')')
-    for j in range(2):
-        d = day_parts[j].replace(u'\xa0', '').replace(u'\u3000', '')
-        if j == 0 or len(day_parts) > 2:
-            d = d + ")"
-        if j == 0:
-            days.append(d)
-        else:
-            schedules.append(d)
-
-day_now = int(date.strftime('%d'))
-for i in days:
-    if day_now < int(i[:2].replace("日", "")):
-        logger.info(f'最新の予定: {i} {schedules[days.index(i)]}')
-        break
 #----------------------------------------------------------------------------------------------------
 # jsonファイル準備(SpreadSheetログイン用)
 dic = ast.literal_eval(os.environ['JSON'])
@@ -85,6 +64,29 @@ def finish(exit_message):
 
 logger.info('セットアップ完了')
 
+# 月間予定取得
+json_data = requests.get(os.environ['GAS']).json()
+month_data = month_data = json_data[0]['month'].split('\n')
+days, schedules = [], []
+
+for i, day_data in enumerate(month_data):
+    day_parts = day_data.split(')')
+    for j in range(2):
+        d = day_parts[j].replace(u'\xa0', '').replace(u'\u3000', '')
+        if j == 0 or len(day_parts) > 2:
+            d = d + ")"
+        if j == 0:
+            days.append(d)
+        else:
+            schedules.append(d)
+
+day_now = int(date.strftime('%d'))
+next_day = None
+for i in days:
+    if day_now < int(i[:2].replace("日", "")):
+        next_day, next_schedule = i, schedules[days.index(i)]
+        logger.info(f'最新の予定: {next_day} {next_schedule}')
+        break
 #----------------------------------------------------------------------------------------------------
 # imgタグを含むものを抽出
 imgs_tag = []
@@ -142,6 +144,30 @@ else:
     logger.info('画像の枚数が異なるので続行')
 
 #----------------------------------------------------------------------------------------------------
+# 月間予定取得
+json_data = requests.get(os.environ['GAS']).json()
+month_data = month_data = json_data[0]['month'].split('\n')
+days, schedules = [], []
+
+for i, day_data in enumerate(month_data):
+    day_parts = day_data.split(')')
+    for j in range(2):
+        d = day_parts[j].replace(u'\xa0', '').replace(u'\u3000', '')
+        if j == 0 or len(day_parts) > 2:
+            d = d + ")"
+        if j == 0:
+            days.append(d)
+        else:
+            schedules.append(d)
+
+day_now = int(date.strftime('%d'))
+next_day = None
+for i in days:
+    if day_now < int(i[:2].replace("日", "")):
+        next_day, next_schedule = i, schedules[days.index(i)]
+        logger.info(f'最新の予定: {next_day} {next_schedule}')
+        break
+
 # 画像URLを使って画像をダウンロード
 imgs_path = []    # ダウンロードする画像のパスを格納するリスト
 for i in imgs_url_now:
@@ -170,7 +196,11 @@ media_ids = []
 for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
-api.update_status(status='時間割が更新されました！', media_ids=media_ids)
+if next_day != None:
+    message = f'時間割が更新されました！\n{next_day}に{next_schedule}があります。'
+else:
+    message = '時間割が更新されました！'
+api.update_status(status=message, media_ids=media_ids)
 logger.info('Twitter: ツイート完了')
 
 # LINE Notifyに通知
