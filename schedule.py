@@ -30,6 +30,27 @@ format = Formatter('[%(asctime)s] [%(levelname)s] %(message)s')
 handler.setFormatter(format)
 logger.addHandler(handler)
 
+# 月間予定取得
+json_data = requests.get(os.environ['GAS']).json()
+month_data = month_data = json_data[0]['month'].split('\n')
+days, schedules = [], []
+
+for i, day_data in enumerate(month_data):
+    day_parts = day_data.split(')')
+    for j in range(2):
+        d = day_parts[j].replace(u'\xa0', '').replace(u'\u3000', '')
+        if j == 0 or len(day_parts) > 2:
+            d = d + ")"
+        if j == 0:
+            days.append(d)
+        else:
+            schedules.append(d)
+
+day_now = int(date.strftime('%d'))
+for i in days:
+    if day_now < int(i[:2].replace("日", "")):
+        logger.info(f'最新の予定: {i} {schedules[days.index(i)]}')
+        break
 #----------------------------------------------------------------------------------------------------
 # jsonファイル準備(SpreadSheetログイン用)
 dic = ast.literal_eval(os.environ['JSON'])
