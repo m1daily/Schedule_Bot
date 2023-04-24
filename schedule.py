@@ -177,7 +177,7 @@ for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
 if next_day != None:
-    message = f'時間割が更新されました！\n{next_day}に {next_schedule} があります。'
+    message = f'時間割が更新されました\n{next_day}に {next_schedule} があります'
 else:
     message = '時間割が更新されました！'
 api.update_status(status=message, media_ids=media_ids)
