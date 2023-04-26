@@ -1,0 +1,36 @@
+name: Dependabot-Check
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches:
+      ref: ${{ github.head_ref }}
+  workflow_dispatch:
+env:  # 環境変数から文字列(パスワードなど)を取得
+  ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+  CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
+  CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
+  JSON: ${{ secrets.JSON }}
+  LINE_NOTIFY: ${{ secrets.LINE_NOTIFY }}
+  WEBHOOK: ${{ secrets.WEBHOOK }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  TZ: 'Asia/Tokyo'
+concurrency:  # 同時にworkflowが実行されたらキャンセル
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10    # 10分過ぎたら強制終了
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+      - name: Run python
+        run: |
+          echo '::group::pip install --upgrade pip'
+          pip install -r ./requirements.txt
+          echo '::endgroup::'
+          python -B schedule.py
