@@ -2,8 +2,6 @@ name: Dependabot-Check
 on:
   pull_request:
     types: [ opened, synchronize, reopened ]
-    branches:
-      - **
   workflow_dispatch:
 env:  # 環境変数から文字列(パスワードなど)を取得
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
