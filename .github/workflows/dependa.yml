@@ -31,4 +31,4 @@ jobs:
           echo '::group::pip install --upgrade pip'
           pip install -r ./requirements.txt
           echo '::endgroup::'
-          python -B schedule.py
+          python -B dependa.py
