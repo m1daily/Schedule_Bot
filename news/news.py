@@ -64,6 +64,8 @@ if schedule == schedule_latest:
     exit()
 else:
     logger.info('更新されているので続行\n')
+    month = soup.select_one('#box-18 > section:nth-child(4) > div.panel-heading.clearfix > span').contents[0][:2].replace("月", "")
+    ws.update_acell('D2', int(month))
     ws.update_acell('D6', schedule)
     schedule = schedule.split('\n')
 
