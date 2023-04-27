@@ -140,13 +140,18 @@ for i, day_data in enumerate(month_data):
             schedules.append(d)
 
 # 次の予定を取得
+month_now = int(date.strftime('%m'))
 day_now = int(date.strftime('%d'))
 next_day = None
-for i in days:
-    if day_now < int(i[:2].replace("日", "")):
-        next_day, next_schedule = i, schedules[days.index(i)]
-        logger.info(f'次の予定: {next_day} {next_schedule}')
-        break
+if day_now != int(ws.acell('C6').value):
+    next_day, next_schedule = days[0], schedules[0]
+    logger.info(f'次の予定: {next_day} {next_schedule}')
+else:
+    for i in days:
+        if day_now < int(i[:2].replace("日", "")):
+            next_day, next_schedule = i, schedules[days.index(i)]
+            logger.info(f'次の予定: {next_day} {next_schedule}')
+            break
 
 # 画像URLを使って画像をダウンロード
 imgs_path = []    # ダウンロードする画像のパスを格納するリスト
