@@ -123,7 +123,8 @@ else:
 #----------------------------------------------------------------------------------------------------
 # 月間予定取得
 json_data = requests.get(os.environ['GAS']).json()
-month_data = month_data = json_data[0]['month'].split('\n')
+month_data = json_data[0]['month'].split('\n')
+month_data = [i for i in month_data if i != '']
 days, schedules = [], []
 
 # 月間予定を日付と予定に分割
@@ -143,7 +144,7 @@ for i, day_data in enumerate(month_data):
 month_now = int(date.strftime('%m'))
 day_now = int(date.strftime('%d'))
 next_day = None
-if day_now != int(ws.acell('C6').value):
+if day_now != int(ws.acell('D2').value):
     next_day, next_schedule = days[0], schedules[0]
     logger.info(f'次の予定: {next_day} {next_schedule}')
 else:
