@@ -1,13 +1,16 @@
-import ast
-import json
-import os
-from logging import DEBUG, Formatter, StreamHandler, getLogger
-import gspread
-import requests
-import tweepy
-from bs4 import BeautifulSoup
-from oauth2client.service_account import ServiceAccountCredentials
-from PIL import Image, ImageDraw, ImageFont
+# 標準ライブラリ
+import ast  # 文字列→JSON
+import json  # JSONファイル読み込み
+import os  # GitHubActionsの環境変数追加
+import re  # 正規表現用
+from logging import DEBUG, Formatter, StreamHandler, getLogger  # ログ出力
+# サードパーティライブラリ
+import gspread  # SpreadSheet操作
+import requests  # Discord送信
+import tweepy  # Twitter送信
+from bs4 import BeautifulSoup  # 予定取得
+from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
+from PIL import Image, ImageDraw, ImageFont  # 画像処理
 
 
 #-----------------------------------------------------------------------------------------------------------------------------------
@@ -25,7 +28,7 @@ handler.setFormatter(format)
 logger.addHandler(handler)
 logger.info('セットアップ完了')
 
-# ユーザーエージェントを変更し、403エラー対策
+# ユーザーエージェントを変更、403エラー対策
 ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
 headers = {'User-Agent': ua}
 
@@ -40,12 +43,28 @@ logger.info('要素抽出完了\n')
 # 余計な文字列を削除
 for i in schedule.select('br'):
     i.replace_with('\n')
-schedule.text.strip()
-schedule = str(schedule)
-schedule = schedule.replace('<p>', '')
-schedule = schedule.replace('<p style="text-align: left;">', '')
-schedule = schedule.replace('</p>', '')
 
+# 外観調整
+schedule = schedule.text.replace('※変更の場合あり', '').split('\n')
+schedule = list(filter(None, schedule))
+li = []
+for i in range(len(schedule)):
+    news = schedule[i].translate(str.maketrans({'　': '', ' ': '', '（': '(', '）': ')', u'\xa0': '', u'\u3000': ''}))  # 余計なスペースを削除、全角括弧を半角括弧に変換
+    news = news.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))  # 全角数字を半角数字に変換
+    news = news.strip()  # 文字列の先頭と末尾の空白を削除
+    if re.match('\d', news[0]) is not None:  # 先頭が数字の場合
+        if news[0] != '1' or news[1] != '日':  # 1日以外の場合、改行を追加
+            news = '\n' + news
+    elif news[0] == '(':  # 先頭が半角括弧の場合、そのまま
+        news = news
+    else:  # それ以外の場合、カンマを追加
+        news = '、' + news
+    li.append(news)
+li[0] = li[0].replace('\n', '')
+txt = ''.join(li)
+logger.info(txt)
+
+#-----------------------------------------------------------------------------------------------------------------------------------
 # Google SpreadSheetsにアクセス
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name('gss.json', scope))
@@ -55,37 +74,15 @@ except:
     logger.warning('Googleスプレッドシートへのアクセス失敗\n')
     exit()
 
-# 最後に投稿した予定を読み込み
-schedule_latest = ws.acell('D6').value
-
 # テキスト比較
-if schedule == schedule_latest:
+if txt == ws.acell('D6').value:
     logger.info('更新されていないので終了')
     exit()
 else:
     logger.info('更新されているので続行\n')
     month = soup.select_one('#box-18 > section:nth-child(4) > div.panel-heading.clearfix > span').contents[0][:2].replace("月", "")
     ws.update_acell('D2', int(month))
-    ws.update_acell('D6', schedule)
-    schedule = schedule.split('\n')
-
-# 外観調整
-li = []
-for i in schedule:
-    news = ''.join(i.split())
-    table = str.maketrans('（）', '()')
-    news = news.translate(table)
-    news = news.strip()
-    if news[0].isdecimal() == True:
-        news = '\n' + news
-    elif news[0] == '(':
-        news = news
-    else:
-        news = ',    ' + news
-    li.append(news)
-# リスト結合
-txt = ''.join(li)
-logger.info(txt)
+    ws.update_acell('D6', txt)
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # 画像に文字を入れる
