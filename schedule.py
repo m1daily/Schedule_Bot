@@ -6,7 +6,7 @@ import os  # GitHubActionsの環境変数追加
 import subprocess  # GitHubActionsの環境変数追加
 import time  # スリープ用
 import urllib.request  # 画像取得
-from logging import DEBUG, Formatter, StreamHandler, getLogger
+from logging import DEBUG, Formatter, StreamHandler, getLogger  # ログ出力
 # サードパーティライブラリ
 import cv2u  # 画像URLから読み込み
 import gspread  # SpreadSheet操作
@@ -121,17 +121,12 @@ else:
     logger.info('画像の枚数が異なるので続行')
 
 #----------------------------------------------------------------------------------------------------
-# 月間予定取得
-json_data = requests.get(os.environ['GAS']).json()
-month_data = json_data[0]['month'].split('\n')
-month_data = [i for i in month_data if i != '']
-days, schedules = [], []
-
 # 月間予定を日付と予定に分割
+month_data = ws.acell('D6').value.split('\n')
+days, schedules = [], []
 for i, day_data in enumerate(month_data):
     day_parts = day_data.split(')')
     for j in range(2):
-        d = day_parts[j].replace(u'\xa0', '').replace(u'\u3000', '')  # スペースを削除
         # 日付の場合「)」を追加
         if j == 0 or len(day_parts) > 2:
             d = d + ")"
