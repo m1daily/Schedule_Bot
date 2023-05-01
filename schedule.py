@@ -127,6 +127,7 @@ days, schedules = [], []
 for i, day_data in enumerate(month_data):
     day_parts = day_data.split(')')
     for j in range(2):
+        d = day_parts[j]
         # 日付の場合「)」を追加
         if j == 0 or len(day_parts) > 2:
             d = d + ")"
