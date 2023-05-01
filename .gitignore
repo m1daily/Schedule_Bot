@@ -1,8 +1,17 @@
+# Python Cache
 *.pyc
+
+# images
 *.png
+*.jpg
+*.jpeg
+
+# secrets
 *env*
-*test*
+.secrets
+
+# vscode
 .vscode
 .actrc
-.secrets
-!/news/news.png
+
+*test*
