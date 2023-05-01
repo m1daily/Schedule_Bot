@@ -13,6 +13,7 @@ import gspread  # SpreadSheet操作
 import requests  # LINE・Discord送信
 import tweepy  # Twitter送信
 from bs4 import BeautifulSoup  # 画像取得
+from misskey import Misskey  # Misskey送信
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
 
 #----------------------------------------------------------------------------------------------------
@@ -206,6 +207,16 @@ payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=Fal
 r = requests.post(webhook_url, data=payload2)
 logger.info(f'Discord: {r.status_code}')
 r.raise_for_status()
+
+# Misskeyに投稿
+mk = Misskey('https://misskey.io/', i=os.environ['MISSKEY'])
+misskey_ids = []
+for i, path in enumerate(imgs_path, 1):
+    with open(path, "rb") as f:
+        data = mk.drive_files_create(f, name=date.strftime('%y-%m-%d_%H-%M_')+str(i), folder_id='9e8gee0xd2')
+        data['id'].append(misskey_ids)
+mk.notes_create(message, visibility='home', file_ids=misskey_ids)
+logger.info('Misskey: 投稿完了')
 
 # One SignalでWeb Push通知
 headers = {'Authorization': 'Basic ' + os.environ['API_KEY'], 'accept': 'application/json', 'content-type': 'application/json'}

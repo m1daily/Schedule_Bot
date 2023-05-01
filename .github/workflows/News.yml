@@ -9,9 +9,10 @@ env:  #環境変数から文字列(パスワードなど)を取得
   ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
   CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
   CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
-  WEBHOOK: ${{ secrets.WEBHOOK_NEWS }}
+  MISSKEY_URL: ${{ secrets.MISSKEY }}
   JSON: ${{ secrets.JSON }}
   SHEET_ID: ${{ secrets.SHEET_ID }}
+  WEBHOOK: ${{ secrets.WEBHOOK_NEWS }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   TZ: 'Asia/Tokyo'
 concurrency:  # 同時にworkflowが実行されたらキャンセル
