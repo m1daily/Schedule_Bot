@@ -1,5 +1,6 @@
 # 標準ライブラリ
 import ast  # 文字列→JSON
+import datetime  # 日付取得
 import json  # JSONファイル読み込み
 import os  # GitHubActionsの環境変数追加
 import re  # 正規表現用
@@ -9,6 +10,7 @@ import gspread  # SpreadSheet操作
 import requests  # Discord送信
 import tweepy  # Twitter送信
 from bs4 import BeautifulSoup  # 予定取得
+from misskey import Misskey  # Misskey送信
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
 from PIL import Image, ImageDraw, ImageFont  # 画像処理
 
@@ -136,3 +138,11 @@ files_qiita = {
 payload2['payload_json'] = json.dumps(payload2['payload_json'], ensure_ascii=False)
 res = requests.post(webhook_url, files = files_qiita, data = payload2)
 logger.info(f'Discord: {res.status_code}')
+
+# Misskeyに投稿
+date = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+mk = Misskey('https://misskey.io/', i=os.environ['MISSKEY'])
+with open('image.png', "rb") as f:
+    data = mk.drive_files_create(f, name=date.strftime('news_%y-%m-%d_%H-%M'), folder_id='9e8gee0xd2')
+mk.notes_create('今月の予定です。', visibility='home', file_ids=[data['id']])
+logger.info('Misskey: 投稿完了')
