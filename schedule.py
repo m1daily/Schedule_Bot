@@ -212,7 +212,7 @@ r.raise_for_status()
 mk = Misskey('https://misskey.io/', i=os.environ['MISSKEY'])
 misskey_ids = []
 for i, path in enumerate(imgs_path, 1):
-    with open(path, "rb") as f:
+    with open(path, 'rb') as f:
         data = mk.drive_files_create(f, name=date.strftime('%y-%m-%d_%H-%M_')+str(i), folder_id='9e8gee0xd2')
         data['id'].append(misskey_ids)
 mk.notes_create(message, visibility='home', file_ids=misskey_ids)
