@@ -16,12 +16,7 @@ from bs4 import BeautifulSoup  # 画像取得
 from misskey import Misskey  # Misskey送信
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
 
-if os.environ["DEBUG"] == "ON":
-    print("ON")
-else:
-    print("OFF")
-exit()
-'''
+
 #----------------------------------------------------------------------------------------------------
 # 日付取得
 date = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
@@ -38,6 +33,11 @@ handler.setFormatter(format)
 logger.addHandler(handler)
 
 #----------------------------------------------------------------------------------------------------
+# デバッグ確認
+debug = os.environ["DEBUG"]
+if debug == "ON":
+    logger.warning("DEBUG MODE: ON\n")
+
 # jsonファイル準備(SpreadSheetログイン用)
 dic = ast.literal_eval(os.environ["JSON"])
 with open("gss.json", mode="wt", encoding="utf-8") as file:
@@ -70,7 +70,7 @@ def finish(exit_message):
     exit()
 
 logger.info("セットアップ完了")
-
+'''
 #----------------------------------------------------------------------------------------------------
 # imgタグを含むものを抽出
 imgs_tag = []
