@@ -36,7 +36,7 @@ logger.addHandler(handler)
 # デバッグ確認
 debug = os.environ["DEBUG"]
 if debug == "ON":
-    logger.warning("DEBUG MODE: ON\n")
+    logger.warning("DEBUG MODE\n")
 
 # jsonファイル準備(SpreadSheetログイン用)
 dic = ast.literal_eval(os.environ["JSON"])
@@ -70,7 +70,7 @@ def finish(exit_message):
     exit()
 
 logger.info("セットアップ完了")
-'''
+
 #----------------------------------------------------------------------------------------------------
 # imgタグを含むものを抽出
 imgs_tag = []
@@ -119,13 +119,16 @@ before = ",".join(imgs_url_latest)
 subprocess.run([f"echo BEFORE={before} >> $GITHUB_OUTPUT"], shell=True)
 
 # 比較
-if len(imgs_url_now) == len(imgs_url_latest):
-    if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
-        finish("画像が一致した為、終了")
+if debug != "ON":
+    if len(imgs_url_now) == len(imgs_url_latest):
+        if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
+            finish("画像が一致した為、終了")
+        else:
+            logger.info("画像が一致しないので続行")
     else:
-        logger.info("画像が一致しないので続行")
+        logger.info("画像の枚数が異なるので続行")
 else:
-    logger.info("画像の枚数が異なるので続行")
+    logger.info("DEBUG MODEなので続行")
 
 #----------------------------------------------------------------------------------------------------
 # 月間予定を日付と予定に分割
@@ -169,10 +172,11 @@ for i in imgs_url_now:
             local_file.write(data)
 
 # GoogleSpreadSheetsに画像URLを書き込み
-ws.update_acell("C2", time_now)
-ws.update_acell("C3", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
-ws.update_acell("C6", " \n".join(imgs_url_now))
-logger.info("画像DL完了、セル上書き完了\n")
+if debug != "ON":
+    ws.update_acell("C2", time_now)
+    ws.update_acell("C3", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
+    ws.update_acell("C6", " \n".join(imgs_url_now))
+    logger.info("画像DL完了、セル上書き完了\n")
 
 #----------------------------------------------------------------------------------------------------
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
@@ -243,4 +247,4 @@ r = requests.post("https://onesignal.com/api/v1/notifications", headers=headers,
 logger.info(f"One Signal: {r.status_code}")
 r.raise_for_status()
 finish("投稿完了")
-'''
+
