@@ -22,7 +22,7 @@ from oauth2client.service_account import ServiceAccountCredentials  # SpreadShee
 date = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
 weekdays = ["月", "火", "水", "木", "金", "土", "日"]
 time_now = date.strftime("[%Y年%m月%d日(" + weekdays[date.weekday()] + ") %H:%M:%S]")
-subprocess.run([f"echo TIME={time_now} >> $GITHUB_OUTPUT"], shell=True)
+subprocess.run([f"echo 'TIME={time_now}' >> $GITHUB_OUTPUT"], shell=True)
 
 # ログ設定
 logger = getLogger(__name__)

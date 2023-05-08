@@ -44,13 +44,13 @@ jobs:
       - name: Run python
         id: results
         run: |
-          echo '::group::pip install --upgrade pip'
+          echo "::group::pip install --upgrade pip"
           pip install -r ./requirements.txt
-          echo '::endgroup::'
+          echo "::endgroup::"
           python -B schedule.py
       - name: GitHub Summary
         run: |
-          echo -e '- #### 時刻: ${{ steps.results.outputs.TIME }}' >> $GITHUB_STEP_SUMMARY
-          echo -e '- #### ステータス: ${{ steps.results.outputs.STATUS }}' >> $GITHUB_STEP_SUMMARY
-          echo -e '- #### 現在の時間割:\n${{ steps.results.outputs.NOW }}' >> $GITHUB_STEP_SUMMARY
-          echo -e '- #### 過去の時間割:\n${{ steps.results.outputs.BEFORE }}' >> $GITHUB_STEP_SUMMARY
+          echo -e "- #### 時刻: ${{ steps.results.outputs.TIME }}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- #### ステータス: ${{ steps.results.outputs.STATUS }}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- #### 現在の時間割:\n${{ steps.results.outputs.NOW }}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- #### 過去の時間割:\n${{ steps.results.outputs.BEFORE }}" >> $GITHUB_STEP_SUMMARY

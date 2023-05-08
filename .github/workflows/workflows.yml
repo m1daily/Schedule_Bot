@@ -2,7 +2,7 @@ name: Workflows
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 15 1,15 * *'    # 0時に動作
+    - cron: "0 15 1,15 * *"    # 0時に動作
 concurrency:  # 同時にworkflowが実行されたらキャンセル
   group: ${{ github.workflow }}-${{ github.ref }}
 
