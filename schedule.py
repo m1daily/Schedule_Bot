@@ -16,6 +16,12 @@ from bs4 import BeautifulSoup  # 画像取得
 from misskey import Misskey  # Misskey送信
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
 
+if os.environ["DEBUG"] == "ON":
+    print("ON")
+else:
+    print("OFF")
+exit()
+'''
 #----------------------------------------------------------------------------------------------------
 # 日付取得
 date = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
@@ -237,3 +243,4 @@ r = requests.post("https://onesignal.com/api/v1/notifications", headers=headers,
 logger.info(f"One Signal: {r.status_code}")
 r.raise_for_status()
 finish("投稿完了")
+'''
