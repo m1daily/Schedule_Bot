@@ -141,7 +141,7 @@ for i, day_data in enumerate(month_data):
 month_now = int(date.strftime('%m'))
 day_now = int(date.strftime('%d'))
 next_day = None
-if day_now != int(ws.acell('D2').value):
+if month_now != int(ws.acell('D2').value):
     next_day, next_schedule = days[0], schedules[0]
     logger.info(f'次の予定: {next_day} {next_schedule}')
 else:
@@ -214,7 +214,7 @@ misskey_ids = []
 for i, path in enumerate(imgs_path, 1):
     with open(path, 'rb') as f:
         data = mk.drive_files_create(f, name=date.strftime('%y-%m-%d_%H-%M_')+str(i), folder_id='9e8gee0xd2')
-        data['id'].append(misskey_ids)
+        misskey_ids.append(data['id'])
 mk.notes_create(message, visibility='home', file_ids=misskey_ids)
 logger.info('Misskey: 投稿完了')
 
