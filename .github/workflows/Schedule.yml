@@ -1,11 +1,12 @@
 name: GitHub_Actions(shedule)
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+        default: main
   schedule:
-    - cron: '*/40 0-12,21-23 * * *'    # 6時〜21時、10分ごとに動作
+    - cron: "*/40 0-12,21-23 * * *"    # 6時〜21時、10分ごとに動作
   repository_dispatch:
     types: [GitHub_Actions(gas)]
 env:  # 環境変数から文字列(パスワードなど)を取得
@@ -21,34 +22,35 @@ env:  # 環境変数から文字列(パスワードなど)を取得
   MISSKEY: ${{ secrets.MISSKEY }}
   SHEET_ID: ${{ secrets.SHEET_ID }}
   WEBHOOK: ${{ secrets.WEBHOOK }}
+  DEBUG: ${{ secrets.DEBUG }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   RUN_NUMBER: ${{ github.run_number }}
   RUN_ID: ${{ github.run_id }}
-  TZ: 'Asia/Tokyo'
+  TZ: "Asia/Tokyo"
 concurrency:  # 同時にworkflowが実行されたらキャンセル
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     timeout-minutes: 10    # 10分過ぎたら強制終了
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
-          architecture: 'x64'
+          python-version: "3.x"
+          architecture: "x64"
       - name: Run python
         id: results
         run: |
-          echo '::group::pip install --upgrade pip'
+          echo "::group::pip install --upgrade pip"
           pip install -r ./requirements.txt
-          echo '::endgroup::'
+          echo "::endgroup::"
           python -B schedule.py
       - name: GitHub Summary
         run: |
-          echo -e '- #### 時刻: ${{ steps.results.outputs.TIME }}' >> $GITHUB_STEP_SUMMARY
-          echo -e '- #### ステータス: ${{ steps.results.outputs.STATUS }}' >> $GITHUB_STEP_SUMMARY
-          echo -e '- #### 現在の時間割:\n${{ steps.results.outputs.NOW }}' >> $GITHUB_STEP_SUMMARY
-          echo -e '- #### 過去の時間割:\n${{ steps.results.outputs.BEFORE }}' >> $GITHUB_STEP_SUMMARY
-
+          echo -e "- #### 時刻: ${{ steps.results.outputs.TIME }}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- #### ステータス: ${{ steps.results.outputs.STATUS }}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- #### 現在の時間割:\n${{ steps.results.outputs.NOW }}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- #### 過去の時間割:\n${{ steps.results.outputs.BEFORE }}" >> $GITHUB_STEP_SUMMARY
