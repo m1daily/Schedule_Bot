@@ -7,8 +7,11 @@ import time  # スリープ用
 import urllib.request  # 画像取得
 from logging import DEBUG, Formatter, StreamHandler, getLogger
 # サードパーティライブラリ
+import gspread  # SpreadSheet操作
 import requests  # LINE・Discord送信
 import tweepy  # Twitter送信
+from misskey import Misskey  # Misskey送信
+from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
 
 #----------------------------------------------------------------------------------------------------
 # 日付取得
@@ -28,6 +31,11 @@ logger.info(time_now)
 #----------------------------------------------------------------------------------------------------
 # json変換
 dic = ast.literal_eval(os.environ["DICT"])
+
+# jsonファイル準備(SpreadSheetログイン用)
+dic = ast.literal_eval(os.environ["JSON"])
+with open("gss.json", mode="wt", encoding="utf-8") as file:
+    json.dump(dic, file, ensure_ascii=False, indent=2)
 
 # keyの指定(情報漏えいを防ぐため伏せています)
 consumer_key = os.environ["CONSUMER_KEY"]    # TwitterAPI識別キー
@@ -49,6 +57,44 @@ with urllib.request.urlopen(dic["url"]) as web_file:
     with open("upload.jpg", mode="wb") as local_file:
         local_file.write(data)
 
+# Googleスプレッドシートへのアクセス
+scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
+gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name("gss.json", scope))
+try:
+    ws = gc.open_by_key(os.environ["SHEET_ID"]).sheet1
+except:
+    logger.warning("Googleスプレッドシートへのアクセス失敗\n")
+    exit()
+
+# 月間予定を日付と予定に分割
+month_data = ws.acell("D6").value.split("\n")
+days, schedules = [], []
+for i, day_data in enumerate(month_data):
+    day_parts = day_data.split(")")
+    for j in range(2):
+        d = day_parts[j]
+        # 日付の場合「)」を追加
+        if j == 0 or len(day_parts) > 2:
+            d = d + ")"
+        if j == 0:
+            days.append(d)
+        else:
+            schedules.append(d)
+
+# 次の予定を取得
+month_now = int(date.strftime("%m"))
+day_now = int(date.strftime("%d"))
+next_day = None
+if month_now != int(ws.acell("D2").value):
+    next_day, next_schedule = days[0], schedules[0]
+    logger.info(f"次の予定: {next_day} {next_schedule}")
+else:
+    for i in days:
+        if day_now < int(i[:2].replace("日", "")):
+            next_day, next_schedule = i, schedules[days.index(i)]
+            logger.info(f"次の予定: {next_day} {next_schedule}")
+            break
+
 #----------------------------------------------------------------------------------------------------
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -56,7 +102,11 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # Twitterに投稿
-api.update_status_with_media(status=dic["message"], filename="upload.jpg")
+if next_day != None:
+    message = dic["message"] + f"\n{next_day}に {next_schedule} があります。"
+else:
+    message = dic["message"]
+api.update_status_with_media(status=message, filename="upload.jpg")
 logger.info("Twitter: ツイート完了")
 
 # LINE Notifyに通知
@@ -73,7 +123,7 @@ for key, value in line_dict.items():
 # Discordに通知
 payload2 = {
     "payload_json" : {
-        "content" : dic["message"],
+        "content" : "@everyone\n" + dic["message"],
         "embeds" : [
             {
                 "color" : 10931421,
@@ -87,3 +137,12 @@ payload2["payload_json"] = json.dumps(payload2["payload_json"], ensure_ascii=Fal
 r = requests.post(webhook_url, data=payload2)
 logger.info(f"Discord: {r.status_code}")
 r.raise_for_status()
+
+# Misskeyに投稿
+mk = Misskey("https://misskey.io/", i=os.environ["MISSKEY"])
+misskey_ids = []
+with open("upload.jpg", "rb") as f:
+    data = mk.drive_files_create(f, name=date.strftime("%y-%m-%d_%H-%M_")+str(i), folder_id="9e8gee0xd2")
+    misskey_ids.append(data["id"])
+mk.notes_create(message, visibility="home", file_ids=misskey_ids)
+logger.info("Misskey: 投稿完了")
