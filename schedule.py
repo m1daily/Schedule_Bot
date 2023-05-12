@@ -229,7 +229,11 @@ for i, path in enumerate(imgs_path, 1):
     with open(path, "rb") as f:
         data = mk.drive_files_create(f, name=date.strftime("%y-%m-%d_%H-%M_")+str(i), folder_id="9e8gee0xd2")
         misskey_ids.append(data["id"])
-mk.notes_create(message, visibility="home", file_ids=misskey_ids)
+if debug != "ON":
+    visibility = "home"
+else:
+    visibility = "specified"
+mk.notes_create(message, visibility=visibility, file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
 
 # One SignalでWeb Push通知
@@ -251,4 +255,3 @@ r = requests.post("https://onesignal.com/api/v1/notifications", headers=headers,
 logger.info(f"One Signal: {r.status_code}")
 r.raise_for_status()
 finish("投稿完了")
-
