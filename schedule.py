@@ -54,10 +54,10 @@ line_dict = ast.literal_eval(os.environ["LINE_NOTIFY"])    # LINEグループの
 webhook_url = os.environ["WEBHOOK"]    # Discordの時間割サーバーのWebhookのURL
 
 # LINEの設定
-def line_notify(line_access_token, image):
+def line_notify(line_access_token, message, image):
     line_url = "https://notify-api.line.me/api/notify"
     headers = {"Authorization": "Bearer " + line_access_token}
-    payload = {"message": "時間割が更新されました。"}
+    payload = {"message": message}
     files = {"imageFile": open(image, "rb")}
     r = requests.post(line_url, headers=headers, params=payload, files=files)
     r.raise_for_status()
@@ -184,15 +184,19 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
+# 環境次第でメッセージ変更
+if debug == "ON":
+    message = "テスト投稿です。"
+else:
+    message = "時間割が更新されました。"
+
 # Twitterに投稿
 media_ids = []
 for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
 if next_day != None:
-    message = f"時間割が更新されました\n{next_day}に {next_schedule} があります"
-else:
-    message = "時間割が更新されました！"
+    message = f"{message}\n{next_day}に {next_schedule} があります。"
 api.update_status(status=message, media_ids=media_ids)
 logger.info("Twitter: ツイート完了")
 
@@ -200,10 +204,10 @@ logger.info("Twitter: ツイート完了")
 logger.info("LINE:")
 for key, value in line_dict.items():
     for i, image in enumerate(imgs_path, 1):
-        logger.info(f"{key}-{i}枚目: {line_notify(value, image)}")
+        logger.info(f"{key}-{i}枚目: {line_notify(value, message, image)}")
 
 # Discordに通知
-payload2 = {"payload_json" : {"content" : "@everyone\n時間割が更新されました。"}}
+payload2 = {"payload_json" : {"content" : f"@everyone\n{message}"}}
 embed = []
 # 画像の枚数分"embed"の値追加
 for i in imgs_url_now:
@@ -237,8 +241,8 @@ json_data = {
         "Inactive Users",
     ],
     "contents": {
-        "en": "時間割が更新されました。",
-        "ja": "時間割が更新されました。",
+        "en": message,
+        "ja": message,
     },
     "name": "mito1daily",
     "app_id": os.environ["APP_ID"],

@@ -44,12 +44,14 @@ jobs:
       - name: Run python
         id: results
         run: |
+          echo -e "現在の環境: ${{ github.event.inputs.environment }}"
           echo "::group::pip install --upgrade pip"
           pip install -r ./requirements.txt
           echo "::endgroup::"
           python -B schedule.py
       - name: GitHub Summary
         run: |
+          echo -e "- #### 現在の環境: ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY
           echo -e "- #### 時刻: ${{ steps.results.outputs.TIME }}" >> $GITHUB_STEP_SUMMARY
           echo -e "- #### ステータス: ${{ steps.results.outputs.STATUS }}" >> $GITHUB_STEP_SUMMARY
           echo -e "- #### 現在の時間割:\n${{ steps.results.outputs.NOW }}" >> $GITHUB_STEP_SUMMARY
