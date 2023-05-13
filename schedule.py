@@ -189,14 +189,14 @@ if debug == "ON":
     message = "テスト投稿です。"
 else:
     message = "時間割が更新されました。"
+if next_day != None:
+    message = f"{message}\n{next_day}に {next_schedule} があります。"
 
 # Twitterに投稿
 media_ids = []
 for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
-if next_day != None:
-    message = f"{message}\n{next_day}に {next_schedule} があります。"
 api.update_status(status=message, media_ids=media_ids)
 logger.info("Twitter: ツイート完了")
 
