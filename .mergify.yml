@@ -1,0 +1,21 @@
+pull_request_rules:
+  - name: yml Auto-merge
+    conditions:
+      - files~=\.yml$
+      - "#approved-reviews-by>=1"
+      - check-success=check
+      - check-success=CodeQL
+    actions:
+      merge:
+        method: merge
+
+  - name: py Auto-merge
+    conditions:
+      - files~=\.py$
+      - "#approved-reviews-by>=1"
+      - check-success=check
+      - check-success=CodeQL
+      - check-success=Analyze (python)
+    actions:
+      merge:
+        method: merge
