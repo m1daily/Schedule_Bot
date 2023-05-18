@@ -1,3 +1,8 @@
+[0_no-mergify]
+color = "f0f854"
+name = "0_no-mergify"
+description = "自動マージOFF"
+
 ["1-ステータス: 1-待機中"]
 color = "26afd9"
 name = "1-ステータス: 1-待機中"
@@ -122,8 +127,3 @@ description = "機能に関する提案"
 color = "2c71bf"
 name = "依存関係"
 description = "dependabot用"
-
-["0_no-mergify"]
-color = "f0f854"
-name = "0_no-mergify"
-description = "自動マージOFF"
