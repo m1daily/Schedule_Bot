@@ -197,7 +197,8 @@ media_ids = []
 for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
-api.update_status(status=message, media_ids=media_ids)
+if debug == "ON":
+    api.update_status(status=message, media_ids=media_ids)
 logger.info("Twitter: ツイート完了")
 
 # LINE Notifyに通知
