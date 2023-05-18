@@ -1,8 +1,20 @@
 version: 2
+
 updates:
-  - package-ecosystem: pip
+  - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: daily
+      interval: "daily"
+      time: "6:00"
+      timezone: "Asia/Tokyo"
+    labels:
+      - "依存関係"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "6:00"
+      timezone: "Asia/Tokyo"
     labels:
       - "依存関係"
