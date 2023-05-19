@@ -116,9 +116,10 @@ for key, value in line_dict.items():
     headers = {"Authorization": "Bearer " + value}
     payload = {"message": local_dic["message"]}
     files = {"imageFile": open("upload.jpg", "rb")}
-    r = requests.post(line_url, headers=headers, params=payload, files=files)
-    r.raise_for_status()
-    logger.info(f"{key}: {str(r.status_code)}")
+    if local_dic["junior"] != "YES" or key in "A" or key in "B":
+        r = requests.post(line_url, headers=headers, params=payload, files=files)
+        r.raise_for_status()
+        logger.info(f"{key}: {str(r.status_code)}")
 
 # Discordに通知
 payload2 = {
