@@ -30,8 +30,7 @@ logger.info(time_now)
 
 #----------------------------------------------------------------------------------------------------
 # json変換
-dic = ast.literal_eval(os.environ["DICT"].replace("*", ""))
-logger.info(dic)
+local_dic = ast.literal_eval(os.environ["DICT"])
 
 # jsonファイル準備(SpreadSheetログイン用)
 dic = ast.literal_eval(os.environ["JSON"])
@@ -52,7 +51,7 @@ logger.info("セットアップ完了")
 
 #----------------------------------------------------------------------------------------------------
 # 画像URLを使って画像をダウンロード
-with urllib.request.urlopen(dic["url"]) as web_file:
+with urllib.request.urlopen(local_dic["url"]) as web_file:
     time.sleep(5)
     data = web_file.read()
     with open("upload.jpg", mode="wb") as local_file:
@@ -104,9 +103,9 @@ api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # Twitterに投稿
 if next_day != None:
-    message = dic["message"] + f"\n{next_day}に {next_schedule} があります。"
+    message = local_dic["message"] + f"\n{next_day}に {next_schedule} があります。"
 else:
-    message = dic["message"]
+    message = local_dic["message"]
 api.update_status_with_media(status=message, filename="upload.jpg")
 logger.info("Twitter: ツイート完了")
 
@@ -115,7 +114,7 @@ logger.info("LINE:")
 for key, value in line_dict.items():
     line_url = "https://notify-api.line.me/api/notify"
     headers = {"Authorization": "Bearer " + value}
-    payload = {"message": dic["message"]}
+    payload = {"message": local_dic["message"]}
     files = {"imageFile": open("upload.jpg", "rb")}
     r = requests.post(line_url, headers=headers, params=payload, files=files)
     r.raise_for_status()
@@ -124,12 +123,12 @@ for key, value in line_dict.items():
 # Discordに通知
 payload2 = {
     "payload_json" : {
-        "content" : "@everyone\n" + dic["message"],
+        "content" : "@everyone\n" + local_dic["message"],
         "embeds" : [
             {
                 "color" : 10931421,
                 "url" : "https://www.google.com/",
-                "image" : {"url" : dic["url"]}
+                "image" : {"url" : local_dic["url"]}
                 }
             ]
         }
