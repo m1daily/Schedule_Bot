@@ -52,8 +52,7 @@ logger.info("セットアップ完了")
 
 #----------------------------------------------------------------------------------------------------
 # 画像URLを使って画像をダウンロード
-with urllib.request.urlopen(local_dic["url"]) as web_file:
-    time.sleep(1)
+with urllib.request.urlopen("https://i.imgur.com/uMslOfU.jpeg") as web_file:
     data = web_file.read()
     with open("upload.jpg", mode="wb") as local_file:
         local_file.write(data)
