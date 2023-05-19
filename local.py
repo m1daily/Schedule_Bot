@@ -31,6 +31,7 @@ logger.info(time_now)
 #----------------------------------------------------------------------------------------------------
 # json変換
 local_dic = ast.literal_eval(os.environ["DICT"])
+logger.info(f"url: {local_dic['url']}\nmessage: {local_dic['message']}\n中学生: {local_dic['junior']}\n")
 
 # jsonファイル準備(SpreadSheetログイン用)
 dic = ast.literal_eval(os.environ["JSON"])
@@ -94,7 +95,7 @@ else:
             next_day, next_schedule = i, schedules[days.index(i)]
             logger.info(f"次の予定: {next_day} {next_schedule}")
             break
-
+"""
 #----------------------------------------------------------------------------------------------------
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -147,3 +148,4 @@ with open("upload.jpg", "rb") as f:
     misskey_ids.append(data["id"])
 mk.notes_create(message, visibility="home", file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
+"""
