@@ -31,6 +31,7 @@ logger.info(time_now)
 #----------------------------------------------------------------------------------------------------
 # json変換
 dic = ast.literal_eval(os.environ["DICT"])
+logger.info(dic)
 
 # jsonファイル準備(SpreadSheetログイン用)
 dic = ast.literal_eval(os.environ["JSON"])
