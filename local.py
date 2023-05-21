@@ -52,11 +52,8 @@ logger.info("セットアップ完了")
 
 #----------------------------------------------------------------------------------------------------
 # 画像URLを使って画像をダウンロード
-with urllib.request.urlopen(local_dic["url"]) as web_file:
-    time.sleep(1)
-    data = web_file.read()
-    with open("upload.jpg", mode="wb") as local_file:
-        local_file.write(data)
+with open("upload.jpg", "wb") as f:
+    f.write(requests.get(local_dic["url"]).content)
 
 # Googleスプレッドシートへのアクセス
 scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
@@ -95,7 +92,7 @@ else:
             next_day, next_schedule = i, schedules[days.index(i)]
             logger.info(f"次の予定: {next_day} {next_schedule}")
             break
-
+"""
 #----------------------------------------------------------------------------------------------------
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -148,3 +145,4 @@ with open("upload.jpg", "rb") as f:
     misskey_ids.append(data["id"])
 mk.notes_create(message, visibility="home", file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
+"""
