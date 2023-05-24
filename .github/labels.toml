@@ -96,17 +96,17 @@ description = "数十行変更する程度"
 ["4-作業量: 3-中"]
 color = "ffd166"
 name = "4-作業量: 3-中"
-description = "数行変更する程度"
+description = "十数行変更する程度"
 
 ["4-作業量: 4-少"]
 color = "dce775"
 name = "4-作業量: 4-少"
-description = "1行変更する程度"
+description = "数行変更する程度"
 
 ["4-作業量: 5-ほぼ無し"]
 color = "81c785"
 name = "4-作業量: 5-ほぼ無し"
-description = "数文字変更する程度"
+description = "1行変更する程度"
 
 ["5-フィードバック: 1-議論"]
 color = "ec79a1"
