@@ -54,6 +54,8 @@ for i in range(len(schedule)):
     news = schedule[i].translate(str.maketrans({"　": "", " ": "", "（": "(", "）": ")", u"\xa0": "", u"\u3000": ""}))  # 余計なスペースを削除、全角括弧を半角括弧に変換
     news = news.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))  # 全角数字を半角数字に変換
     news = news.strip()  # 文字列の先頭と末尾の空白を削除
+    if not news:  # newsが空の場合、continue
+        continue
     if re.match("\d", news[0]) is not None:  # 先頭が数字の場合
         if news[0] != "1" or news[1] != "日":  # 1日以外の場合、改行を追加
             news = "\n" + news
@@ -62,6 +64,7 @@ for i in range(len(schedule)):
     else:  # それ以外の場合、カンマを追加
         news = "、" + news
     li.append(news)
+li = [i for i in li if i != ""]  # 空の要素を削除
 li[0] = li[0].replace("\n", "")
 txt = "".join(li)
 logger.info(txt)

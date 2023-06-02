@@ -151,7 +151,7 @@ month_now = int(date.strftime("%m"))
 day_now = int(date.strftime("%d"))
 next_day = None
 if month_now != int(ws.acell("D2").value):
-    next_day, next_schedule = days[0], schedules[0]
+    next_day, next_schedule = str(ws.acell("D2").value) + "月" + days[0], schedules[0]
     logger.info(f"次の予定: {next_day} {next_schedule}")
 else:
     for i in days:
