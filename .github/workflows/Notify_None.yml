@@ -1,0 +1,39 @@
+name: notify_none
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [notify_none(mobile)]
+env:  # 環境変数から文字列(パスワードなど)を取得
+  GOOGLE_URL: ${{ secrets.GOOGLE_URL }}
+  JSON: ${{ secrets.JSON }}
+  SHEET_ID: ${{ secrets.SHEET_ID }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  RUN_NUMBER: ${{ github.run_number }}
+  RUN_ID: ${{ github.run_id }}
+  TZ: "Asia/Tokyo"
+concurrency:  # 同時にworkflowが実行されたらキャンセル
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10    # 10分過ぎたら強制終了
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+          architecture: "x64"
+      - name: Run python
+        id: results
+        run: |
+          echo "::group::pip install --upgrade pip"
+          pip install -r ./requirements.txt
+          echo "::endgroup::"
+          python -B notify_none.py
+      - name: GitHub Summary
+        run: |
+          echo -e "- #### 時刻: ${{ steps.results.outputs.TIME }}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- #### ステータス: ${{ steps.results.outputs.STATUS }}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- #### 現在の時間割:\n${{ steps.results.outputs.NOW }}" >> $GITHUB_STEP_SUMMARY
+          echo -e "- #### 過去の時間割:\n${{ steps.results.outputs.BEFORE }}" >> $GITHUB_STEP_SUMMARY
