@@ -104,4 +104,4 @@ ws.update_acell("C3", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + 
 ws.update_acell("C6", " \n".join(imgs_url_now))
 logger.info("画像DL完了、セル上書き完了\n")
 
-finish("投稿完了")
+finish("完了")
