@@ -163,7 +163,7 @@ else:
 violence = False
 if "土曜課外" in next_schedule:
     violence = True
-    r = requests.get(ws.acell("C7")).content
+    r = requests.get(ws.acell("C7").value).content
     with open("sat.jpg", "wb") as f:
         f.write(r)
 
