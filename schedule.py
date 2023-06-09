@@ -161,11 +161,12 @@ else:
 
 # 土曜加害判定
 violence = False
-if "土曜課外" in next_schedule:
+if "土曜課外" in next_schedule and next_day - day_now == 1:
     violence = True
     r = requests.get(ws.acell("C7").value).content
     with open("sat.jpg", "wb") as f:
         f.write(r)
+    logger.info("土曜課外 有")
 
 # 画像URLを使って画像をダウンロード
 imgs_path = []    # ダウンロードする画像のパスを格納するリスト
@@ -183,7 +184,7 @@ if debug != "ON":
     ws.update_acell("C3", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
     ws.update_acell("C6", " \n".join(imgs_url_now))
     logger.info("画像DL完了、セル上書き完了\n")
-"""
+
 #----------------------------------------------------------------------------------------------------
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -197,7 +198,7 @@ else:
     message = "時間割が更新されました。"
 if next_day != None:
     message = f"{message}\n{next_day}に {next_schedule} があります。"
-"""
+
 # Twitterに投稿
 media_ids = []
 for image in imgs_path:
@@ -205,12 +206,12 @@ for image in imgs_path:
    media_ids.append(img.media_id)
 if debug != "ON":
     api.update_status(status=message, media_ids=media_ids)
-"""
+
 # 土曜加害がある場合は加害の時間割画像も投稿
 if violence:
     api.update_status_with_media(status="土曜課害の時間割です。", filename="sat.jpg")
 logger.info("Twitter: ツイート完了")
-"""
+
 # LINE Notifyに通知
 logger.info("LINE:")
 for key, value in line_dict.items():
