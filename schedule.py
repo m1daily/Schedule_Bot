@@ -154,14 +154,15 @@ if month_now != int(ws.acell("D2").value):
     logger.info(f"次の予定: {next_day} {next_schedule}")
 else:
     for i in days:
-        if day_now < int(i[:2].replace("日", "")):
+        day = int(i[:2].replace("日", ""))
+        if day_now < day:
             next_day, next_schedule = i, schedules[days.index(i)]
             logger.info(f"次の予定: {next_day} {next_schedule}")
             break
 
 # 土曜加害判定
 violence = False
-if "土曜課外" in next_schedule and next_day - day_now == 1:
+if "土曜課外" in next_schedule and day - day_now == 1:
     violence = True
     r = requests.get(ws.acell("C7").value).content
     with open("sat.jpg", "wb") as f:
