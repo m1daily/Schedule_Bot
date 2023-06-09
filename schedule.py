@@ -161,7 +161,7 @@ else:
 
 # 土曜加害判定
 violence = False
-if "土曜課外" in next_day:
+if "土曜課外" in next_schedule:
     violence = True
     r = requests.get(ws.acell("C7")).content
     with open("sat.jpg", "wb") as f:
