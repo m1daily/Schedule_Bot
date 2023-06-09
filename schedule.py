@@ -208,7 +208,7 @@ if debug != "ON":
 """
 # 土曜加害がある場合は加害の時間割画像も投稿
 if violence:
-    api.update_status_with_media(status="土曜課害の時間割です。", filename="str.jpg")
+    api.update_status_with_media(status="土曜課害の時間割です。", filename="sat.jpg")
 logger.info("Twitter: ツイート完了")
 """
 # LINE Notifyに通知
