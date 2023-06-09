@@ -5,7 +5,6 @@ import json  # JSONファイル読み込み
 import os  # GitHubActionsの環境変数追加
 import subprocess  # GitHubActionsの環境変数追加
 import time  # スリープ用
-import urllib.request  # 画像取得
 from logging import DEBUG, Formatter, StreamHandler, getLogger  # ログ出力
 # サードパーティライブラリ
 import cv2u  # 画像URLから読み込み
@@ -117,7 +116,7 @@ for e in imgs_url_latest:
 # $GITHUB_OUTPUTに追加
 before = ",".join(imgs_url_latest)
 subprocess.run([f"echo BEFORE={before} >> $GITHUB_OUTPUT"], shell=True)
-
+"""
 # 比較
 if debug != "ON":
     if len(imgs_url_now) == len(imgs_url_latest):
@@ -129,7 +128,7 @@ if debug != "ON":
         logger.info("画像の枚数が異なるので続行")
 else:
     logger.info("DEBUG MODEなので続行")
-
+"""
 #----------------------------------------------------------------------------------------------------
 # 月間予定を日付と予定に分割
 month_data = ws.acell("D6").value.split("\n")
@@ -160,24 +159,31 @@ else:
             logger.info(f"次の予定: {next_day} {next_schedule}")
             break
 
+# 土曜加害判定
+violence = False
+if "土曜課外" in next_day:
+    violence = True
+    r = requests.get(ws.acell("C7")).content
+    with open("sat.jpg", "wb") as f:
+        f.write(r)
+
 # 画像URLを使って画像をダウンロード
 imgs_path = []    # ダウンロードする画像のパスを格納するリスト
 for i in imgs_url_now:
-    with urllib.request.urlopen(i) as web_file:
-        time.sleep(5)
-        data = web_file.read()
-        img = str(imgs_url_now.index(i) + 1) + ".png"    # 画像の名前を1.png,2.png,...とする
-        imgs_path.append(img)
-        with open(img, mode="wb") as local_file:
-            local_file.write(data)
-
+    time.sleep(3)
+    r = requests.get(i).content
+    img = str(imgs_url_now.index(i) + 1) + ".png"    # 画像の名前を1.png,2.png,...とする
+    imgs_path.append(img)
+    with open(img, mode="wb") as f:
+        f.write(r)
+"""
 # GoogleSpreadSheetsに画像URLを書き込み
 if debug != "ON":
     ws.update_acell("C2", time_now)
     ws.update_acell("C3", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
     ws.update_acell("C6", " \n".join(imgs_url_now))
     logger.info("画像DL完了、セル上書き完了\n")
-
+"""
 #----------------------------------------------------------------------------------------------------
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -191,7 +197,7 @@ else:
     message = "時間割が更新されました。"
 if next_day != None:
     message = f"{message}\n{next_day}に {next_schedule} があります。"
-
+"""
 # Twitterに投稿
 media_ids = []
 for image in imgs_path:
@@ -199,13 +205,19 @@ for image in imgs_path:
    media_ids.append(img.media_id)
 if debug != "ON":
     api.update_status(status=message, media_ids=media_ids)
+"""
+# 土曜加害がある場合は加害の時間割画像も投稿
+if violence:
+    api.update_status_with_media(status="土曜課害の時間割です。", filename="str.jpg")
 logger.info("Twitter: ツイート完了")
-
+"""
 # LINE Notifyに通知
 logger.info("LINE:")
 for key, value in line_dict.items():
     for i, image in enumerate(imgs_path, 1):
         logger.info(f"{key}-{i}枚目: {line_notify(value, message, image)}")
+    if violence:
+        logger.info(f"{key}-土曜課害: {line_notify(value, '土曜課外の時間割です。', 'sat.jpg')}")
 
 # Discordに通知
 payload2 = {"payload_json" : {"content" : f"@everyone\n{message}"}}
@@ -256,3 +268,4 @@ r = requests.post("https://onesignal.com/api/v1/notifications", headers=headers,
 logger.info(f"One Signal: {r.status_code}")
 r.raise_for_status()
 finish("投稿完了")
+"""
