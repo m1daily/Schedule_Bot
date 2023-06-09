@@ -116,7 +116,7 @@ for e in imgs_url_latest:
 # $GITHUB_OUTPUTに追加
 before = ",".join(imgs_url_latest)
 subprocess.run([f"echo BEFORE={before} >> $GITHUB_OUTPUT"], shell=True)
-"""
+
 # 比較
 if debug != "ON":
     if len(imgs_url_now) == len(imgs_url_latest):
@@ -128,7 +128,7 @@ if debug != "ON":
         logger.info("画像の枚数が異なるので続行")
 else:
     logger.info("DEBUG MODEなので続行")
-"""
+
 #----------------------------------------------------------------------------------------------------
 # 月間予定を日付と予定に分割
 month_data = ws.acell("D6").value.split("\n")
@@ -178,7 +178,7 @@ for i in imgs_url_now:
     imgs_path.append(img)
     with open(img, mode="wb") as f:
         f.write(r)
-"""
+
 # GoogleSpreadSheetsに画像URLを書き込み
 if debug != "ON":
     ws.update_acell("C2", time_now)
@@ -270,4 +270,3 @@ r = requests.post("https://onesignal.com/api/v1/notifications", headers=headers,
 logger.info(f"One Signal: {r.status_code}")
 r.raise_for_status()
 finish("投稿完了")
-"""
