@@ -199,7 +199,7 @@ else:
     message = "時間割が更新されました。"
 if next_day != None:
     message = f"{message}\n{next_day}に {next_schedule} があります。"
-
+"""
 # Twitterに投稿
 media_ids = []
 for image in imgs_path:
@@ -212,7 +212,7 @@ if debug != "ON":
 if violence:
     api.update_status_with_media(status="土曜課害の時間割です。", filename="sat.jpg")
 logger.info("Twitter: ツイート完了")
-
+"""
 # LINE Notifyに通知
 logger.info("LINE:")
 for key, value in line_dict.items():
