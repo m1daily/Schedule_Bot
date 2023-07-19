@@ -206,7 +206,10 @@ for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
 if debug != "ON":
-    api.update_status(status=message, media_ids=media_ids)
+    try:
+        api.update_status(status=message, media_ids=media_ids)
+    except:
+        logger.warning("Twitter: 投稿失敗")
 
 # 土曜加害がある場合は加害の時間割画像も投稿
 if violence:
