@@ -97,7 +97,7 @@ subprocess.run([f"echo NOW={now} >> $GITHUB_OUTPUT"], shell=True)
 
 #----------------------------------------------------------------------------------------------------
 # Googleスプレッドシートへのアクセス
-scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name("gss.json", scope))
 try:
     ws = gc.open_by_key(os.environ["SHEET_ID"]).sheet1
@@ -191,6 +191,11 @@ if debug != "ON":
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
+client = tweepy.Client(
+   consumer_key=consumer_key,
+   consumer_secret=consumer_secret,
+   access_token=access_token,
+   access_token_secret=access_token_secret)
 
 # 環境次第でメッセージ変更
 if debug == "ON":
@@ -206,10 +211,7 @@ for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
 if debug != "ON":
-    try:
-        api.update_status(status=message, media_ids=media_ids)
-    except:
-        logger.warning("Twitter: 投稿失敗")
+    client.create_tweet(text=message, media_ids=media_ids)
 
 # 土曜加害がある場合は加害の時間割画像も投稿
 if violence:
@@ -230,9 +232,16 @@ embed = []
 # 画像の枚数分"embed"の値追加
 for i in imgs_url_now:
     if imgs_url_now.index(i) == 0:
-        img_embed = {"color" : 10931421, "url" : "https://www.google.com/", "image" : {"url" : i}}
+        img_embed = {
+            "color" : 10931421,
+            "url" : "https://www.google.com/",
+            "image" : {"url" : i}
+            }
     else:
-        img_embed = {"url" : "https://www.google.com/", "image" : {"url" : i}}
+        img_embed = {
+            "url" : "https://www.google.com/",
+            "image" : {"url" : i}
+            }
     embed.append(img_embed)
 payload2["payload_json"]["embeds"] = embed
 payload2["payload_json"] = json.dumps(payload2["payload_json"], ensure_ascii=False)
@@ -255,7 +264,11 @@ mk.notes_create(message, visibility=visibility, file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
 
 # One SignalでWeb Push通知
-headers = {"Authorization": "Basic " + os.environ["API_KEY"], "accept": "application/json", "content-type": "application/json"}
+headers = {
+    "Authorization": "Basic " + os.environ["API_KEY"],
+    "accept": "application/json",
+    "content-type": "application/json"
+}
 json_data = {
     "included_segments": [
         "Subscribed Users",
