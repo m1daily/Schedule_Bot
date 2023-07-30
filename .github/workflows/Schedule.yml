@@ -48,6 +48,13 @@ jobs:
           pip install -r ./requirements.txt
           echo "::endgroup::"
           python -B schedule.py
+      - name: Notify discord when job failed
+        if: ${{ failure() }}
+        uses: sarisia/actions-status-discord@v1
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_ERROR }}
+        with:
+          status: ${{ job.status }}
       - name: GitHub Summary
         run: |
           echo -e "- #### 時刻: ${{ steps.results.outputs.TIME }}" >> $GITHUB_STEP_SUMMARY

@@ -34,3 +34,10 @@ jobs:
           pip install -r ./requirements.txt
           echo "::endgroup::"
           python -B ./news/news.py
+      - name: Notify discord when job failed
+        if: ${{ failure() }}
+        uses: sarisia/actions-status-discord@v1
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_ERROR }}
+        with:
+          status: ${{ job.status }}
