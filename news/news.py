@@ -38,7 +38,7 @@ headers = {"User-Agent": ua}
 url = "https://www.mito1-h.ibk.ed.jp/"
 r = requests.get(url, headers=headers)
 soup = BeautifulSoup(r.text, "html.parser")
-schedule = soup.select_one("#box-18 > section:nth-child(4) > div.panel-body.block > article > p")
+schedule = soup.select_one("#box-18 > section:nth-child(4) > div.panel-body.block > article > p:nth-child(2)")
 logger.info("要素抽出完了\n")
 
 #-----------------------------------------------------------------------------------------------------------------------------------
