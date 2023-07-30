@@ -14,7 +14,8 @@ from misskey import Misskey  # Misskey送信
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
 from PIL import Image, ImageDraw, ImageFont  # 画像処理
 
-
+if a == 1:
+    print("a")
 #-----------------------------------------------------------------------------------------------------------------------------------
 # jsonファイル準備(SpreadSheetログイン用)
 dic = ast.literal_eval(os.environ["JSON"])
