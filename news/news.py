@@ -117,7 +117,7 @@ client = tweepy.Client(
 
 # ツイート
 img = api.media_upload("image.png")
-client.create_tweet(text="今月の予定です。", media_ids=img.media_id)
+client.create_tweet(text="今月の予定です。", media_ids=[img.media_id])
 logger.info("Twitter: ツイート完了")
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Discordに投稿
