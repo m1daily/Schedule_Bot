@@ -55,6 +55,12 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_ERROR }}
         with:
           status: ${{ job.status }}
+      - name: Notify Slack when job failed
+        if: ${{ failure() }}
+        uses: rtCamp/action-slack-notify@v2.2.1
+        env:
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
       - name: GitHub Summary
         run: |
           echo -e "- #### 時刻: ${{ steps.results.outputs.TIME }}" >> $GITHUB_STEP_SUMMARY
