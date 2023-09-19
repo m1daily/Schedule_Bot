@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup  # 画像取得
 from misskey import Misskey  # Misskey送信
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
 
-a = 0 / 0
+
 #----------------------------------------------------------------------------------------------------
 # 日付取得
 date = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
