@@ -159,17 +159,19 @@ else:
             next_day, next_schedule = i, schedules[days.index(i)]
             logger.info(f"次の予定: {next_day} {next_schedule}")
             break
-    if "next_schedule" in globals():
+    if not "next_schedule" in globals():
         next_schedule = None
+        logger.info("次の予定 無")
 
 # 土曜加害判定
 violence = False
-if "土曜課外" in next_schedule and day - day_now == 1:
-    violence = True
-    r = requests.get(ws.acell("C7").value).content
-    with open("sat.jpg", "wb") as f:
-        f.write(r)
-    logger.info("土曜課外 有")
+if next_schedule != None:
+    if "土曜課外" in next_schedule and day - day_now == 1:
+        violence = True
+        r = requests.get(ws.acell("C7").value).content
+        with open("sat.jpg", "wb") as f:
+            f.write(r)
+        logger.info("土曜課外 有")
 
 # 画像URLを使って画像をダウンロード
 imgs_path = []    # ダウンロードする画像のパスを格納するリスト
@@ -204,7 +206,7 @@ if debug == "ON":
     message = "テスト投稿です。"
 else:
     message = "時間割が更新されました。"
-if next_day != None:
+if next_schedule != None:
     message = f"{message}\n{next_day}に {next_schedule} があります。"
 
 # Twitterに投稿
