@@ -159,7 +159,7 @@ else:
             next_day, next_schedule = i, schedules[days.index(i)]
             logger.info(f"次の予定: {next_day} {next_schedule}")
             break
-    if next_schedule == False:
+    if "next_schedule" in globals():
         next_schedule = None
 
 # 土曜加害判定
