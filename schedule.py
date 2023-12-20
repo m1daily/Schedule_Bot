@@ -229,7 +229,11 @@ logger.info("Twitter: ツイート完了")
 logger.info("LINE:")
 for key, value in line_dict.items():
     for i, image in enumerate(imgs_path, 1):
-        logger.info(f"{key}-{i}枚目: {line_notify(value, message, image)}")
+        try:
+            logger.info(f"{key}-{i}枚目: {line_notify(value, message, image)}")
+        except Exception as e:
+            logger.info(f"{key}-{i}枚目: {e.__class__.__name__}({e})")
+            continue
     if violence:
         logger.info(f"{key}-土曜課害: {line_notify(value, '土曜課外の時間割です。', 'sat.jpg')}")
 
