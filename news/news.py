@@ -91,7 +91,7 @@ else:
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # 画像に文字を入れる
-im = Image.new("RGB", (720, len(li)*19), (256, 256, 256))
+im = Image.new("RGB", (720, len(li)*20), (256, 256, 256))
 draw = ImageDraw.Draw(im)
 font = ImageFont.truetype("./news/NotoSansCJKjp-Light.otf", 12)
 draw.text((20, 10), txt, fill=(0, 0, 0), font=font, spacing=12)
