@@ -2,7 +2,7 @@ name: "バグ報告"
 description: "バグが発生した際のテンプレート"
 title: "Bug: "
 labels: ["1-ステータス: 1-待機中"]
-assignees: ["Geusen"]
+assignees: ["SoniPana"]
 
 
 body:
@@ -35,7 +35,7 @@ body:
       description: >
         再現手順やエラーの内容などを記入してください。
       placeholder: >
-        - https://github.com/Geusen/Schedule_Bot/actions/runs/3579455799/jobs/6020667956
+        - https://github.com/SoniPana/Schedule_Bot/actions/runs/3579455799/jobs/6020667956
           -  ```run python```の97行目～
     validations:
       required: true

@@ -2,7 +2,7 @@ name: "機能提案"
 description: "機能提案する際のテンプレート"
 title: "Request: "
 labels: ["1-ステータス: 1-待機中"]
-assignees: ["Geusen"]
+assignees: ["SoniPana"]
 
 
 body:

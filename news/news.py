@@ -129,7 +129,7 @@ payload2 = {
             {
                 "color" : 5419910,
                 "footer": {
-                    "icon_url" : "https://raw.githubusercontent.com/Geusen/images/main/m1.jpg",
+                    "icon_url" : "https://raw.githubusercontent.com/SoniPana/images/main/m1.jpg",
                     "text" : "By 水戸一高時間割Bot",
                 },
                 "image": {

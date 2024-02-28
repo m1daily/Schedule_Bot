@@ -1,6 +1,6 @@
 # Schedule_Bot
 
-![](https://github.com/Geusen/Schedule_Bot/actions/workflows/Schedule.yml/badge.svg) ![](https://img.shields.io/github/last-commit/Geusen/Schedule_Bot?label=%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E6%9C%80%E7%B5%82%E6%9B%B4%E6%96%B0) ![](https://www.codefactor.io/repository/github/geusen/schedule_bot/badge)
+![](https://github.com/SoniPana/Schedule_Bot/actions/workflows/Schedule.yml/badge.svg) ![](https://img.shields.io/github/last-commit/SoniPana/Schedule_Bot?label=%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E6%9C%80%E7%B5%82%E6%9B%B4%E6%96%B0) ![](https://www.codefactor.io/repository/github/SoniPana/schedule_bot/badge)
 
 ## About
 
@@ -11,5 +11,5 @@
 
 ## バグ報告や要望について
 
-- 上のタブにある「[Discussions](https://github.com/Geusen/Schedule_Bot/discussions)」へお願いします。
-- 詳細は上のタブにある「[wiki](https://github.com/Geusen/Schedule_Bot/wiki)」で
+- 上のタブにある「[Discussions](https://github.com/SoniPana/Schedule_Bot/discussions)」へお願いします。
+- 詳細は上のタブにある「[wiki](https://github.com/SoniPana/Schedule_Bot/wiki)」で
