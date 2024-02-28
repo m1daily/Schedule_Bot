@@ -35,7 +35,7 @@ body:
       description: >
         再現手順やエラーの内容などを記入してください。
       placeholder: >
-        - https://github.com/SoniPana/Schedule_Bot/actions/runs/3579455799/jobs/6020667956
+        - https://github.com/m1daily/Schedule_Bot/actions/runs/3579455799/jobs/6020667956
           -  ```run python```の97行目～
     validations:
       required: true
