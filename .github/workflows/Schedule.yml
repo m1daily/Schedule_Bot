@@ -57,7 +57,7 @@ jobs:
           status: ${{ job.status }}
       - name: Notify Slack when job failed
         if: ${{ failure() }}
-        uses: rtCamp/action-slack-notify@v2.2.1
+        uses: rtCamp/action-slack-notify@v2.3.0
         env:
           SLACK_COLOR: ${{ job.status }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
