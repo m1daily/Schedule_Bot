@@ -168,9 +168,11 @@ violence = False
 if next_schedule != None:
     if "土曜課外" in next_schedule and day - day_now == 1:
         violence = True
+        '''
         r = requests.get(ws.acell("C7").value).content
         with open("sat.jpg", "wb") as f:
             f.write(r)
+        '''
         logger.info("土曜課外 有")
 
 # 画像URLを使って画像をダウンロード
