@@ -3,6 +3,9 @@
 
 # images
 *.png
+*.jpg
+*.jpeg
+!sat.jpg
 
 # secrets
 *env*
