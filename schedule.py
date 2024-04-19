@@ -224,7 +224,7 @@ if violence:
     media_ids = []
     img = api.media_upload("sat.jpg")
     media_ids.append(img.media_id)
-    client.create_tweet(text="土曜課害の時間割です。", media_ids=media_ids)
+    client.create_tweet(text="土曜課外の時間割です。", media_ids=media_ids)
 logger.info("Twitter: ツイート完了")
 
 # LINE Notifyに通知
