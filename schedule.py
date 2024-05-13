@@ -52,15 +52,30 @@ access_token_secret = os.environ["ACCESS_TOKEN_SECRET"]    # Twitterアカウン
 line_dict = ast.literal_eval(os.environ["LINE_NOTIFY"])    # LINEグループのトークン(JSON形式)
 webhook_url = os.environ["WEBHOOK"]    # Discordの時間割サーバーのWebhookのURL
 
+# InstagramAPIのtoken設定
+insta_business_id = os.environ['FACEBOOK_ID']
+insta_token = os.environ['FACEBOOK_TOKEN']
+
 # LINEの設定
 def line_notify(line_access_token, message, image):
     line_url = "https://notify-api.line.me/api/notify"
-    headers = {"Authorization": "Bearer " + line_access_token}
+    headers = {"Authorization": f"Bearer {line_access_token}"}
     payload = {"message": message}
     files = {"imageFile": open(image, "rb")}
     r = requests.post(line_url, headers=headers, params=payload, files=files)
     r.raise_for_status()
     return str(r.status_code)
+
+# InstagramAPIの設定
+def instagram_api(url, post_data):
+    try:
+        headers = {"Authorization": f"Bearer {insta_token}", "Content-Type": "application/json"}
+        options = {"headers": headers, "data": json.dumps(post_data)}
+        response = requests.post(url, **options)
+        return response
+    except Exception as error:
+        logger.warning(f"Instagram APIのリクエスト中にエラー発生\n{error}\n")
+        return None
 
 # 終了時用
 def finish(exit_message):
@@ -275,6 +290,19 @@ else:
     visibility = "specified"
 mk.notes_create(message, visibility=visibility, file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
+
+# Instagramに投稿
+post_data = {"image_url": imgs_url_now[0], "caption": message, "media_type": ""}
+url = f"https://graph.facebook.com/v19.0/{insta_business_id}/media?"
+r = instagram_api(url, post_data)  # 画像のアップロード
+r.raise_for_status()
+logger.info(f"画像アップロード: {str(r.status_code)}")
+data = r.json()['id'] # 画像のIDを取得
+post_data = {'creation_id': data}
+url = f"https://graph.facebook.com/v19.0/{insta_business_id}/media_publish?"
+r = instagram_api(url, post_data) # 投稿
+r.raise_for_status()
+logger.info(f"投稿: {str(r.status_code)}")
 
 # One SignalでWeb Push通知
 headers = {
