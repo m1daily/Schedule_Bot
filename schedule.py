@@ -52,9 +52,9 @@ access_token_secret = os.environ["ACCESS_TOKEN_SECRET"]    # Twitterアカウン
 line_dict = ast.literal_eval(os.environ["LINE_NOTIFY"])    # LINEグループのトークン(JSON形式)
 webhook_url = os.environ["WEBHOOK"]    # Discordの時間割サーバーのWebhookのURL
 
-# InstagramAPIのtoken設定
-insta_business_id = os.environ['FACEBOOK_ID']
-insta_token = os.environ['FACEBOOK_TOKEN']
+# Instagram Graph APIのtoken設定
+insta_business_id = os.environ["INSTA_ID"]
+insta_token = os.environ["INSTA_TOKEN"]
 
 # LINEの設定
 def line_notify(line_access_token, message, image):
