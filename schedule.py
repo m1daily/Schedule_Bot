@@ -32,11 +32,6 @@ handler.setFormatter(format)
 logger.addHandler(handler)
 
 #----------------------------------------------------------------------------------------------------
-# デバッグ確認
-debug = os.environ["DEBUG"]
-if debug == "ON":
-    logger.warning("DEBUG MODE\n")
-
 # jsonファイル準備(SpreadSheetログイン用)
 dic = ast.literal_eval(os.environ["JSON"])
 with open("gss.json", mode="wt", encoding="utf-8") as file:
@@ -133,16 +128,13 @@ before = ",".join(imgs_url_latest)
 subprocess.run([f"echo BEFORE={before} >> $GITHUB_OUTPUT"], shell=True)
 
 # 比較
-if debug != "ON":
-    if len(imgs_url_now) == len(imgs_url_latest):
-        if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
-            finish("画像が一致した為、終了")
-        else:
-            logger.info("画像が一致しないので続行")
+if len(imgs_url_now) == len(imgs_url_latest):
+    if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
+        finish("画像が一致した為、終了")
     else:
-        logger.info("画像の枚数が異なるので続行")
+        logger.info("画像が一致しないので続行")
 else:
-    logger.info("DEBUG MODEなので続行")
+    logger.info("画像の枚数が異なるので続行")
 
 #----------------------------------------------------------------------------------------------------
 # 月間予定を日付と予定に分割
@@ -201,11 +193,10 @@ for i in imgs_url_now:
         f.write(r)
 
 # GoogleSpreadSheetsに画像URLを書き込み
-if debug != "ON":
-    ws.update_acell("C2", time_now)
-    ws.update_acell("C3", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
-    ws.update_acell("C6", " \n".join(imgs_url_now))
-    logger.info("画像DL完了、セル上書き完了\n")
+ws.update_acell("C2", time_now)
+ws.update_acell("C3", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
+ws.update_acell("C6", " \n".join(imgs_url_now))
+logger.info("画像DL完了、セル上書き完了\n")
 
 #----------------------------------------------------------------------------------------------------
 # tweepyの設定(認証情報を設定、APIインスタンスの作成)
@@ -219,10 +210,7 @@ client = tweepy.Client(
    access_token_secret=access_token_secret)
 
 # 環境次第でメッセージ変更
-if debug == "ON":
-    message = "テスト投稿です。"
-else:
-    message = "時間割が更新されました。"
+message = "時間割が更新されました。"
 if next_schedule != None:
     message = f"{message}\n{next_day}に {next_schedule} があります。"
 
@@ -231,8 +219,7 @@ media_ids = []
 for image in imgs_path:
    img = api.media_upload(image)
    media_ids.append(img.media_id)
-if debug != "ON":
-    client.create_tweet(text=message, media_ids=media_ids)
+client.create_tweet(text=message, media_ids=media_ids)
 
 # 土曜加害がある場合は加害の時間割画像も投稿
 if violence:
@@ -284,10 +271,7 @@ for i, path in enumerate(imgs_path, 1):
     with open(path, "rb") as f:
         data = mk.drive_files_create(f, name=date.strftime("%y-%m-%d_%H-%M_")+str(i), folder_id="9e8gee0xd2")
         misskey_ids.append(data["id"])
-if debug != "ON":
-    visibility = "home"
-else:
-    visibility = "specified"
+visibility = "home"
 mk.notes_create(message, visibility=visibility, file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
 
