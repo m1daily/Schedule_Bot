@@ -287,27 +287,4 @@ url = f"https://graph.facebook.com/v19.0/{insta_business_id}/media_publish?"
 r = instagram_api(url, post_data) # 投稿
 r.raise_for_status()
 logger.info(f"投稿: {str(r.status_code)}")
-
-# One SignalでWeb Push通知
-headers = {
-    "Authorization": "Basic " + os.environ["API_KEY"],
-    "accept": "application/json",
-    "content-type": "application/json"
-}
-json_data = {
-    "included_segments": [
-        "Subscribed Users",
-        "Active Users",
-        "Inactive Users",
-    ],
-    "contents": {
-        "en": message,
-        "ja": message,
-    },
-    "name": "mito1daily",
-    "app_id": os.environ["APP_ID"],
-}
-r = requests.post("https://onesignal.com/api/v1/notifications", headers=headers, json=json_data)
-logger.info(f"One Signal: {r.status_code}")
-r.raise_for_status()
 finish("投稿完了")
