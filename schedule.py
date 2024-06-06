@@ -127,14 +127,20 @@ for e in imgs_url_latest:
 before = ",".join(imgs_url_latest)
 subprocess.run([f"echo BEFORE={before} >> $GITHUB_OUTPUT"], shell=True)
 
-# 比較
-if len(imgs_url_now) == len(imgs_url_latest):
-    if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
-        finish("画像が一致した為、終了")
+# 更新通知のチェック
+if ws.acell("D3").value == "NoUpdate":
+    # 比較
+    if len(imgs_url_now) == len(imgs_url_latest):
+        if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
+            finish("画像が一致した為、終了")
+        else:
+            logger.info("画像が一致しないので続行")
     else:
-        logger.info("画像が一致しないので続行")
+        logger.info("画像の枚数が異なるので続行")
+    ws.update_acell("D3", "Update")
+    finish("次の更新チェックで画像投稿")
 else:
-    logger.info("画像の枚数が異なるので続行")
+    logger.info("画像投稿実行")
 
 #----------------------------------------------------------------------------------------------------
 # 月間予定を日付と予定に分割
@@ -196,6 +202,7 @@ for i in imgs_url_now:
 ws.update_acell("C2", time_now)
 ws.update_acell("C3", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
 ws.update_acell("C6", " \n".join(imgs_url_now))
+ws.update_acell("D3", "NoUpdate")
 logger.info("画像DL完了、セル上書き完了\n")
 
 #----------------------------------------------------------------------------------------------------
