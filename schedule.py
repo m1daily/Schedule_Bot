@@ -210,9 +210,8 @@ client = tweepy.Client(
    access_token_secret=access_token_secret)
 
 # 環境次第でメッセージ変更
-message = "時間割が更新されました。"
 if next_schedule != None:
-    message = f"{message}\n{next_day}に {next_schedule} があります。"
+    message = f"時間割が更新されました。\n{next_day}に {next_schedule} があります。"
 
 # Twitterに投稿
 media_ids = []
@@ -271,8 +270,7 @@ for i, path in enumerate(imgs_path, 1):
     with open(path, "rb") as f:
         data = mk.drive_files_create(f, name=date.strftime("%y-%m-%d_%H-%M_")+str(i), folder_id="9e8gee0xd2")
         misskey_ids.append(data["id"])
-visibility = "home"
-mk.notes_create(message, visibility=visibility, file_ids=misskey_ids)
+mk.notes_create(message, visibility="home", file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
 
 # Instagramに投稿
