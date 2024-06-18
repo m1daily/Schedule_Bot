@@ -40,7 +40,8 @@ jobs:
       - name: Run python
         id: results
         run: |
-          echo "::group::pip install --upgrade pip"
+          echo "::group::pip"
+          pip install --upgrade pip
           pip install -r ./requirements.txt
           echo "::endgroup::"
           python -B schedule.py
