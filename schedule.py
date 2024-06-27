@@ -7,6 +7,7 @@ import subprocess  # GitHubActionsの環境変数追加
 import time  # スリープ用
 from logging import DEBUG, Formatter, StreamHandler, getLogger  # ログ出力
 # サードパーティライブラリ
+import cv2  # 画像処理
 import cv2u  # 画像URLから読み込み
 import gspread  # SpreadSheet操作
 import requests  # LINE・Discord送信
@@ -52,11 +53,11 @@ insta_business_id = os.environ["INSTA_ID"]
 insta_token = os.environ["INSTA_TOKEN"]
 
 # LINEの設定
-def line_notify(line_access_token, message, image):
+def line_notify(line_access_token, line_message):
     line_url = "https://notify-api.line.me/api/notify"
     headers = {"Authorization": f"Bearer {line_access_token}"}
-    payload = {"message": message}
-    files = {"imageFile": open(image, "rb")}
+    payload = {"message": line_message}
+    files = {"imageFile": open("update.jpg", "rb")}
     r = requests.post(line_url, headers=headers, params=payload, files=files)
     r.raise_for_status()
     return str(r.status_code)
@@ -176,27 +177,32 @@ else:
         next_schedule = None
         logger.info("次の予定 無")
 
-# 土曜加害判定
-violence = False
-if next_schedule != None:
-    if "土曜課外" in next_schedule and day - day_now == 1:
-        violence = True
-        '''
-        r = requests.get(ws.acell("C7").value).content
-        with open("sat.jpg", "wb") as f:
-            f.write(r)
-        '''
-        logger.info("土曜課外 有")
-
 # 画像URLを使って画像をダウンロード
-imgs_path = []    # ダウンロードする画像のパスを格納するリスト
+imgs_path = []    # 現在の画像をcv2で読み込んだものを格納するリスト
 for i in imgs_url_now:
     time.sleep(3)
     r = requests.get(i).content
-    img = str(imgs_url_now.index(i) + 1) + ".png"    # 画像の名前を1.png,2.png,...とする
-    imgs_path.append(img)
+    img = str(imgs_url_now.index(i)) + ".png"    # 画像の名前を0.png,1.png,...とする
     with open(img, mode="wb") as f:
         f.write(r)
+    imgs_path.append(cv2.imread(img))
+
+# 土曜加害判定
+if next_schedule != None:
+    if "土曜課外" in next_schedule and day - day_now == 1:
+        """
+        r = requests.get(ws.acell("C7").value).content
+        with open("sat.jpg", "wb") as f:
+            f.write(r)
+        """
+        imgs_path.append(cv2.imread("sat.jpg"))
+        logger.info("土曜課外 有")
+
+# 画像結合
+h_min = min(im.shape[0]for im in imgs_path)
+im_list_resize = [cv2.resize(im, (int(im.shape[1] * h_min / im.shape[0]), h_min), interpolation=cv2.INTER_CUBIC)
+                  for im in imgs_path]  # 画像を小さい方に合わせてリサイズ
+cv2.imwrite("update.jpg", cv2.hconcat(im_list_resize))  # 画像を横に結合
 
 # GoogleSpreadSheetsに画像URLを書き込み
 ws.update_acell("C2", time_now)
@@ -219,69 +225,43 @@ client = tweepy.Client(
 # 環境次第でメッセージ変更
 if next_schedule != None:
     message = f"時間割が更新されました。\n{next_day}に {next_schedule} があります。"
+else:
+    message = "時間割が更新されました。"
 
 # Twitterに投稿
-media_ids = []
-for image in imgs_path:
-   img = api.media_upload(image)
-   media_ids.append(img.media_id)
-client.create_tweet(text=message, media_ids=media_ids)
-
-# 土曜加害がある場合は加害の時間割画像も投稿
-if violence:
-    media_ids = []
-    img = api.media_upload("sat.jpg")
-    media_ids.append(img.media_id)
-    client.create_tweet(text="土曜課外の時間割です。", media_ids=media_ids)
+client.create_tweet(text=message, media_ids=[api.media_upload("update.jpg").media_id])
 logger.info("Twitter: ツイート完了")
 
 # LINE Notifyに通知
 logger.info("LINE:")
 for key, value in line_dict.items():
-    for i, image in enumerate(imgs_path, 1):
-        try:
-            logger.info(f"{key}-{i}枚目: {line_notify(value, message, image)}")
-        except Exception as e:
-            logger.info(f"{key}-{i}枚目: {e.__class__.__name__}({e})")
-            continue
-    if violence:
-        logger.info(f"{key}-土曜課害: {line_notify(value, '土曜課外の時間割です。', 'sat.jpg')}")
+    try:
+        logger.info(f"{key}: {line_notify(value, message)}")
+    except Exception as e:
+        logger.info(f"{key}: {e.__class__.__name__}({e})")
+        continue
+
+# Discord, Misskey用に画像をバイナリに変換
+with open("update.jpg", mode='rb') as f:
+    image_rb = f.read()
 
 # Discordに通知
-payload2 = {"payload_json" : {"content" : f"@everyone\n{message}"}}
-embed = []
-# 画像の枚数分"embed"の値追加
-for i in imgs_url_now:
-    if imgs_url_now.index(i) == 0:
-        img_embed = {
-            "color" : 10931421,
-            "url" : "https://www.google.com/",
-            "image" : {"url" : i}
-            }
-    else:
-        img_embed = {
-            "url" : "https://www.google.com/",
-            "image" : {"url" : i}
-            }
-    embed.append(img_embed)
-payload2["payload_json"]["embeds"] = embed
+payload2 = {"payload_json" : {"content" : f"@everyone\n{message}",}}
 payload2["payload_json"] = json.dumps(payload2["payload_json"], ensure_ascii=False)
-r = requests.post(webhook_url, data=payload2)
+r = requests.post(webhook_url, data=payload2, files={"attachment": ("update.jpg", image_rb)})
 logger.info(f"Discord: {r.status_code}")
 r.raise_for_status()
 
 # Misskeyに投稿
 mk = Misskey("https://misskey.io/", i=os.environ["MISSKEY"])
 misskey_ids = []
-for i, path in enumerate(imgs_path, 1):
-    with open(path, "rb") as f:
-        data = mk.drive_files_create(f, name=date.strftime("%y-%m-%d_%H-%M_")+str(i), folder_id="9e8gee0xd2")
-        misskey_ids.append(data["id"])
+data = mk.drive_files_create(image_rb, name=date.strftime("%y-%m-%d_%H-%M_"), folder_id="9e8gee0xd2")
+misskey_ids.append(data["id"])
 mk.notes_create(message, visibility="home", file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
 
 # Instagramに投稿
-post_data = {"image_url": imgs_url_now[0], "caption": message, "media_type": ""}
+post_data = {"image_url": "update.jpg", "caption": message, "media_type": ""}
 url = f"https://graph.facebook.com/v19.0/{insta_business_id}/media?"
 r = instagram_api(url, post_data)  # 画像のアップロード
 r.raise_for_status()
