@@ -261,7 +261,7 @@ mk.notes_create(message, visibility="home", file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
 
 # Instagramに投稿
-post_data = {"image_url": "update.jpg", "caption": message, "media_type": ""}
+post_data = {"image_url": imgs_url_now[0], "caption": message, "media_type": ""}
 url = f"https://graph.facebook.com/v19.0/{insta_business_id}/media?"
 r = instagram_api(url, post_data)  # 画像のアップロード
 r.raise_for_status()
