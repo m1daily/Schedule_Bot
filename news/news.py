@@ -30,6 +30,16 @@ handler.setFormatter(format)
 logger.addHandler(handler)
 logger.info("セットアップ完了")
 
+# LINEの設定
+def line_notify(line_access_token, line_message):
+    line_url = "https://notify-api.line.me/api/notify"
+    headers = {"Authorization": f"Bearer {line_access_token}"}
+    payload = {"message": line_message}
+    files = {"imageFile": open("image.png", "rb")}
+    r = requests.post(line_url, headers=headers, params=payload, files=files)
+    r.raise_for_status()
+    return str(r.status_code)
+
 # ユーザーエージェントを変更、403エラー対策
 ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
 headers = {"User-Agent": ua}
@@ -119,7 +129,17 @@ client = tweepy.Client(
 img = api.media_upload("image.png")
 client.create_tweet(text="今月の予定です。", media_ids=[img.media_id])
 logger.info("Twitter: ツイート完了")
-#-----------------------------------------------------------------------------------------------------------------------------------
+
+# LINE Notifyに通知
+logger.info("LINE:")
+line_dict = ast.literal_eval(os.environ["LINE_NOTIFY"])    # LINEグループのトークン(JSON形式)
+for key, value in line_dict.items():
+    try:
+        logger.info(f"{key}: {line_notify(value, "今月の予定です。")}")
+    except Exception as e:
+        logger.info(f"{key}: {e.__class__.__name__}({e})")
+        continue
+
 # Discordに投稿
 webhook_url = os.environ["WEBHOOK"]
 payload2 = {

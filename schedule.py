@@ -148,7 +148,7 @@ else:
 month_data = ws.acell("D6").value.split("\n")
 days, schedules = [], []
 for i, day_data in enumerate(month_data):
-    day_parts = day_data.split(")")
+    day_parts = day_data.split(")")  # day_parts = ["5日(金", "①②実力試験(1", "、③校内模試(2", "、④ベネ記述模試"]
     yotei = []
     for n, d in enumerate(day_parts):
         # 日付の場合「)」を追加
