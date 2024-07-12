@@ -247,7 +247,7 @@ with open("update.jpg", mode='rb') as f:
     image_rb = f.read()
 
 # Discordに通知
-payload2 = {"payload_json" : {"content" : f"@everyone\n{message}",}}
+payload2 = {"payload_json": {"content" : f"@everyone\n{message}",}}
 payload2["payload_json"] = json.dumps(payload2["payload_json"], ensure_ascii=False)
 r = requests.post(webhook_url, data=payload2, files={"attachment": ("update.jpg", image_rb)})
 logger.info(f"Discord: {r.status_code}")
@@ -262,15 +262,28 @@ mk.notes_create(message, visibility="home", file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
 
 # Instagramに投稿
-post_data = {"image_url": imgs_url_now[0], "caption": message, "media_type": ""}
-url = f"https://graph.facebook.com/v19.0/{insta_business_id}/media?"
-r = instagram_api(url, post_data)  # 画像のアップロード
-r.raise_for_status()
-logger.info(f"画像アップロード: {str(r.status_code)}")
-data = r.json()['id'] # 画像のIDを取得
-post_data = {'creation_id': data}
-url = f"https://graph.facebook.com/v19.0/{insta_business_id}/media_publish?"
-r = instagram_api(url, post_data) # 投稿
+if len(imgs_url_now) > 1:
+    logger.info("Instagram: カルーセル投稿")
+    contena_ids = []  # 複数枚ある場合はカルーセル投稿
+    for insta_url in imgs_url_now:
+        post_data = {"image_url": insta_url, "media_type": ""}
+        r = instagram_api(f"https://graph.facebook.com/v19.0/{insta_business_id}/media?", post_data)  # 画像のアップロード
+        r.raise_for_status()
+        logger.info(f"画像アップロード: {str(r.status_code)}")
+        contena_ids.append(r.json()["id"]) # 画像のIDを取得
+    post_data = {"media_type": "CAROUSEL", "children": contena_ids, "caption": message}
+    r = instagram_api(f"https://graph.facebook.com/v19.0/{insta_business_id}/media?", post_data)
+    r.raise_for_status()
+    logger.info(f"グループ化コンテナID取得: {str(r.status_code)}")
+    post_data = {"media_type": "CAROUSEL", "creation_id": r.json()["id"]}
+else:
+    logger.info("Instagram: 画像投稿")
+    post_data = {"image_url": imgs_url_now[0], "caption": message, "media_type": ""}
+    r = instagram_api(f"https://graph.facebook.com/v19.0/{insta_business_id}/media?", post_data)  # 画像のアップロード
+    r.raise_for_status()
+    logger.info(f"画像アップロード: {str(r.status_code)}")
+    post_data = {"creation_id": r.json()["id"]}  # 画像のIDを取得
+r = instagram_api(f"https://graph.facebook.com/v19.0/{insta_business_id}/media_publish?", post_data) # 投稿
 r.raise_for_status()
 logger.info(f"投稿: {str(r.status_code)}")
 finish("投稿完了")
