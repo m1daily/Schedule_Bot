@@ -132,12 +132,15 @@ subprocess.run([f"echo BEFORE={before} >> $GITHUB_OUTPUT"], shell=True)
 if ws.acell("D3").value == "NoUpdate":
     # 比較
     if len(imgs_url_now) == len(imgs_url_latest):
-        if bool(set(imgs_cv2u_now) == set(imgs_cv2u_latest)) == True:
+        if set(imgs_cv2u_now) == set(imgs_cv2u_latest):
             finish("画像が一致した為、終了")
         else:
             logger.info("画像が一致しないので続行")
     else:
-        logger.info("画像の枚数が異なるので続行")
+        if len(imgs_url_now) < len(imgs_url_latest) and set(imgs_cv2u_now).issubset(imgs_cv2u_latest):
+            finish("画像の枚数が減っただけなので終了")
+        else:
+            logger.info("画像の枚数が異なるので続行")
     ws.update_acell("D3", "Update")
     finish("次の更新チェックで画像投稿")
 else:
