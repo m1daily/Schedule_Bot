@@ -48,7 +48,8 @@ headers = {"User-Agent": ua}
 url = "https://www.mito1-h.ibk.ed.jp/"
 r = requests.get(url, headers=headers)
 soup = BeautifulSoup(r.text, "html.parser")
-schedule = soup.select_one("#box-18 > section:nth-child(4) > div.panel-body.block > article > p:nth-child(2)")
+news_len = str(len(soup.select("#box-18 > section:nth-child(4) > div.panel-body.block > article > p")))
+schedule = soup.select_one(f"#box-18 > section:nth-child(4) > div.panel-body.block > article > p:nth-child({news_len})")
 logger.info("要素抽出完了\n")
 
 #-----------------------------------------------------------------------------------------------------------------------------------
@@ -66,6 +67,11 @@ for i in range(len(schedule)):
     news = news.strip()  # 文字列の先頭と末尾の空白を削除
     if not news:  # newsが空の場合、continue
         continue
+    if i == 0:  # 1日の形式がn/1(x)の場合
+        day_pattern = news[:news.find('(')]  # (の前の部分を取得
+        if "/" in day_pattern:  # 日付部分に/が含まれている場合
+            day_delete = day_pattern.find('/')  # /で分割
+            news = news[day_delete + 1:]
     if re.match("\d", news[0]) is not None:  # 先頭が数字の場合
         if news[0] != "1" or news[1] != "日":  # 1日以外の場合、改行を追加
             news = "\n" + news
