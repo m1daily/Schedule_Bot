@@ -54,6 +54,19 @@ insta_token = os.environ["INSTA_TOKEN"]
 
 # LINEの設定
 def line_notify(line_access_token, line_message):
+    """
+    Line Notify API を使って Line に通知メッセージを送信
+
+    引数
+        line_access_token (str): LINE Notify API のアクセストークン
+        line_message (str): 送信するメッセージ
+
+    戻り値
+        str: HTTPリクエストのステータスコード
+
+    発生：
+        requests.HTTPError: HTTP リクエストがエラー・ステータス・コードを返した場合
+    """
     line_url = "https://notify-api.line.me/api/notify"
     headers = {"Authorization": f"Bearer {line_access_token}"}
     payload = {"message": line_message}
@@ -64,6 +77,16 @@ def line_notify(line_access_token, line_message):
 
 # InstagramAPIの設定
 def instagram_api(url, post_data):
+    """
+    指定されたURLと投稿データでInstagram APIにPOSTリクエストを送信
+
+    引数
+        url (str): Instagram APIエンドポイントのURL
+        post_data (dict): POSTリクエストで送信するデータ
+
+    戻り値
+        requests.Response or None: リクエストが成功した場合はレスポンスオブジェクト、そうでない場合はNone
+    """
     try:
         headers = {"Authorization": f"Bearer {insta_token}", "Content-Type": "application/json"}
         options = {"headers": headers, "data": json.dumps(post_data)}
