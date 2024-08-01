@@ -101,7 +101,14 @@ if txt == ws.acell("D6").value:
     exit()
 else:
     logger.info("更新されているので続行\n")
-    month = soup.select_one("#box-18 > section:nth-child(4) > div.panel-heading.clearfix > span").contents[0][:2].replace("月", "")
+    month = soup.select_one("#box-18 > section:nth-child(4) > div.panel-heading.clearfix > span").contents[0].translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))
+    logger.info(f"月の表記: {month}")
+    month_li = month[:month.find("月")].split("・")
+    if max(month_li) == "12" and "1" in month_li:
+        month = "1"
+    else:
+        month = max(month_li)
+    logger.info(f"月: {month}")
     ws.update_acell("D2", int(month))
     ws.update_acell("D6", txt)
 
