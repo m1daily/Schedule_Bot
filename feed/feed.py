@@ -25,6 +25,11 @@ handler.setFormatter(format)
 logger.addHandler(handler)
 logger.info("セットアップ完了")
 
+def log(msg: str, li: list):
+    logger.info(f"{msg}:")
+    for i, item in enumerate(li):
+        logger.info(f"{i+1}: {item}")
+
 # 月間予定の要素を抽出
 url = os.environ["RSS_URL_NEWS"]
 articles = []
@@ -37,11 +42,7 @@ while len(articles) < 10:
     if ar == "の記事を掲載しました。":
         continue
     articles.append(ar)
-logger.info("要素抽出完了\n")
-for i, item in enumerate(articles):
-    logger.info(f"{i+1}: {item}")
-txt = "\n".join(articles)
-logger.info(f"\n{txt}\n")
+log("取得した記事", articles)
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Google SpreadSheetsにアクセス
@@ -55,14 +56,15 @@ except:
 
 # テキスト比較
 old_articles = ws.acell("E6").value.split("\n")
+log("旧記事", old_articles)
 if articles == old_articles:
     logger.info("更新されていないので終了")
     exit()
 else:
     logger.info("更新されているので続行\n")
     diff = [i for i in articles if not i in old_articles]
-    update = "\n".join(diff)
-    logger.info(f"差分: {update}")
+    log("差分", diff)
+    txt = "\n".join(articles)
     ws.update_acell("E6", txt)
 
 #-----------------------------------------------------------------------------------------------------------------------------------
@@ -83,5 +85,6 @@ client = tweepy.Client(
    access_token_secret=access_token_secret)
 
 # ツイート
-# client.create_tweet(text = "https://www.mito1-h.ibk.ed.jp/" + "\n水戸一高のHPが更新されました。\n" + update[:90] + "...(以下略)")
-# logger.info("Twitter: ツイート完了")
+update = "\n".join(diff)
+client.create_tweet(text = "https://www.mito1-h.ibk.ed.jp/" + "\n水戸一高のHPが更新されました。\n" + update[:90] + "...(以下略)")
+logger.info("Twitter: ツイート完了")
