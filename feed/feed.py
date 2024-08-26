@@ -1,0 +1,87 @@
+# 標準ライブラリ
+import ast  # 文字列→JSON
+import json  # JSONファイル読み込み
+import os  # GitHubActionsの環境変数追加
+from logging import DEBUG, Formatter, StreamHandler, getLogger  # ログ出力
+# サードパーティライブラリ
+import feedparser  # RSS取得
+import gspread  # SpreadSheet操作
+import tweepy  # Twitter送信
+from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
+
+
+#-----------------------------------------------------------------------------------------------------------------------------------
+# jsonファイル準備(SpreadSheetログイン用)
+dic = ast.literal_eval(os.environ["JSON"])
+with open("gss.json", mode="wt", encoding="utf-8") as file:
+    json.dump(dic, file, ensure_ascii=False, indent=2)
+
+# ログ設定
+logger = getLogger(__name__)
+logger.setLevel(DEBUG)
+handler = StreamHandler()
+format = Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
+handler.setFormatter(format)
+logger.addHandler(handler)
+logger.info("セットアップ完了")
+
+# 月間予定の要素を抽出
+url = os.environ["RSS_URL_NEWS"]
+articles = []
+index = 0
+f = feedparser.parse(url)['entries']
+while len(articles) < 10:
+    ar = f[index]['title'].translate(str.maketrans({"　": "", " ": "", "（": "(", "）": ")", u"\xa0": "", u"\u3000": "", "\n": ""}))  # 余計なスペースを削除、全角括弧を半角括弧に変換
+    ar = ar.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))  # 全角数字を半角数字に変換
+    index += 1
+    if ar == "の記事を掲載しました。":
+        continue
+    articles.append(ar)
+logger.info("要素抽出完了\n")
+for i, item in enumerate(articles):
+    logger.info(f"{i+1}: {item}")
+txt = "\n".join(articles)
+logger.info(f"\n{txt}\n")
+
+#-----------------------------------------------------------------------------------------------------------------------------------
+# Google SpreadSheetsにアクセス
+scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
+gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name("gss.json", scope))
+try:
+    ws = gc.open_by_key(os.environ["SHEET_ID"]).sheet1
+except:
+    logger.warning("Googleスプレッドシートへのアクセス失敗\n")
+    exit()
+
+# テキスト比較
+old_articles = ws.acell("E6").value.split("\n")
+if articles == old_articles:
+    logger.info("更新されていないので終了")
+    exit()
+else:
+    logger.info("更新されているので続行\n")
+    diff = [i for i in articles if not i in old_articles]
+    update = "\n".join(diff)
+    logger.info(f"差分: {update}")
+    ws.update_acell("E6", txt)
+
+#-----------------------------------------------------------------------------------------------------------------------------------
+# keyの指定(情報漏えいを防ぐため伏せています)
+consumer_key = os.environ["CONSUMER_KEY"]
+consumer_secret = os.environ["CONSUMER_SECRET"]
+access_token = os.environ["ACCESS_TOKEN"]
+access_token_secret = os.environ["ACCESS_TOKEN_SECRET"]
+
+# tweepyの設定(認証情報を設定、APIインスタンスの作成)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth, wait_on_rate_limit=True)
+client = tweepy.Client(
+   consumer_key=consumer_key,
+   consumer_secret=consumer_secret,
+   access_token=access_token,
+   access_token_secret=access_token_secret)
+
+# ツイート
+# client.create_tweet(text = "https://www.mito1-h.ibk.ed.jp/" + "\n水戸一高のHPが更新されました。\n" + update[:90] + "...(以下略)")
+# logger.info("Twitter: ツイート完了")

@@ -1,0 +1,43 @@
+name: GitHub_Actions(feed)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * *"
+
+env:  #環境変数から文字列(パスワードなど)を取得
+  ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+  CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
+  CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
+  JSON: ${{ secrets.JSON }}
+  RSS_URL_NEWS: ${{ secrets.RSS_URL_NEWS }}
+  SHEET_ID: ${{ secrets.SHEET_ID }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  TZ: "Asia/Tokyo"
+concurrency:  # 同時にworkflowが実行されたらキャンセル
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+          architecture: "x64"
+      - name: Run python
+        run: |
+          echo "::group::pip"
+          pip install --upgrade pip
+          pip install -r ./requirements.txt
+          echo "::endgroup::"
+          python -B ./feed/feed.py
+      - name: Notify discord when job failed
+        if: ${{ failure() }}
+        uses: sarisia/actions-status-discord@v1
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_ERROR }}
+        with:
+          status: ${{ job.status }}
