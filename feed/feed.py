@@ -93,6 +93,6 @@ client = tweepy.Client(
    access_token_secret=access_token_secret)
 
 # ツイート
-update = "\n".join(diff)
-client.create_tweet(text = "https://www.mito1-h.ibk.ed.jp/" + "\n水戸一高のHPが更新されました。\n" + update[:90] + "...(以下略)")
+update = "\n・".join(diff)
+client.create_tweet(text = "https://www.mito1-h.ibk.ed.jp/" + "\n水戸一高のHPが更新されました。\n" + update[:85] + "...(以下略)")
 logger.info("Twitter: ツイート完了")
