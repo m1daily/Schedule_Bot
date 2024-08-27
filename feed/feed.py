@@ -62,7 +62,15 @@ if articles == old_articles:
     exit()
 else:
     logger.info("更新されているので続行\n")
-    diff = [i for i in articles if not i in old_articles]
+    idex = 0
+    while index < 10:
+        if articles[index] == old_articles[0]:
+            break
+        index += 1
+    diff = articles[:index]
+    if diff == []:
+        logger.info("差分なし")
+        exit()
     log("差分", diff)
     txt = "\n".join(articles)
     ws.update_acell("E6", txt)
