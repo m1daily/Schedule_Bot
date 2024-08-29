@@ -56,13 +56,13 @@ except:
 
 # テキスト比較
 old_articles = ws.acell("E6").value.split("\n")
-log("旧記事", old_articles)
+log("\n旧記事", old_articles)
 if articles == old_articles:
     logger.info("更新されていないので終了")
     exit()
 else:
     logger.info("更新されているので続行\n")
-    idex = 0
+    index = 0
     while index < 10:
         if articles[index] == old_articles[0]:
             break
@@ -94,5 +94,6 @@ client = tweepy.Client(
 
 # ツイート
 update = "\n・".join(diff)
+update = "\n・" + update
 client.create_tweet(text = "https://www.mito1-h.ibk.ed.jp/" + "\n水戸一高のHPが更新されました。\n" + update[:85] + "...(以下略)")
 logger.info("Twitter: ツイート完了")
