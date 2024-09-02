@@ -94,6 +94,8 @@ client = tweepy.Client(
 
 # ツイート
 update = "\n・".join(diff)
-update = "\n・" + update
-client.create_tweet(text = "https://www.mito1-h.ibk.ed.jp/" + "\n水戸一高のHPが更新されました。\n" + update[:85] + "...(以下略)")
+post = f"https://www.mito1-h.ibk.ed.jp/\n水戸一高のHPが更新されました。\n\n・{update}"
+if len(post) > 139:
+    post = f"{post[:130]}...(以下略)"
+client.create_tweet(text=post)
 logger.info("Twitter: ツイート完了")
