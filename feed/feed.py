@@ -2,11 +2,13 @@
 import ast  # 文字列→JSON
 import json  # JSONファイル読み込み
 import os  # GitHubActionsの環境変数追加
+import re  # 正規表現用
 from logging import DEBUG, Formatter, StreamHandler, getLogger  # ログ出力
 # サードパーティライブラリ
-import feedparser  # RSS取得
 import gspread  # SpreadSheet操作
+import requests  # Discord送信
 import tweepy  # Twitter送信
+from bs4 import BeautifulSoup  # 予定取得
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
 
 
@@ -30,13 +32,23 @@ def log(msg: str, li: list):
     for i, item in enumerate(li):
         logger.info(f"{i+1}: {item}")
 
+# ユーザーエージェントを変更、403エラー対策
+ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+headers = {"User-Agent": ua}
+
 # 月間予定の要素を抽出
-url = os.environ["RSS_URL_NEWS"]
+url = "https://www.mito1-h.ibk.ed.jp/"
+r = requests.get(url, headers=headers)
+soup = BeautifulSoup(r.text, "html.parser")
+pattern = re.compile('<div><span style="font-size: 11pt;">.*</span></div>')
+f = re.findall(pattern, r.text)
 articles = []
 index = 0
-f = feedparser.parse(url)['entries']
 while len(articles) < 10:
-    ar = f[index]['title'].translate(str.maketrans({"　": "", " ": "", "（": "(", "）": ")", u"\xa0": "", u"\u3000": "", "\n": ""}))  # 余計なスペースを削除、全角括弧を半角括弧に変換
+    ar = f[index].replace('<div><span style="font-size: 11pt;">', "").replace("</span></div>", "").replace("&nbsp;", "")
+    ar = re.sub('<a href=".*?">', "", ar)  # タグを削除
+    ar = re.sub("<.*?>", "", ar)  # タグを削除
+    ar = ar.translate(str.maketrans({"　": "", " ": "", "（": "(", "）": ")", u"\xa0": "", u"\u3000": "", "\n": ""}))  # 余計なスペースを削除、全角括弧を半角括弧に変換
     ar = ar.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))  # 全角数字を半角数字に変換
     index += 1
     if ar == "の記事を掲載しました。":
