@@ -188,3 +188,11 @@ with open("image.png", "rb") as f:
     data = mk.drive_files_create(f, name=date.strftime("news_%y-%m-%d_%H-%M"), folder_id="9e8gee0xd2")
 mk.notes_create("今月の予定です。", visibility="home", file_ids=[data["id"]])
 logger.info("Misskey: 投稿完了")
+
+# imgurにアップロード
+imgur = os.environ["IMGUR"]
+headers = {"authorization": f"Client-ID {imgur}"}
+files = {"image": open("image.png", "rb")}
+r = requests.post("https://api.imgur.com/3/image", headers=headers, files=files)
+logger.info(f"imgur: {r.status_code}")
+ws.update_acell("D7", json.loads(r.text)['data']['link'])
