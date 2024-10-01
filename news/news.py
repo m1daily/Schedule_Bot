@@ -48,9 +48,18 @@ headers = {"User-Agent": ua}
 url = "https://www.mito1-h.ibk.ed.jp/"
 r = requests.get(url, headers=headers)
 soup = BeautifulSoup(r.text, "html.parser")
-news_len = str(len(soup.select("#box-18 > section:nth-child(4) > div.panel-body.block > article > p")))
+news_soup = soup.select("#box-18 > section:nth-child(4) > div.panel-body.block > article > p")
+news_len = 0
+for i in range(1, len(news_soup)+1):
+    if str(soup.select_one(f"#box-18 > section:nth-child(4) > div.panel-body.block > article > p:nth-child({i})")).count("<br/>") > 5:
+        news_len = str(i)
+        break
+if news_len == 0:
+    logger.info("要素抽出失敗 (news_len=0)\n")
+    raise Exception("要素抽出失敗")
 schedule = soup.select_one(f"#box-18 > section:nth-child(4) > div.panel-body.block > article > p:nth-child({news_len})")
 logger.info("要素抽出完了\n")
+raise Exception("要素抽出失敗")
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # 余計な文字列を削除
@@ -148,7 +157,7 @@ logger.info("LINE:")
 line_dict = ast.literal_eval(os.environ["LINE_NOTIFY"])    # LINEグループのトークン(JSON形式)
 for key, value in line_dict.items():
     try:
-        logger.info(f"{key}: {line_notify(value, "今月の予定です。")}")
+        logger.info(f"{key}: {line_notify(value, '今月の予定です。')}")
     except Exception as e:
         logger.info(f"{key}: {e.__class__.__name__}({e})")
         continue
@@ -195,4 +204,4 @@ headers = {"authorization": f"Client-ID {imgur}"}
 files = {"image": open("image.png", "rb")}
 r = requests.post("https://api.imgur.com/3/image", headers=headers, files=files)
 logger.info(f"imgur: {r.status_code}")
-ws.update_acell("D7", json.loads(r.text)['data']['link'])
+ws.update_acell("D7", json.loads(r.text)["data"]["link"])
