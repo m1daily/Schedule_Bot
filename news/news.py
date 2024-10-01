@@ -59,7 +59,6 @@ if news_len == 0:
     raise Exception("要素抽出失敗")
 schedule = soup.select_one(f"#box-18 > section:nth-child(4) > div.panel-body.block > article > p:nth-child({news_len})")
 logger.info("要素抽出完了\n")
-raise Exception("要素抽出失敗")
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # 余計な文字列を削除
