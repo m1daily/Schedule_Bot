@@ -141,7 +141,13 @@ except:
     exit()
 
 # 最後に投稿した画像のリストを読み込み
-imgs_url_latest = ws.acell("C6").value.split()    # URLリスト(過去)
+time.sleep(2)
+try:
+    imgs_url_latest = ws.acell("C6").value.split()    # URLリスト(過去)
+except:
+    logger.warning("Googleスプレッドシートへのアクセス失敗\n")
+    subprocess.run(["echo STATUS=Googleスプレッドシートへのアクセス失敗 >> $GITHUB_OUTPUT"], shell=True)
+    exit()
 logger.info(f"過去の画像:{imgs_url_latest}\n")
 imgs_cv2u_latest = []    # cv2u用リスト(過去)
 for e in imgs_url_latest:
