@@ -223,11 +223,9 @@ for i in imgs_url_now:
 # 土曜加害判定
 if next_schedule != None:
     if "土曜課外" in next_schedule and day - day_now == 1:
-        """
         r = requests.get(ws.acell("C7").value).content
         with open("sat.jpg", "wb") as f:
             f.write(r)
-        """
         imgs_path.append(cv2.imread("sat.jpg"))
         logger.info("土曜課外 有")
 
