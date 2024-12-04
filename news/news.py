@@ -86,9 +86,10 @@ for i in range(len(schedule)):
                 check = "number(1)"
             else:
                 news = "、" + news  # カンマを追加(文字列の場合と同じ扱い)
-                check = "number"
+                check = "number(/)"
         else:
             news = "\n" + news
+            check = "number"
     else:  # 先頭が文字列の場合、カンマを追加
         news = "、" + news
         check = "string"
