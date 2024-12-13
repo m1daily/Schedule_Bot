@@ -224,13 +224,13 @@ for i in imgs_url_now:
 if next_schedule != None:
     if "土曜課外" in next_schedule and day - day_now == 1:
         r = requests.get(ws.acell("C7").value).content
-        with open("sat.jpg", "wb") as f:
+        with open("sat.png", "wb") as f:
             f.write(r)
-        imgs_path.append(cv2.imread("sat.jpg"))
+        imgs_path.append(cv2.imread("sat.png"))
         logger.info("土曜課外 有")
 
 # 画像結合
-h_min = min(im.shape[0]for im in imgs_path)
+h_min = min(im.shape[0] for im in imgs_path)
 im_list_resize = [cv2.resize(im, (int(im.shape[1] * h_min / im.shape[0]), h_min), interpolation=cv2.INTER_CUBIC)
                   for im in imgs_path]  # 画像を小さい方に合わせてリサイズ
 cv2.imwrite("update.jpg", cv2.hconcat(im_list_resize))  # 画像を横に結合
