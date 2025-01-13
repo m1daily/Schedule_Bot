@@ -70,7 +70,7 @@ for i in schedule.select("br"):
     i.replace_with("\n")
 
 # 外観調整
-schedule = schedule.text.replace("※変更の場合あり", "").split("\n")
+schedule = schedule.text.replace("変更の場合あり", "").replace("※", "").split("\n")
 schedule = list(filter(None, schedule))
 li = []
 subprocess.run(["echo '::group::parts'"], shell=True)
