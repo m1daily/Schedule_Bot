@@ -49,7 +49,9 @@ headers = {"User-Agent": ua}
 url = "https://www.mito1-h.ibk.ed.jp/"
 r = requests.get(url, headers=headers)
 soup = BeautifulSoup(r.text, "html.parser")
-news_soup = soup.select("#box-18 > section:nth-child(4) > div.panel-body.block > article > p")
+schedule = soup.select_one("#box-18 > section:nth-child(4) > div.panel-body.block > article")
+'''
+news_soup = soup.select("#box-18 > section:nth-child(4) > div.panel-body.block > article")
 news_len = 0
 for i in range(1, len(news_soup)+1):
     if str(soup.select_one(f"#box-18 > section:nth-child(4) > div.panel-body.block > article > p:nth-child({i})")).count("<br/>") > 5:
@@ -59,6 +61,7 @@ if news_len == 0:
     logger.info("要素抽出失敗 (news_len=0)\n")
     raise Exception("要素抽出失敗")
 schedule = soup.select_one(f"#box-18 > section:nth-child(4) > div.panel-body.block > article > p:nth-child({news_len})")
+'''
 logger.info("要素抽出完了\n")
 
 #-----------------------------------------------------------------------------------------------------------------------------------
