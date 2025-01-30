@@ -40,7 +40,7 @@ headers = {"User-Agent": ua}
 url = "https://www.mito1-h.ibk.ed.jp/"
 r = requests.get(url, headers=headers)
 soup = BeautifulSoup(r.text, "html.parser")
-pattern = re.compile('<div><span style="font-size: 11pt;">.*</span></div>')
+pattern = re.compile("<div>.*</div>")
 f = re.findall(pattern, r.text)
 articles = []
 index = 0
