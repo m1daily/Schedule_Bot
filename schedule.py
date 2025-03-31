@@ -10,7 +10,7 @@ from logging import DEBUG, Formatter, StreamHandler, getLogger  # ログ出力
 import cv2  # 画像処理
 import cv2u  # 画像URLから読み込み
 import gspread  # SpreadSheet操作
-import requests  # LINE・Discord送信
+import requests  # Discord送信
 import tweepy  # Twitter送信
 from bs4 import BeautifulSoup  # 画像取得
 from misskey import Misskey  # Misskey送信
@@ -44,36 +44,12 @@ consumer_secret = os.environ["CONSUMER_SECRET"]    # TwitterAPI識別シーク�
 access_token = os.environ["ACCESS_TOKEN"]    # Twitterアカウントに対するアクセストークン
 access_token_secret = os.environ["ACCESS_TOKEN_SECRET"]    # Twitterアカウントに対するアクセストークンシークレット
 
-# LINE,Discordのtoken設定(伏せています)
-line_dict = ast.literal_eval(os.environ["LINE_NOTIFY"])    # LINEグループのトークン(JSON形式)
+# Discordのtoken設定(伏せています)
 webhook_url = os.environ["WEBHOOK"]    # Discordの時間割サーバーのWebhookのURL
 
 # Instagram Graph APIのtoken設定
 insta_business_id = os.environ["INSTA_ID"]
 insta_token = os.environ["INSTA_TOKEN"]
-
-# LINEの設定
-def line_notify(line_access_token, line_message):
-    """
-    Line Notify API を使って Line に通知メッセージを送信
-
-    引数
-        line_access_token (str): LINE Notify API のアクセストークン
-        line_message (str): 送信するメッセージ
-
-    戻り値
-        str: HTTPリクエストのステータスコード
-
-    発生：
-        requests.HTTPError: HTTP リクエストがエラー・ステータス・コードを返した場合
-    """
-    line_url = "https://notify-api.line.me/api/notify"
-    headers = {"Authorization": f"Bearer {line_access_token}"}
-    payload = {"message": line_message}
-    files = {"imageFile": open("update.jpg", "rb")}
-    r = requests.post(line_url, headers=headers, params=payload, files=files)
-    r.raise_for_status()
-    return str(r.status_code)
 
 # InstagramAPIの設定
 def instagram_api(url, post_data):
@@ -262,15 +238,6 @@ else:
 # Twitterに投稿
 client.create_tweet(text=message, media_ids=[api.media_upload("update.jpg").media_id])
 logger.info("Twitter: ツイート完了")
-
-# LINE Notifyに通知
-logger.info("LINE:")
-for key, value in line_dict.items():
-    try:
-        logger.info(f"{key}: {line_notify(value, message)}")
-    except Exception as e:
-        logger.info(f"{key}: {e.__class__.__name__}({e})")
-        continue
 
 # Discord, Misskey用に画像をバイナリに変換
 with open("update.jpg", mode='rb') as f:
