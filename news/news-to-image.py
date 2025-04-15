@@ -1,6 +1,5 @@
 # 標準ライブラリ
 import re  # 正規表現用
-import subprocess  # GitHubActionsの環境変数追加
 from logging import DEBUG, Formatter, StreamHandler, getLogger  # ログ出力
 # サードパーティライブラリ
 from PIL import Image, ImageDraw, ImageFont  # 画像処理
@@ -25,7 +24,6 @@ logger.info("要素抽出完了\n")
 schedule = schedule.replace("変更の場合あり", "").replace("※", "").split("\n")
 schedule = list(filter(None, schedule))
 li = []
-subprocess.run(["echo '::group::parts'"], shell=True)
 for i in range(len(schedule)):
     news = schedule[i].translate(str.maketrans({"　": "", " ": "", "（": "(", "）": ")", u"\xa0": "", u"\u3000": ""}))  # 余計なスペースを削除、全角括弧を半角括弧に変換
     news = news.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))  # 全角数字を半角数字に変換
@@ -49,8 +47,6 @@ for i in range(len(schedule)):
         news = "、" + news
         check = "string"
     li.append(news)
-    subprocess.run([f"echo '{news} [{check}]'"], shell=True)
-subprocess.run(["echo '::endgroup::'"], shell=True)
 li = [i for i in li if i != ""]  # 空の要素を削除
 li[0] = li[0].replace("\n", "")
 txt = "".join(li)
@@ -62,7 +58,7 @@ length = 0
 for i in txt.split("\n"):
     if len(i) > length:
         length = len(i)
-im = Image.new("RGB", ((length+1)*12, (txt.count("\n")+2)*24+20), (256, 256, 256))
+im = Image.new("RGB", ((length+1)*12, (txt.count("\n")+2)*24+30), (256, 256, 256))
 draw = ImageDraw.Draw(im)
 font = ImageFont.truetype("./news/NotoSansCJKjp-Light.otf", 12)
 draw.text((20, 10), txt, fill=(0, 0, 0), font=font, spacing=12)
