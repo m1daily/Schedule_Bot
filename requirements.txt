@@ -1,4 +1,4 @@
-beautifulsoup4==4.13.3
+beautifulsoup4==4.13.4
 feedparser==6.0.11
 gspread==6.2.0
 Misskey.py==4.1.0
