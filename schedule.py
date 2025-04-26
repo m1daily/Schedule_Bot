@@ -110,7 +110,11 @@ subprocess.run([f"echo NOW={now} >> $GITHUB_OUTPUT"], shell=True)
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name("gss.json", scope))
 try:
-    ws = gc.open_by_key(os.environ["SHEET_ID"]).sheet1
+    ws = gc.open_by_key(os.environ["SHEET_ID"]).schedule
+    time.sleep(2)
+    ws2 = gc.open_by_key(os.environ["SHEET_ID"]).month
+    time.sleep(2)
+    ws3 = gc.open_by_key(os.environ["SHEET_ID"]).commands
 except:
     logger.warning("Googleスプレッドシートへのアクセス失敗\n")
     subprocess.run(["echo STATUS=Googleスプレッドシートへのアクセス失敗 >> $GITHUB_OUTPUT"], shell=True)
@@ -119,7 +123,7 @@ except:
 # 最後に投稿した画像のリストを読み込み
 time.sleep(2)
 try:
-    imgs_url_latest = ws.acell("C6").value.split()    # URLリスト(過去)
+    imgs_url_latest = ws.acell("C2").value.split()    # URLリスト(過去)
 except:
     logger.warning("Googleスプレッドシートへのアクセス失敗\n")
     subprocess.run(["echo STATUS=Googleスプレッドシートへのアクセス失敗 >> $GITHUB_OUTPUT"], shell=True)
@@ -134,7 +138,7 @@ before = ",".join(imgs_url_latest)
 subprocess.run([f"echo BEFORE={before} >> $GITHUB_OUTPUT"], shell=True)
 
 # 更新通知のチェック
-if ws.acell("D3").value == "NoUpdate":
+if ws.acell("C3").value == "NoUpdate":
     # 比較
     if len(imgs_url_now) == len(imgs_url_latest):
         if set(imgs_cv2u_now) == set(imgs_cv2u_latest):
@@ -146,14 +150,14 @@ if ws.acell("D3").value == "NoUpdate":
             finish("画像の枚数が減っただけなので終了")
         else:
             logger.info("画像の枚数が異なるので続行")
-    ws.update_acell("D3", "Update")
+    ws.update_acell("C3", "Update")
     finish("次の更新チェックで画像投稿")
 else:
     logger.info("画像投稿実行")
 
 #----------------------------------------------------------------------------------------------------
 # 月間予定を日付と予定に分割
-month_data = ws.acell("D6").value.split("\n")
+month_data = ws2.acell("B2").value.split("\n")
 days, schedules = [], []
 for i, day_data in enumerate(month_data):
     day_parts = day_data.split(")")  # day_parts = ["5日(金", "①②実力試験(1", "、③校内模試(2", "、④ベネ記述模試"]
@@ -172,8 +176,8 @@ for i, day_data in enumerate(month_data):
 month_now = int(date.strftime("%m"))
 day_now = int(date.strftime("%d"))
 next_day = None
-if month_now != int(ws.acell("D2").value):
-    next_day, next_schedule = str(ws.acell("D2").value) + "月" + days[0], schedules[0]
+if month_now != int(ws2.acell("A2").value):
+    next_day, next_schedule = str(ws2.acell("A2").value) + "月" + days[0], schedules[0]
     logger.info(f"次の予定: {next_day} {next_schedule}")
 else:
     for i in days:
@@ -199,7 +203,7 @@ for i in imgs_url_now:
 # 土曜加害判定
 if next_schedule != None:
     if "土曜課外" in next_schedule and day - day_now == 1:
-        r = requests.get(ws.acell("C7").value).content
+        r = requests.get(ws3.acell("C6").value).content
         with open("sat.png", "wb") as f:
             f.write(r)
         imgs_path.append(cv2.imread("sat.png"))
@@ -212,10 +216,10 @@ im_list_resize = [cv2.resize(im, (int(im.shape[1] * h_min / im.shape[0]), h_min)
 cv2.imwrite("update.jpg", cv2.hconcat(im_list_resize))  # 画像を横に結合
 
 # GoogleSpreadSheetsに画像URLを書き込み
-ws.update_acell("C2", time_now)
-ws.update_acell("C3", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
-ws.update_acell("C6", " \n".join(imgs_url_now))
-ws.update_acell("D3", "NoUpdate")
+ws.update_acell("C2", " \n".join(imgs_url_now))
+ws.update_acell("C3", "NoUpdate")
+ws.update_acell("C4", time_now)
+ws.update_acell("C5", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
 logger.info("画像DL完了、セル上書き完了\n")
 
 #----------------------------------------------------------------------------------------------------

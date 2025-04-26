@@ -61,13 +61,14 @@ log("取得した記事", articles)
 scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name("gss.json", scope))
 try:
-    ws = gc.open_by_key(os.environ["SHEET_ID"]).sheet1
+    ws = gc.open_by_key(os.environ["SHEET_ID"]).news
 except:
     logger.warning("Googleスプレッドシートへのアクセス失敗\n")
     exit()
 
 # テキスト比較
-old_articles = ws.acell("E6").value.split("\n")
+old_articles = ws.col_values(2)
+old_articles.pop(0)  # 1行目はヘッダーなので削除
 log("\n旧記事", old_articles)
 if articles == old_articles:
     logger.info("更新されていないので終了")
@@ -84,8 +85,12 @@ else:
         logger.info("差分なし")
         exit()
     log("差分", diff)
-    txt = "\n".join(articles)
-    ws.update_acell("E6", txt)
+
+    # spreadsheetに書き込み
+    values = []
+    for i in articles:
+        values.append([i])
+    ws.update("B2:B11", values)
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # keyの指定(情報漏えいを防ぐため伏せています)
