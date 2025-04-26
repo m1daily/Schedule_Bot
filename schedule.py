@@ -115,8 +115,8 @@ try:
     ws2 = gc.open_by_key(os.environ["SHEET_ID"]).month
     time.sleep(2)
     ws3 = gc.open_by_key(os.environ["SHEET_ID"]).commands
-except:
-    logger.warning("Googleスプレッドシートへのアクセス失敗\n")
+except Exception as e:
+    logger.warning(f"{e.__class__.__name__}: {e}")
     subprocess.run(["echo STATUS=Googleスプレッドシートへのアクセス失敗 >> $GITHUB_OUTPUT"], shell=True)
     exit()
 

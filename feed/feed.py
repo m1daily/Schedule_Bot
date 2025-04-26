@@ -62,8 +62,8 @@ scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/aut
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name("gss.json", scope))
 try:
     ws = gc.open_by_key(os.environ["SHEET_ID"]).news
-except:
-    logger.warning("Googleスプレッドシートへのアクセス失敗\n")
+except Exception as e:
+    logger.warning(f"{e.__class__.__name__}: {e}")
     exit()
 
 # テキスト比較
