@@ -61,7 +61,7 @@ log("取得した記事", articles)
 scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
 gc = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name("gss.json", scope))
 try:
-    ws = gc.open_by_key(os.environ["SHEET_ID"]).news
+    ws = gc.open_by_key(os.environ["SHEET_ID"]).worksheet("news")
 except Exception as e:
     logger.warning(f"{e.__class__.__name__}: {e}")
     exit()
