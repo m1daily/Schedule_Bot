@@ -16,6 +16,7 @@ python-opencv-utils = "==0.0.4"
 tweepy = "==4.15.0"
 typing-extensions = "*"
 six = "*"
+dotenv = "*"
 
 [dev-packages]
 
@@ -25,3 +26,4 @@ python_full_version = "3.12.10"
 
 [scripts]
 feed = "python feed/feed_test.py"
+gyazo = "python gyazo.py"
