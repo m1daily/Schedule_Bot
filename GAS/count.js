@@ -1,21 +1,18 @@
-// 公式アカウントのボタンが押されたらカウント
-// 日,週,月でカウントリセット
 function reset_day() {
-  reset("C");
+  reset("B");
 }
 
 function reset_week() {
-  reset("D");
+  reset("C");
 }
 
 function reset_month() {
-  reset("E");
+  reset("D");
 }
 
 function reset(column) {
-  const sheet = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty("DEBUG"));
-  const ss = sheet.getSheetByName("Count");
+  const ss = SpreadsheetApp.getActive().getSheetByName("Count");
   const lastRow = ss.getLastRow();
-  const cell = ss.getRange(`${column}3:${column}${lastRow}`);
+  const cell = ss.getRange(`${column}2:${column}${lastRow}`);
   cell.setValue(0);
 }
