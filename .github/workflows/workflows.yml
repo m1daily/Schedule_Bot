@@ -14,7 +14,7 @@ jobs:
         GITHUB_REPO: ${{ github.repository }}
     timeout-minutes: 3    # 10分過ぎたら強制終了
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: GitHub Actions Update
         run: |
           gh workflow list
