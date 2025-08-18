@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 headers = {"Authorization": f"Bearer {os.environ['GYAZO']}"}
-files = {"imagedata": open("doyou.jpg", "rb")}
+files = {"imagedata": open("image.png", "rb")}
 r = requests.post("https://upload.gyazo.com/api/upload", headers=headers, files=files)
 try:
     r.raise_for_status()

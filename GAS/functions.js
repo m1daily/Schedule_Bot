@@ -1,94 +1,259 @@
-// 次の予定取得
-function get_schedules(sheet) {
-  try{
-    // 予定取得
-    const month = sheet.getRange("D2").getValue();
-    const monthData = sheet.getRange("D6").getValue().replace(" ", "").split("\n");
+function test() {
+  const a = 1;
+  try {
+    const ss = SpreadsheetApp.getActive();
+    const b = 2;
+    debug2(b, `s`, ss, "debug2");
+    throw new Error("aaa")
+  } catch (e) {
+    console.log(a);
+  }
+}
 
-    // 現在の月日取得
-    const time = new Date();
-    const m = time.getMonth() + 1;
-    const d = time.getDate();
+function test2() {
+  const ss = SpreadsheetApp.getActive();
+  console.log(swhich_Message(ss, "予定+時間割", ""));
+}
 
-    // 日付と予定のデータを整理
-    const days = [];
-    const schedules = [];
 
-    for (let i = 0; i < monthData.length; i++) {
-      let dayData = monthData[i];
-      let dayParts = dayData.split(")");
-      let yotei = [];
+function dict() {
+  return [];
+}
 
-      for (let n = 0; n < dayParts.length; n++) {
-        // 日付の場合「)」を追加
-        if (dayParts.length - n > 1) {
-          dayParts[n] = dayParts[n] + ")";
-        };
-        if (n > 0) {
-          yotei.push(dayParts[n]);
-        }else if (n === 0) {
-          days.push(dayParts[n]);
-        };
-      };
-      schedules.push(yotei.join(""));
+
+//-------------------------------------------------------------------------------------------------------------
+// 2次元配列の検索
+function search_2dArray(array, value) {
+  let index = 0;
+  while (array[index][0] != value) {
+    index++;
+    if (index == array.length) {
+      return false;
     };
+  };
+  return index;
+}
 
-    // スプレッドシートの予定の月と現在の月が一致しないなら終了
-    if (month != String(m)) {
-      return {
+
+// LINEで返信するのに必要なメッセージレスポンスの形式で返す
+function make_Response(value, type) {
+  let response = "";
+  switch (type) {
+    case "text":
+      response = [{
         "type": "text",
-        "text": `${month}月${days[0]}に ${schedules[0]} があります。`
-      };
-    };
-
-    // 予定取得
-    let schedule = ""
-    for (let i = 0; i < days.length; i++) {
-      let day = parseInt(days[i].slice(0, 2).replace("日", ""));
-      if (d < day) {
-        return {
-          "type": "text",
-          "text": `${days[i]}に ${schedules[i]} があります。`
-        };
-      };
-    };
-    if (schedule == "") {
-      return {
-        "type": "text",
-        "text": "次の予定はまだ取得できません。"
-      };
-    };
-  }catch(e){
-    return error(e.stack);
+        "text": value
+      }];
+      return response;
+    case "image":
+      response = [{
+        "type": "image",
+        "originalContentUrl": value,
+        "previewImageUrl": value
+      }];
+      return response;
+    default:
+      return [];
   };
 }
 
 
-// 時間割画像取得
-function get_images(sheet, cell) {
-  try{
-    const images = [];
-    const image_urls = sheet.getRange(cell).getValue().replace(" ", "").split("\n");
-    for (let i = 0; i < image_urls.length; i++){
-      let image = {
-            "type": "image",
-            "originalContentUrl": image_urls[i],
-            "previewImageUrl": image_urls[i]
+// エラーのテスト
+function error_test() {
+  try {
+    throw new Error("error_test");
+  } catch (e) {
+    const ss = SpreadsheetApp.getActive();
+    return error(e, ss);
+  };
+}
+
+
+// エラーメッセージ
+function error(e, ss) {
+  debug(e, ss);
+  return [{
+    "type": "text",
+    "text": `エラーが発生しました。\nエラー内容:\n${e}\n\nhttps://works.do/R/ti/p/schedule@mito1daily\nもし「最新情報」でエラー発生中といったメッセージが確認できなかった場合は、↑から作者の公式アカウントを追加して連絡をいただけると助かります。連絡する場合は↑のエラー内容も伝えてください。`
+  }];
+}
+
+
+// スプレッドシートにエラー出力
+function debug(e, ss) {
+  const sheet = ss.getSheetByName("debug");
+  const targetRow = sheet.getLastRow() + 1;
+  const date = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
+  const values = [targetRow - 1, date, e, e.stack];
+  sheet.getRange(`A${targetRow}:D${targetRow}`).setValues([values]);
+}
+
+
+// スプレッドシートに自由に出力
+function debug2(value, message, ss, sheet_name) {
+  const sheet = ss.getSheetByName(sheet_name);
+  const targetRow = sheet.getLastRow() + 1;
+  const date = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
+  const values = [targetRow - 1, date, value, message];
+  sheet.getRange(`A${targetRow}:D${targetRow}`).setValues([values]);
+}
+
+
+// カウンター
+function count(ss, value) {
+  const sheet = ss.getSheetByName("count");
+  let items = sheet.getDataRange().getValues();
+  items.shift();  // 先頭はデータではないので削除
+  const index = search_2dArray(items, value);
+  if (typeof (index) != "number") {
+    return false;
+  };
+  let values = items[index];
+
+  // 値増加
+  for (let i = 1; i < values.length; i++) {
+    if (!isNaN(values[i])) { // セルが数値の場合のみ
+      values[i] = values[i] + 1;
+    } else {
+      values[i] = 1; // セルが数値でない場合は1に設定
+    };
+  };
+  sheet.getRange(`A${index + 2}:E${index + 2}`).setValues([values]);
+}
+
+
+//-------------------------------------------------------------------------------------------------------------
+// 次の予定のテキストを取得
+function get_schedules(ss) {
+  try {
+    // 現在の月日取得
+    const time = new Date();
+    const m = time.getMonth() + 1;
+    const d = time.getDate();
+    const h = Utilities.formatDate(time, "JST", "HH");
+
+    // 現在の月を元に月間予定データを取得
+    let items = ss.getSheetByName("month").getDataRange().getValues();
+    items.shift();  // 先頭はデータではないので削除
+    const index = search_2dArray(items, m);
+    if (typeof (index) == "number") {
+      // 日付と予定のデータをそれぞれ用意
+      const monthData = items[index][1].split("\n");
+      const days = [];
+      const schedules = [];
+      for (let dayData of monthData) {
+        const day = `${dayData.split(")", 1)[0]})`;  //例) "8日(水)R、土曜課外(1)" => ["8日(水"] => "8日(水)"
+        const schedule = dayData.replace(day, "");
+        days.push(day);
+        schedules.push(schedule);
       };
-      images.push(image);
+
+      // 予定送信
+      for (let i = 0; i < days.length; i++) {
+        const day = parseInt(days[i].split("日", 1)[0]);  //例) "8日(水)" => 8
+        // 午前中はその日の予定を返す, 午後なら次の日の予定を返す
+        if ((h < 12 && d == day) || (d < day)) {
+          return make_Response(`${days[i]}に ${schedules[i]} があります。`, "text");
+        };
+      };
+    };
+
+    // 予定が見つからなかった場合は翌月の最初の予定を返す
+    const nextIndex = search_2dArray(items, m + 1);
+    if (typeof (nextIndex) == "number") {
+      const nextMonthData = items[nextIndex][1].split("\n");
+      const firstDayData = nextMonthData[0];
+      const firstDay = `${firstDayData.split(")", 1)[0]})`
+      const firstSchedule = firstDayData.replace(firstDay, "");
+      return make_Response(`${m + 1}月${firstDay}に ${firstSchedule} があります。`, "text");
+    } else {
+      return make_Response("次の予定はまだ公開されていません。このメッセージが長期間続くなら以下のアカウントに連絡をお願いします。\n\nhttps://works.do/R/ti/p/schedule@mito1daily", "text");
+    };
+  } catch (e) {
+    return error(e, ss);
+  };
+}
+
+
+// Parserライブラリで時間割画像取得
+function parse_images() {
+  try {
+    let images = [];
+    const response = UrlFetchApp.fetch("https://docs.google.com/spreadsheets/d/1fdSGqT1s2kit91TcQV_mjcuvOawGAU6JZ_5N684bH3U/htmlview");
+    const content = response.getContentText("utf-8");
+    // const image_urls = Parser.data(content).from('<img src="').to('" style="').iterate();
+    const image_urls = Parser.data(content).from("<img src='").to("' style").iterate();
+    console.log(image_urls);
+
+    // urlかどうかチェック
+    let urls = [];
+    for (let url of image_urls) {
+      if (url.slice(0, 8) == "https://") {
+        urls.push(url);
+      };
+    };
+    if (!urls.length) {
+      const image_urls2 = Parser.data(content).from('<img src="').to('" style="').iterate();
+      urls = [];
+      for (let url of image_urls2) {
+        if (url.slice(0, 8) == "https://") {
+          urls.push(url);
+        };
+      };
+      if (!urls.length) {
+        return make_Response("画像が取得できませんでした。このメッセージが長期間続くなら以下のアカウントに連絡をお願いします。\n\nhttps://works.do/R/ti/p/schedule@mito1daily", "text");
+      };
+    };
+
+    // 返信
+    for (let url of urls) {
+      images = images.concat(make_Response(url, "image"));
     };
     return images;
-  }catch(e){
-    return [error(e.stack)];
+  } catch (e) {
+    const ss = SpreadsheetApp.getActive();
+    return error(e, ss);
+  };
+}
+
+
+// 月間予定取得
+function month(ss) {
+  try {
+    console.time("month()");
+    // 現在の月日取得
+    const time = new Date();
+    const m = time.getMonth() + 1;
+
+    // 現在の月を元に月間予定データを取得
+    let items = ss.getSheetByName("month").getDataRange().getValues();
+    items.shift();  // 先頭はデータではないので削除
+    let index = search_2dArray(items, m);
+    if (typeof (index) != "number") {
+      index = search_2dArray(items, m + 1);
+      if (typeof (index) != "number") {
+        return make_Response("次の予定はまだ公開されていません。このメッセージが長期間続くなら以下のアカウントに連絡をお願いします。\n\nhttps://works.do/R/ti/p/schedule@mito1daily", "text");
+      };
+    };
+    const monthData = items[index][1];
+    const monthImage = items[index][2];
+
+    let messages = [];
+    messages = messages.concat(make_Response(monthData, "text"));
+    messages = messages.concat(make_Response(monthImage, "image"));
+    console.timeEnd("month()");
+    return messages;
+  } catch (e) {
+    return error(e, ss);
   };
 }
 
 
 // ニュース取得
-function get_news(sheet) {
-  try{
+function get_news(ss) {
+  try {
     // 直近のニュースを5件取得
-    const news_all = sheet.getRange("E6").getValue().split("\n").slice(0, 5);
+    const news_all = ss.getSheetByName("news").getRange("B2:B6").getValues();
 
     // カラム作成
     const columns = [];
@@ -97,19 +262,19 @@ function get_news(sheet) {
       "部活動ニュース": "https://www.mito1-h.ibk.ed.jp/f3f2a48def04f2d9c4586f42bda6b409/%E5%AD%A6%E6%A0%A1%E7%94%9F%E6%B4%BB/%E9%83%A8%E6%B4%BB%E5%8B%95%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9",
       "医学コースについて": "https://www.mito1-h.ibk.ed.jp/%E5%8C%BB%E5%AD%A6%E3%82%B3%E3%83%BC%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/%E5%8C%BB%E5%AD%A6%E3%82%B3%E3%83%BC%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/%E5%8C%BB%E5%AD%A6%E3%82%B3%E3%83%BC%E3%82%B9%E3%81%AE%E5%AE%9F%E8%B7%B5",
       "水戸一高の風景": "https://www.mito1-h.ibk.ed.jp/%E6%B0%B4%E6%88%B8%E4%B8%80%E9%AB%98%E3%81%AE%E9%A2%A8%E6%99%AF",
-    }
-    for (let i = 0; i < news_all.length; i++){
-      let label = "詳細を見る"
-      let uri = "https://www.mito1-h.ibk.ed.jp/#frame-587"
-      for (let key in url){
-        if (news_all[i].includes(key)) {
-          label = key
-          uri = url[key]
+    };
+    for (let news of news_all) {
+      let label = "詳細を見る";
+      let uri = "https://www.mito1-h.ibk.ed.jp/#frame-587";
+      for (let key in url) {
+        if (news[0].includes(key)) {
+          label = key;
+          uri = url[key];
         };
       };
       let txt = {
         "imageBackgroundColor": "#FFFFFF",
-        "text": news_all[i].slice(0,100),
+        "text": news[0].slice(0, 100),
         "actions": [
           {
             "type": "uri",
@@ -119,141 +284,36 @@ function get_news(sheet) {
         ]
       };
       columns.push(txt);
-      console.log(txt)
+      console.log(txt);
     };
 
     // message作成
-    const news = {
+    return [{
       "type": "template",
       "altText": "直近のニュース5件",
       "template": {
         "type": "carousel",
         "columns": columns
       }
-    };
-    return news;
-  }catch(e){
-    return [error(e.stack)];
-  };
-}
-
-
-// SNSリンク集の取得
-function get_sns() {
-  try{
-    // サービス名, 画像URL, リンク
-    const sns_all = [
-      ["Twitter", "https://cdn-icons-png.flaticon.com/512/124/124021.png", "詳細を見る", "https://x.com/mito1daily"],
-      ["Instagram", "https://cdn-icons-png.flaticon.com/512/15713/15713420.png", "詳細を見る", "https://www.instagram.com/mito1daily/"],
-      ["Discord", "", "詳細を見る", ""]
-      ["GoogleForm", "", "お問い合わせ", ""]
-    ];
-
-    // カラム作成
-    const columns = [];
-    for (let i = 0; i < sns_all.length; i++){
-      let txt = {
-        "thumbnailImageUrl": sns_all[i][1],
-        "imageBackgroundColor": "#FFFFFF",
-        "text": sns_all[i][0],
-        "actions": [
-          {
-            "type": "uri",
-            "label": sns_all[i][2],
-            "uri": sns_all[i][3],
-          }
-        ]
-      };
-      columns.push(txt);
-    };
-
-    // message作成
-    const sns = {
-      "type": "template",
-      "altText": "SNS",
-      "template": {
-        "type": "carousel",
-        "columns": columns
-      },
-      "imageAspectRatio": "square",
-      "imageSize": "cover"
-    };
-    return sns;
-  }catch(e){
-    return [error(e.stack)];
-  };
-}
-
-
-// 辞書からランダムに単語と意味取得
-function get_word() {
-  try{
-    // 辞書データ取得
-    const ss =SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty("DICT"));
-    const sheet = ss.getSheetByName("フォームの回答 1");
-    const rows = sheet.getLastRow();
-    console.log(rows);
-
-    // 乱数生成,単語取得
-    const num = Math.floor(Math.random()*rows)+1;
-    const words = sheet.getRange(num, 1, 1, 5).getValues()[0];
-    const time = Utilities.formatDate(words[0], "JST", "yy/MM/dd HH:mm");
-
-    // message作成
-    let mes = `単語: ${words[1]} (${num}/${rows})\n品詞: ${words[2]}\n意味: ${words[3]}`;
-    if (words[4] != ""){
-      mes = mes + `\n補足: ${words[4]}`
-    };
-    const txt = {
-      "type": "text",
-      "text": mes + `\n\n作成日: ${time}`
-    };
-    return txt;
-  }catch(e){
-    return [error(e.stack)];
-  };
-}
-
-
-// スプレッドシートから情報取得
-function get_info(cell) {
-  try{
-    // 辞書データ取得
-    const ss =SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty("DEBUG"));
-    const sheet = ss.getSheetByName("Messages");
-    const info = sheet.getRange(cell).getValue();
-
-    // message作成
-    const txt = {
-      "type": "text",
-      "text": info
-    };
-    return txt;
-  }catch(e){
-    return [error(e.stack)];
+    }];
+  } catch (e) {
+    return error(e, ss);
   };
 }
 
 
 // テーマ取得
-function get_themes(get_array) {
-  try{
+function get_themes(ss) {
+  try {
     // 全てのテーマ取得
-    const ss =SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty("DEBUG"));
-    const sheet = ss.getSheetByName("Themes");
-    const rows = sheet.getLastRow();
-    const themes_all = sheet.getRange(3, 2, rows - 2, 4).getValues();
-    console.log(themes_all);
-    if (get_array) {
-      return themes_all;
-    };
+    let items = ss.getSheetByName("themes").getDataRange().getValues();
+    items.shift();  // 先頭はデータではないので削除
 
     // カラム作成
     const columns = [];
-    for (let i = 0; i < themes_all.length; i++){
-      const theme = themes_all[i];
+    for (let theme of items) {
       let txt = {
-        "thumbnailImageUrl": theme[2],
+        "thumbnailImageUrl": theme[3],
         "imageBackgroundColor": "#FFFFFF",
         "text": theme[1],
         "actions": [
@@ -265,8 +325,8 @@ function get_themes(get_array) {
           }
         ]
       };
-      columns.push(txt);
       console.log(txt);
+      columns.push(txt);
     };
 
     // message作成
@@ -280,117 +340,106 @@ function get_themes(get_array) {
         "imageSize": "cover"
       }
     };
-    console.log(themes)
     return themes;
-  }catch(e){
-    return [error(e.stack)];
+  } catch (e) {
+    return error(e, ss);
   };
 }
 
 
 // テーマ変更
-function change_theme(name, user_id) {
-  try{
+function change_theme(ss, theme_name, user_id) {
+  try {
+    console.time("change_theme()");
     // テーマ名からリッチメニューIDを取得
-    const theme_name = name;
-    const theme_all = get_themes(true);
-    let i = 0;
-    while (theme_name != theme_all[i][0]){
-      i = i + 1;
-      if (theme_all.length === i) {
-        return false
-      };
+    let items = ss.getSheetByName("themes").getDataRange().getValues();
+    items.shift();  // 先頭はデータではないので削除
+
+    const index = search_2dArray(items, theme_name);
+    if (typeof (index) != "number") {
+      return [];
     };
-    const theme_id = theme_all[i][3];
+    const theme_id = items[index][2];
 
     // リッチメニューとユーザーをリンク
     const theme_options = {
-      "method"  : "POST",
-      "headers" : {"Authorization": `Bearer ${PropertiesService.getScriptProperties().getProperty("TOKEN")}`}
+      "method": "POST",
+      "headers": { "Authorization": `Bearer ${PropertiesService.getScriptProperties().getProperty("TOKEN")}` }
     };
     UrlFetchApp.fetch(`https://api.line.me/v2/bot/user/${user_id}/richmenu/${theme_id}`, theme_options);
-    return false;
-  }catch(e){
-    return [error(e.stack)];
+    console.timeEnd("change_theme()");
+    return [];
+  } catch (e) {
+    return error(e, ss);
   };
 };
 
 
-// メッセージのテスト
-// スプレッドシートから情報取得
-function get_test(cell, type) {
-  try{
+// 辞書データ送信
+function get_word(ss) {
+  try {
     // 辞書データ取得
-    const ss = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty("DEBUG"));
-    const sheet = ss.getSheetByName("Test");
-    const test = sheet.getRange(cell).getValue();
+    const dict = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty("DICT"));
+    const sheet = dict.getSheetByName("フォームの回答 1");
+    const rows = sheet.getLastRow() - 1;
+    console.log(rows);
+
+    // 乱数生成,単語取得
+    let num = Math.floor(Math.random() * rows) + 2;
+    const words = sheet.getRange(num, 1, 1, 5).getValues()[0];
+    const time = Utilities.formatDate(words[0], "JST", "yy/MM/dd HH:mm");
 
     // message作成
-    let mes = ""
-    if (type === "text"){
-      mes = {
-        "type": "text",
-        "text": test
-      };
-    } else if (type === "image") {
-      mes = {
-        "type": "image",
-        "originalContentUrl": test,
-        "previewImageUrl": test
-      };
-    } else {
-      return false;
+    let mes = `単語: ${words[1]} (${num - 1}/${rows})\n品詞: ${words[2]}\n意味: ${words[3]}`;
+    if (words[4] != "") {
+      mes = mes + `\n補足: ${words[4]}`
     };
-    return mes;
-  }catch(e){
-    return [error(e.stack)];
+    return make_Response(`${mes}\n\n作成日: ${time}`, "text");
+  } catch (e) {
+    return error(e, ss);
   };
 }
 
 
-// エラーのテスト
-function error_test() {
-  try{
-    throw new Error("error_test");
-  }catch(e){
-    return error(e.stack);
-  };
-}
+// 追加情報
+function add_info(ss) {
+  try {
+    // データ取得
+    let items = ss.getSheetByName("add").getDataRange().getValues();
+    items.shift();  // 先頭はデータではないので削除
 
-
-// エラーメッセージ
-function error(error_message) {
-  debug(error_message);
-  return {
-      "type": "text",
-      "text": `エラーが発生しました。\nエラー内容:\n${error_message}\n\nhttps://works.do/R/ti/p/schedule@mito1daily\n↑から作者の公式アカウントを追加して連絡くれると助かります。連絡くれる場合は↑のエラー内容も伝えてください。`
-  };
-}
-
-
-// スプレッドシートに出力
-function debug(value) {
-  const sheet = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty("DEBUG"));
-  const ss = sheet.getSheetByName("Debug");
-  const date = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
-  const targetRow = ss.getLastRow() + 1;
-  ss.getRange('A' + targetRow).setValue(date);
-  ss.getRange('B' + targetRow).setValue(value);
-}
-
-
-// カウンター
-function count(ce) {
-  const sheet = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty("DEBUG"));
-  const ss = sheet.getSheetByName("Count");
-  const column = ["C", "D", "E", "F"];
-  for (let i in column){
-    let cell = ss.getRange(column[i] + String(ce));
-    const currentValue = cell.getValue();
-    if (!isNaN(currentValue)) { // セルが数値の場合のみ
-      cell.setValue(currentValue + 1);
-    } else {
-      cell.setValue(1); // セルが数値でない場合は1に設定
+    // メッセージ作成
+    let messages = [];
+    for (let i of items) {
+      const now_date = new Date();
+      const [next_date, type, content] = [i[1], i[2], i[3]];
+      if (now_date <= next_date) {
+        messages = messages.concat(make_Response(content, type));
+      };
     };
+    return messages;
+  } catch (e) {
+    return error(e, ss);
+  };
+}
+
+
+// その他のコマンド
+function commands(ss, command) {
+  try {
+    console.time("commands()");
+    // コマンドを元にメッセージデータを取得
+    let items = ss.getSheetByName("commands").getDataRange().getValues();
+    items.shift();  // 先頭はデータではないので削除
+    const index = search_2dArray(items, command);
+    if (typeof (index) != "number") {
+      return [];
+    };
+    const type = items[index][1];
+    const message = items[index][2];
+    console.timeEnd("commands()");
+    return make_Response(message, type);
+  } catch (e) {
+    return error(e, ss);
   };
 }
