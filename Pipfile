@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 requests = "*"
-beautifulsoup4 = "==4.13.4"
+beautifulsoup4 = "==4.13.5"
 feedparser = "==6.0.11"
 gspread = "==6.2.1"
 "misskey.py" = "==4.1.0"
