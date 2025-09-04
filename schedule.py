@@ -141,22 +141,17 @@ before = ",".join(imgs_url_latest)
 subprocess.run([f"echo BEFORE={before} >> $GITHUB_OUTPUT"], shell=True)
 
 # 更新通知のチェック
-if ws.acell("C3").value == "NoUpdate":
-  # 比較
-  if len(imgs_url_now) == len(imgs_url_latest):
-    if set(imgs_cv2u_now) == set(imgs_cv2u_latest):
-      finish("画像が一致した為、終了")
-    else:
-      logger.info("画像が一致しないので続行")
+if len(imgs_url_now) == len(imgs_url_latest):
+  if set(imgs_cv2u_now) == set(imgs_cv2u_latest):
+    finish("画像が一致した為、終了")
   else:
-    if len(imgs_url_now) < len(imgs_url_latest) and set(imgs_cv2u_now).issubset(imgs_cv2u_latest):
-      finish("画像の枚数が減っただけなので終了")
-    else:
-      logger.info("画像の枚数が異なるので続行")
-  ws.update_acell("C3", "Update")
-  finish("次の更新チェックで画像投稿")
+    logger.info("画像が一致しないので続行")
 else:
-  logger.info("画像投稿実行")
+  if len(imgs_url_now) < len(imgs_url_latest) and set(imgs_cv2u_now).issubset(imgs_cv2u_latest):
+    finish("画像の枚数が減っただけなので終了")
+  else:
+    logger.info("画像の枚数が異なるので続行")
+logger.info("画像投稿実行")
 
 #----------------------------------------------------------------------------------------------------
 # 月間予定を日付と予定に分割
@@ -203,6 +198,21 @@ for i in imgs_url_now:
     f.write(r)
   imgs_path.append(cv2.imread(img))
 
+# Gyazoに画像アップロード
+imgs_url_now_gyazo = []  # GyazoのURLを格納するリスト
+for i in range(len(imgs_path)):
+  time.sleep(2)
+  headers = {"Authorization": f"Bearer {os.environ['GYAZO_YAMADA']}"}
+  files = {"imagedata": open(f"{i}.png", "rb")}
+  r = requests.post("https://upload.gyazo.com/api/upload", headers=headers, files=files)
+  try:
+      r.raise_for_status()
+  except requests.RequestException as e:
+      logger.error("request failed. error=(%s)", e.response.text)
+      continue
+  url = json.loads(r.text)["url"]
+  imgs_url_now_gyazo.append(url)
+
 # 土曜加害判定
 if next_schedule != None:
   if "土曜課外" in next_schedule and day - day_now == 1:
@@ -219,8 +229,7 @@ im_list_resize = [cv2.resize(im, (int(im.shape[1] * h_min / im.shape[0]), h_min)
 cv2.imwrite("update.jpg", cv2.hconcat(im_list_resize))  # 画像を横に結合
 
 # GoogleSpreadSheetsに画像URLを書き込み
-ws.update_acell("C2", " \n".join(imgs_url_now))
-ws.update_acell("C3", "NoUpdate")
+ws.update_acell("C2", " \n".join(imgs_url_now_gyazo))
 ws.update_acell("C4", time_now)
 ws.update_acell("C5", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
 logger.info("画像DL完了、セル上書き完了\n")
