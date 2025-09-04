@@ -205,10 +205,10 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 client = tweepy.Client(
-   consumer_key=consumer_key,
-   consumer_secret=consumer_secret,
-   access_token=access_token,
-   access_token_secret=access_token_secret)
+  consumer_key=consumer_key,
+  consumer_secret=consumer_secret,
+  access_token=access_token,
+  access_token_secret=access_token_secret)
 
 # 環境次第でメッセージ変更
 if next_schedule != None:
@@ -241,8 +241,8 @@ logger.info("Misskey: 投稿完了")
 
 # Instagramに投稿
 insta_imgs = []
-for i in imgs_url_now:
-  h, w = cv2u.urlread(i).shape[:2]
+for i in imgs_path:
+  h, w = cv2.imread(i).shape[:2]
   aspect = w / h
   if 0.8 < aspect < 1.91:
     insta_imgs.append(i)
