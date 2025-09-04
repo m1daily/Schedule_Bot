@@ -180,17 +180,20 @@ except requests.RequestException as e:
 gyazo_url = json.loads(r.text)["url"]
 
 # 土曜加害判定
-imgs_path = []
-imgs_path.append(cv2_now)
+path_images = []
+path_images.append("now.png")
+cv2_images = []
+cv2_images.append(cv2_now)
 if next_schedule != None:
   if "土曜課外" in next_schedule and day - day_now == 1:
-    imgs_path.append(download(ws3.acell("C6").value, "sat.jpg"))
+    path_images.append("sat.jpg")
+    cv2_images.append(download(ws3.acell("C6").value, "sat.jpg"))
     logger.info("土曜課外 有")
 
 # 画像結合
-h_min = min(im.shape[0] for im in imgs_path)
+h_min = min(im.shape[0] for im in cv2_images)
 im_list_resize = [cv2.resize(im, (int(im.shape[1] * h_min / im.shape[0]), h_min), interpolation=cv2.INTER_CUBIC)
-          for im in imgs_path]  # 画像を小さい方に合わせてリサイズ
+          for im in cv2_images]  # 画像を小さい方に合わせてリサイズ
 cv2.imwrite("update.jpg", cv2.hconcat(im_list_resize))  # 画像を横に結合
 
 # GoogleSpreadSheetsに画像URLを書き込み
@@ -241,7 +244,7 @@ logger.info("Misskey: 投稿完了")
 
 # Instagramに投稿
 insta_imgs = []
-for i in imgs_path:
+for i in path_images:
   h, w = cv2.imread(i).shape[:2]
   aspect = w / h
   if 0.8 < aspect < 1.91:
