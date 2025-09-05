@@ -7,6 +7,7 @@
 *.jpeg
 *.svg
 !sat.jpg
+!none.jpeg
 !images/*.png
 
 # secrets

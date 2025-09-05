@@ -99,6 +99,10 @@ cv2_now = download(url_now, "now.png")
 logger.info(f"現在の画像:{url_now}")
 subprocess.run([f"echo NOW={url_now} >> $GITHUB_OUTPUT"], shell=True)
 
+# none.jpegと一致した場合終了
+if np.array_equal(cv2_now, cv2.imread("none.jpeg")):
+  finish("画像が空欄の為、終了")
+
 #----------------------------------------------------------------------------------------------------
 # Googleスプレッドシートへのアクセス
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -180,13 +184,13 @@ except requests.RequestException as e:
 gyazo_url = json.loads(r.text)["url"]
 
 # 土曜加害判定
-path_images = []
-path_images.append("now.png")
+url_images = []
+url_images.append(url_now)
 cv2_images = []
 cv2_images.append(cv2_now)
 if next_schedule != None:
   if "土曜課外" in next_schedule and day - day_now == 1:
-    path_images.append("sat.jpg")
+    url_images.append(ws3.acell("C6").value)
     cv2_images.append(download(ws3.acell("C6").value, "sat.jpg"))
     logger.info("土曜課外 有")
 
@@ -244,7 +248,7 @@ logger.info("Misskey: 投稿完了")
 
 # Instagramに投稿
 insta_imgs = []
-for i in path_images:
+for i in url_images:
   h, w = cv2.imread(i).shape[:2]
   aspect = w / h
   if 0.8 < aspect < 1.91:
