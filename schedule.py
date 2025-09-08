@@ -85,12 +85,13 @@ else:
 url_now = []
 cv2u_now = []
 for i in range(len(src)):
-  logger.info(f"{i}枚目: {src[i]}")
+  url = src[i]
+  logger.info(f"{i}枚目: {url}")
   if src[i]:
-    if not str(cv2u.urlread(i)) in cv2u_now:
+    if not str(cv2u.urlread(url)) in cv2u_now:
       logger.info(" → append")
-      url_now.append(i)
-      cv2u_now.append(cv2u.urlread(i))
+      url_now.append(url)
+      cv2u_now.append(cv2u.urlread(url))
   else:
     logger.info(f"{i}枚目の画像が空")
 logger.info(f"現在の画像:{url_now}")
