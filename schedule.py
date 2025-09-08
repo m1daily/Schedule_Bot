@@ -8,8 +8,8 @@ import time  # スリープ用
 from logging import DEBUG, Formatter, StreamHandler, getLogger  # ログ出力
 # サードパーティライブラリ
 import cv2  # 画像処理
+import cv2u  # 画像URLから読み込み
 import gspread  # SpreadSheet操作
-import numpy as np  # 画像比較
 import requests  # Discord送信
 import tweepy  # Twitter送信
 from bs4 import BeautifulSoup  # 画像取得
@@ -53,16 +53,6 @@ insta_token = os.environ["INSTA_TOKEN"]
 
 # InstagramAPIの設定
 def instagram_api(url, post_data):
-  """
-  指定されたURLと投稿データでInstagram APIにPOSTリクエストを送信
-
-  引数
-    url (str): Instagram APIエンドポイントのURL
-    post_data (dict): POSTリクエストで送信するデータ
-
-  戻り値
-    requests.Response or None: リクエストが成功した場合はレスポンスオブジェクト、そうでない場合はNone
-  """
   try:
     headers = {"Authorization": f"Bearer {insta_token}", "Content-Type": "application/json"}
     options = {"headers": headers, "data": json.dumps(post_data)}
@@ -71,13 +61,6 @@ def instagram_api(url, post_data):
   except Exception as error:
     logger.warning(f"Instagram APIのリクエスト中にエラー発生\n{error}\n")
     return None
-
-# 画像ダウンロード
-def download(url, filename):
-  r = requests.get(url)
-  with open(filename, "wb") as f:
-    f.write(r.content)
-  return cv2.imread(filename)
 
 # 終了時用
 def finish(exit_message):
@@ -89,19 +72,29 @@ logger.info("セットアップ完了")
 
 #----------------------------------------------------------------------------------------------------
 # imgタグを含むものを抽出
+src = []
 soup = BeautifulSoup(requests.get(os.environ["GOOGLE_URL"]).text, "html.parser")
-url_now = soup.select_one("meta[property='og:image']").get("content")
-if not url_now:
+for im in soup.select('img[src^="https://lh7-rt.googleusercontent.com/sheets/"]'):
+  src.append(im["src"])
+if src:
+  logger.info(f"imgタグ抽出: {src}")
+else:
   finish("画像が発見できなかったため終了(img無)")
 
-# imgタグから画像をダウンロード
-cv2_now = download(url_now, "now.png")
+# 時間割の画像のみ抽出
+url_now = []
+cv2u_now = []
+for i in src:
+  logger.info(f"{i}枚目: {src[i]}")
+  if src[i]:
+    if not str(cv2u.urlread(i)) in cv2u_now:
+      logger.info(" → append")
+      url_now.append(i)
+      cv2u_now.append(cv2u.urlread(i))
+  else:
+    logger.info(f"{i}枚目の画像が空")
 logger.info(f"現在の画像:{url_now}")
-subprocess.run([f"echo NOW={url_now} >> $GITHUB_OUTPUT"], shell=True)
-
-# none.jpegと一致した場合終了
-if np.array_equal(cv2_now, cv2.imread("none.jpeg")):
-  finish("画像が空欄の為、終了")
+subprocess.run([f"echo NOW={",".join(url_now)} >> $GITHUB_OUTPUT"], shell=True)
 
 #----------------------------------------------------------------------------------------------------
 # Googleスプレッドシートへのアクセス
@@ -120,22 +113,40 @@ except Exception as e:
   exit()
 
 # 最後に投稿した画像を読み込み
-time.sleep(2)
 try:
-  url_old = ws.acell("C2").value
+  url_old = ws.acell("C2").value.split()
 except:
   logger.warning("Googleスプレッドシートへのアクセス失敗\n")
   subprocess.run(["echo STATUS=Googleスプレッドシートへのアクセス失敗 >> $GITHUB_OUTPUT"], shell=True)
   exit()
-cv2_old = download(url_old, "old.png")
+cv2u_old = []
+for im in url_old:
+    cv2u_old.append(cv2u.urlread(im))
 logger.info(f"過去の画像:{url_old}")
-subprocess.run([f"echo BEFORE={url_old} >> $GITHUB_OUTPUT"], shell=True)
+subprocess.run([f"echo BEFORE={",".join(url_old)} >> $GITHUB_OUTPUT"], shell=True)
 
 # 更新通知のチェック
-if np.array_equal(cv2_now, cv2_old):
-  finish("画像が一致した為、終了")
+if ws.acell("C3").value == "NoUpdate":
+  # 比較
+  if len(url_now) == len(url_old):
+    if set(url_now) == set(url_old):
+      finish("画像が一致した為、終了")
+    else:
+      logger.info("画像が一致しないので続行")
+  else:
+    if len(url_now) < len(url_old) and set(cv2u_now).issubset(cv2u_old):
+      finish("画像の枚数が減っただけなので終了")
+    else:
+      logger.info("画像の枚数が異なるので続行")
+  ws.update_acell("C3", "Update")
+  finish("次の更新チェックで画像投稿")
 else:
-  logger.info("画像が一致しないので続行")
+  logger.info("画像投稿実行")
+
+# 画像情報のリスト作成
+images = []
+for i in range(len(url_now)):
+  images.append({"path": f"{i}.png", "url": url_now[i]})
 
 #----------------------------------------------------------------------------------------------------
 # 月間予定を日付と予定に分割
@@ -172,24 +183,19 @@ else:
     next_schedule = None
     logger.info("次の予定 無")
 
-# Gyazoに画像アップロード
-time.sleep(2)
-headers = {"Authorization": f"Bearer {os.environ['GYAZO_YAMADA']}"}
-files = {"imagedata": open("now.png", "rb")}
-r = requests.post("https://upload.gyazo.com/api/upload", headers=headers, files=files)
-try:
-  r.raise_for_status()
-except requests.RequestException as e:
-  logger.error("request failed. error=(%s)", e.response.text)
-gyazo_url = json.loads(r.text)["url"]
-
 # 土曜加害判定
-images = []
-images.append({"path": "now.png", "url": url_now, "cv2": cv2_now})
 if next_schedule != None:
   if "土曜課外" in next_schedule and day - day_now == 1:
-    images.append({"path": "sat.jpg", "url": ws3.acell("C6").value, "cv2": download(ws3.acell("C6").value, "sat.jpg")})
+    images.append({"path": "sat.jpg", "url": ws3.acell("C6").value, "cv2": cv2u.urlread(ws3.acell("C6").value)})
     logger.info("土曜課外 有")
+
+# 画像ダウンロード
+for im in images:
+  time.sleep(2)
+  r = requests.get(im["url"])
+  with open(im["path"], mode="wb") as f:
+    f.write(r.content)
+  im["cv2"] = cv2.imread(im["path"])
 
 # 画像結合
 h_min = min(im["cv2"].shape[0] for im in images)  # 画像の高さの最小値を取得
@@ -198,7 +204,8 @@ im_list_resize = [cv2.resize(im["cv2"], (int(im["cv2"].shape[1] * h_min / im["cv
 cv2.imwrite("update.jpg", cv2.hconcat(im_list_resize))  # 画像を横に結合
 
 # GoogleSpreadSheetsに画像URLを書き込み
-ws.update_acell("C2", gyazo_url)
+ws.update_acell("C2", " \n".join(url_now))
+ws.update_acell("C3", "NoUpdate")
 ws.update_acell("C4", time_now)
 ws.update_acell("C5", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
 logger.info("画像DL完了、セル上書き完了\n")
@@ -245,11 +252,11 @@ logger.info("Misskey: 投稿完了")
 
 # Instagramに投稿
 insta_imgs = []
-for i in images:
-  h, w = cv2.imread(i["path"]).shape[:2]
+for im in images:
+  h, w = im["cv2"].shape[:2]
   aspect = w / h
   if 0.8 < aspect < 1.91:
-    insta_imgs.append(i["url"])
+    insta_imgs.append(im["url"])
 if len(insta_imgs) > 1:
   logger.info("Instagram: カルーセル投稿")
   contena_ids = []  # 複数枚ある場合はカルーセル投稿
