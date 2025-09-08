@@ -192,9 +192,9 @@ if next_schedule != None:
     logger.info("土曜課外 有")
 
 # 画像結合
-h_min = min(im.shape[0] for im in images["cv2"])  # 画像の高さの最小値を取得
-im_list_resize = [cv2.resize(im, (int(im.shape[1] * h_min / im.shape[0]), h_min), interpolation=cv2.INTER_CUBIC)
-          for im in images["cv2"]]  # 画像を小さい方に合わせてリサイズ
+h_min = min(im["cv2"].shape[0] for im in images)  # 画像の高さの最小値を取得
+im_list_resize = [cv2.resize(im["cv2"], (int(im["cv2"].shape[1] * h_min / im["cv2"].shape[0]), h_min), interpolation=cv2.INTER_CUBIC)
+          for im in images]  # 画像を小さい方に合わせてリサイズ
 cv2.imwrite("update.jpg", cv2.hconcat(im_list_resize))  # 画像を横に結合
 
 # GoogleSpreadSheetsに画像URLを書き込み
