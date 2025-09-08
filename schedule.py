@@ -84,7 +84,7 @@ else:
 # 時間割の画像のみ抽出
 url_now = []
 cv2u_now = []
-for i in src:
+for i in range(len(stc)):
   logger.info(f"{i}枚目: {src[i]}")
   if src[i]:
     if not str(cv2u.urlread(i)) in cv2u_now:
