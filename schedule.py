@@ -141,8 +141,10 @@ if ws.acell("C3").value == "NoUpdate":
       logger.info("画像の枚数が異なるので続行")
   ws.update_acell("C3", "Update")
   finish("次の更新チェックで画像投稿")
-else:
+elif ws.acell("C3").value == "Update":
   logger.info("画像投稿実行")
+else:
+  finish("C3セルの値が不正なため終了")
 
 # 画像情報のリスト作成
 images = []
