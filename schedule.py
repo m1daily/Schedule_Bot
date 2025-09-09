@@ -91,7 +91,7 @@ for i in range(len(src)):
     if not str(cv2u.urlread(url)) in cv2u_now:
       logger.info(" → append")
       url_now.append(url)
-      cv2u_now.append(cv2u.urlread(url))
+      cv2u_now.append(str(cv2u.urlread(url)))
   else:
     logger.info(f"{i}枚目の画像が空")
 logger.info(f"現在の画像:{url_now}")
@@ -122,13 +122,14 @@ except:
   exit()
 cv2u_old = []
 for im in url_old:
-    cv2u_old.append(cv2u.urlread(im))
+    cv2u_old.append(str(cv2u.urlread(im)))
 logger.info(f"過去の画像:{url_old}")
 subprocess.run([f"echo BEFORE={",".join(url_old)} >> $GITHUB_OUTPUT"], shell=True)
 
 # 更新通知のチェック
-if ws.acell("C3").value == "NoUpdate":
-  # 比較
+if ws.acell("C3").value == "Update":
+  logger.info("画像投稿実行")
+else:
   if len(url_now) == len(url_old):
     if set(url_now) == set(url_old):
       finish("画像が一致した為、終了")
@@ -139,12 +140,11 @@ if ws.acell("C3").value == "NoUpdate":
       finish("画像の枚数が減っただけなので終了")
     else:
       logger.info("画像の枚数が異なるので続行")
-  ws.update_acell("C3", "Update")
-  finish("次の更新チェックで画像投稿")
-elif ws.acell("C3").value == "Update":
-  logger.info("画像投稿実行")
-else:
-  finish("C3セルの値が不正なため終了")
+  if ws.acell("C3").value == "NoUpdate":
+    ws.update_acell("C3", "Update")
+    finish("次の更新チェックで画像投稿")
+  else:
+    finish("C3セルの値が不正なため終了")
 
 # 画像情報のリスト作成
 images = []
@@ -189,7 +189,7 @@ else:
 # 土曜加害判定
 if next_schedule != None:
   if "土曜課外" in next_schedule and day - day_now == 1:
-    images.append({"path": "sat.jpg", "url": ws3.acell("C6").value, "cv2": cv2u.urlread(ws3.acell("C6").value)})
+    images.append({"path": "sat.jpg", "url": ws3.acell("C6").value})
     logger.info("土曜課外 有")
 
 # 画像ダウンロード
