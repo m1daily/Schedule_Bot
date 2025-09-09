@@ -179,10 +179,16 @@ function get_schedules(ss) {
 function parse_images() {
   try {
     let images = [];
-    const response = UrlFetchApp.fetch("https://docs.google.com/spreadsheets/d/1fdSGqT1s2kit91TcQV_mjcuvOawGAU6JZ_5N684bH3U/htmlview");
+    const response = UrlFetchApp.fetch("https://docs.google.com/spreadsheets/u/0/d/1fdSGqT1s2kit91TcQV_mjcuvOawGAU6JZ_5N684bH3U/htmlview/sheet?headers=true&gid=0");
     const content = response.getContentText("utf-8");
-    // const image_urls = Parser.data(content).from('<img src="').to('" style="').iterate();
-    const image_urls = Parser.data(content).from("<img src='").to("' style").iterate();
+    const parse_urls = Parser.data(content).from('<img ').to('>').iterate();
+    const image_urls = []
+    for (let i of parse_urls) {
+      let url = i.match(/src=['"](.*?)['"]/)[1];
+      if (url) {
+        image_urls.push(url);
+      };
+    };
     console.log(image_urls);
 
     // urlかどうかチェック
