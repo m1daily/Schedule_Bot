@@ -131,7 +131,7 @@ if ws.acell("C3").value == "Update":
   logger.info("画像投稿実行")
 else:
   if len(url_now) == len(url_old):
-    if set(url_now) == set(url_old):
+    if set(cv2u_now) == set(cv2u_old):
       finish("画像が一致した為、終了")
     else:
       logger.info("画像が一致しないので続行")
