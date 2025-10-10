@@ -284,6 +284,7 @@ else:
   logger.info(f"画像アップロード: {str(r.status_code)}\n{r.json()}")
   r.raise_for_status()
   post_data = {"creation_id": r.json()["id"]}  # 画像のIDを取得
+time.sleep(5)
 r = instagram_api(f"https://graph.facebook.com/v21.0/{insta_business_id}/media_publish?", post_data) # 投稿
 logger.info(f"投稿: {str(r.status_code)}\n{r.json()}")
 r.raise_for_status()
