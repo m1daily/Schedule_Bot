@@ -74,7 +74,7 @@ logger.info("セットアップ完了")
 # imgタグを含むものを抽出
 src = []
 soup = BeautifulSoup(requests.get(os.environ["GOOGLE_URL"]).text, "html.parser")
-for im in soup.select('img[src^="https://lh7-rt.googleusercontent.com/sheets/"]'):
+for im in soup.select('img[src^="https://lh7-rt.googleusercontent.com/sheets"]'):
   src.append(im["src"])
 if src:
   logger.info(f"imgタグ抽出: {src}")
