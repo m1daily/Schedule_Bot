@@ -206,8 +206,21 @@ im_list_resize = [cv2.resize(im["cv2"], (int(im["cv2"].shape[1] * h_min / im["cv
           for im in images]  # 画像を小さい方に合わせてリサイズ
 cv2.imwrite("update.jpg", cv2.hconcat(im_list_resize))  # 画像を横に結合
 
+# Gyazoに画像アップロード
+gyazo_url = []
+for im in images:
+  time.sleep(2)
+  headers = {"Authorization": f"Bearer {os.environ['GYAZO_YAMADA']}"}
+  files = {"imagedata": open(im["path"], "rb")}
+  r = requests.post("https://upload.gyazo.com/api/upload", headers=headers, files=files)
+  try:
+    r.raise_for_status()
+  except requests.RequestException as e:
+    logger.error("request failed. error=(%s)", e.response.text)
+  gyazo_url.append(json.loads(r.text)["url"])
+
 # GoogleSpreadSheetsに画像URLを書き込み
-ws.update_acell("C2", " \n".join(url_now))
+ws.update_acell("C2", " \n".join(gyazo_url))
 ws.update_acell("C3", "NoUpdate")
 ws.update_acell("C4", time_now)
 ws.update_acell("C5", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
