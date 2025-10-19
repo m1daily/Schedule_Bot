@@ -218,9 +218,10 @@ for im in images:
   except requests.RequestException as e:
     logger.error("request failed. error=(%s)", e.response.text)
   gyazo_url.append(json.loads(r.text)["url"])
+logger.info(gyazo_url)
 
 # GoogleSpreadSheetsに画像URLを書き込み
-ws.update_acell("C2", " \n".join(gyazo_url))
+ws.update_acell("C2", "\n".join(gyazo_url))
 ws.update_acell("C3", "NoUpdate")
 ws.update_acell("C4", time_now)
 ws.update_acell("C5", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + str(os.environ["RUN_ID"]))
