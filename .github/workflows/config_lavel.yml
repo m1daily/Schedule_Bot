@@ -51,7 +51,7 @@ jobs:
 
       - name: Create Pull Request
         if: contains(github.event_name, 'push')
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "既存のラベルから定義ファイルを取得"
@@ -71,7 +71,7 @@ jobs:
 
       - name: Create Pull Request
         if: contains(github.event_name, 'label') || contains(github.event_name, 'workflow_dispatch')
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "既存のラベルから定義ファイルを取得"
