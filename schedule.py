@@ -248,12 +248,12 @@ mk.notes_create(message, visibility="home", file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
 
 # Instagramに投稿
-insta_imgs = gyazo_url
-# for im in images:
-#   h, w = im["cv2"].shape[:2]
-#   aspect = w / h
-#   if 0.8 < aspect < 1.91:
-#     insta_imgs.append(im["url"])
+insta_imgs = []
+for i, im in enumerate(images):
+  h, w = im["cv2"].shape[:2]
+  aspect = w / h
+  if 0.8 < aspect < 1.91:
+    insta_imgs.append(gyazo_url[i])
 if len(insta_imgs) > 1:
   logger.info("Instagram: カルーセル投稿")
   contena_ids = []  # 複数枚ある場合はカルーセル投稿
