@@ -11,7 +11,6 @@ import cv2  # 画像処理
 import cv2u  # 画像URLから読み込み
 import gspread  # SpreadSheet操作
 import requests  # Discord送信
-import tweepy  # Twitter送信
 from bs4 import BeautifulSoup  # 画像取得
 from misskey import Misskey  # Misskey送信
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
@@ -37,12 +36,6 @@ logger.addHandler(handler)
 dic = ast.literal_eval(os.environ["JSON"])
 with open("gss.json", mode="wt", encoding="utf-8") as file:
   json.dump(dic, file, ensure_ascii=False, indent=2)
-
-# keyの指定(情報漏えいを防ぐため伏せています)
-consumer_key = os.environ["CONSUMER_KEY"]  # TwitterAPI識別キー
-consumer_secret = os.environ["CONSUMER_SECRET"]  # TwitterAPI識別シークレットキー
-access_token = os.environ["ACCESS_TOKEN"]  # Twitterアカウントに対するアクセストークン
-access_token_secret = os.environ["ACCESS_TOKEN_SECRET"]  # Twitterアカウントに対するアクセストークンシークレット
 
 # Discordのtoken設定(伏せています)
 webhook_url = os.environ["WEBHOOK"]  # Discordの時間割サーバーのWebhookのURL
@@ -229,25 +222,11 @@ ws.update_acell("C5", "https://github.com/m1daily/Schedule_Bot/actions/runs/" + 
 logger.info("画像DL完了、セル上書き完了\n")
 
 #----------------------------------------------------------------------------------------------------
-# tweepyの設定(認証情報を設定、APIインスタンスの作成)
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth, wait_on_rate_limit=True)
-client = tweepy.Client(
-  consumer_key=consumer_key,
-  consumer_secret=consumer_secret,
-  access_token=access_token,
-  access_token_secret=access_token_secret)
-
 # 環境次第でメッセージ変更
 if next_schedule != None:
   message = f"時間割が更新されました。\n{next_day}に {next_schedule} があります。"
 else:
   message = "時間割が更新されました。"
-
-# Twitterに投稿
-client.create_tweet(text=message, media_ids=[api.media_upload("update.jpg").media_id])
-logger.info("Twitter: ツイート完了")
 
 # Discord, Misskey用に画像をバイナリに変換
 with open("update.jpg", mode='rb') as f:

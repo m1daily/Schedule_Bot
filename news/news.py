@@ -9,7 +9,6 @@ from logging import DEBUG, Formatter, StreamHandler, getLogger  # ログ出力
 # サードパーティライブラリ
 import gspread  # SpreadSheet操作
 import requests  # Discord送信
-import tweepy  # Twitter送信
 from bs4 import BeautifulSoup  # 予定取得
 from misskey import Misskey  # Misskey送信
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
@@ -135,27 +134,6 @@ im.save("image.png")
 logger.info("画像化完了\n")
 
 #-----------------------------------------------------------------------------------------------------------------------------------
-# keyの指定(情報漏えいを防ぐため伏せています)
-consumer_key = os.environ["CONSUMER_KEY"]
-consumer_secret = os.environ["CONSUMER_SECRET"]
-access_token = os.environ["ACCESS_TOKEN"]
-access_token_secret = os.environ["ACCESS_TOKEN_SECRET"]
-
-# tweepyの設定(認証情報を設定、APIインスタンスの作成)
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth, wait_on_rate_limit=True)
-client = tweepy.Client(
-   consumer_key=consumer_key,
-   consumer_secret=consumer_secret,
-   access_token=access_token,
-   access_token_secret=access_token_secret)
-
-# ツイート
-img = api.media_upload("image.png")
-client.create_tweet(text="今月の予定です。", media_ids=[img.media_id])
-logger.info("Twitter: ツイート完了")
-
 # Discordに投稿
 webhook_url = os.environ["WEBHOOK"]
 payload2 = {

@@ -9,7 +9,6 @@ from logging import DEBUG, Formatter, StreamHandler, getLogger
 # サードパーティライブラリ
 import gspread  # SpreadSheet操作
 import requests  # LINE・Discord送信
-import tweepy  # Twitter送信
 from misskey import Misskey  # Misskey送信
 from oauth2client.service_account import ServiceAccountCredentials  # SpreadSheet操作
 
@@ -94,18 +93,6 @@ else:
             break
 
 #----------------------------------------------------------------------------------------------------
-# tweepyの設定(認証情報を設定、APIインスタンスの作成)
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth, wait_on_rate_limit=True)
-
-# Twitterに投稿
-if next_day != None:
-    message = local_dic["message"] + f"\n{next_day}に {next_schedule} があります。"
-else:
-    message = local_dic["message"]
-api.update_status_with_media(status=message, filename="upload.jpg")
-logger.info("Twitter: ツイート完了")
 
 # LINE Notifyに通知
 logger.info("LINE:")

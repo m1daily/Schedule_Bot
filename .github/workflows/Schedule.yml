@@ -6,12 +6,8 @@ on:
   repository_dispatch:
     types: [GitHub_Actions(gas)]
 env:  # 環境変数から文字列(パスワードなど)を取得
-  ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-  ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
   API_KEY: ${{ secrets.API_KEY }}
   APP_ID: ${{ secrets.APP_ID }}
-  CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
-  CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
   GOOGLE_URL: ${{ secrets.GOOGLE_URL }}
   GYAZO_YAMADA: ${{ secrets.GYAZO_YAMADA }}
   INSTA_ID: ${{ secrets.INSTA_ID }}

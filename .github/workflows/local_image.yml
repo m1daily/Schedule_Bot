@@ -5,12 +5,8 @@ on:
     types: [ShortcutApp]
 env:  # 環境変数から文字列(パスワードなど)を取得
   DICT: ${{ toJson(github.event.client_payload) }}
-  ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-  ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
   API_KEY: ${{ secrets.API_KEY }}
   APP_ID: ${{ secrets.APP_ID }}
-  CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
-  CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
   JSON: ${{ secrets.JSON }}
   LINE_NOTIFY: ${{ secrets.LINE_NOTIFY }}
   MISSKEY: ${{ secrets.MISSKEY }}
