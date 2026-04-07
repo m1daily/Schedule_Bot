@@ -200,18 +200,18 @@ im_list_resize = [cv2.resize(im["cv2"], (int(im["cv2"].shape[1] * h_min / im["cv
 cv2.imwrite("update.jpg", cv2.hconcat(im_list_resize))  # 画像を横に結合
 
 # Gyazoに画像アップロード
-# gyazo_url = []
-# for im in images:
-#   time.sleep(2)
-#   headers = {"Authorization": f"Bearer {os.environ['GYAZO_YAMADA']}"}
-#   files = {"imagedata": open(im["path"], "rb")}
-#   r = requests.post("https://upload.gyazo.com/api/upload", headers=headers, files=files)
-#   try:
-#     r.raise_for_status()
-#   except requests.RequestException as e:
-#     logger.error("request failed. error=(%s)", e.response.text)
-#   gyazo_url.append(json.loads(r.text)["url"])
-# logger.info(gyazo_url)
+gyazo_url = []
+for im in images:
+  time.sleep(2)
+  headers = {"Authorization": f"Bearer {os.environ['GYAZO_YAMADA']}"}
+  files = {"imagedata": open(im["path"], "rb")}
+  r = requests.post("https://upload.gyazo.com/api/upload", headers=headers, files=files)
+  try:
+    r.raise_for_status()
+  except requests.RequestException as e:
+    logger.error("request failed. error=(%s)", e.response.text)
+  gyazo_url.append(json.loads(r.text)["url"])
+logger.info(gyazo_url)
 
 # GoogleSpreadSheetsに画像URLを書き込み
 # ws.update_acell("C2", "\n".join(gyazo_url))
@@ -248,12 +248,12 @@ mk.notes_create(message, visibility="home", file_ids=misskey_ids)
 logger.info("Misskey: 投稿完了")
 
 # Instagramに投稿
-insta_imgs = []
-for im in images:
-  h, w = im["cv2"].shape[:2]
-  aspect = w / h
-  if 0.8 < aspect < 1.91:
-    insta_imgs.append(im["url"])
+insta_imgs = gyazo_url
+# for im in images:
+#   h, w = im["cv2"].shape[:2]
+#   aspect = w / h
+#   if 0.8 < aspect < 1.91:
+#     insta_imgs.append(im["url"])
 if len(insta_imgs) > 1:
   logger.info("Instagram: カルーセル投稿")
   contena_ids = []  # 複数枚ある場合はカルーセル投稿
