@@ -123,10 +123,15 @@ color = "ec79a1"
 name = "5-フィードバック: 3-提案"
 description = "機能に関する提案"
 
+[dequeued]
+color = "6e936c"
+name = "dequeued"
+#description = null  # To use: uncomment and replace null with value
+
 [queued]
 color = "845610"
 name = "queued"
-#description = null  # To use: uncomment and replace null with value
+description = ""
 
 ["依存関係"]
 color = "2c71bf"
