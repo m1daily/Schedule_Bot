@@ -126,7 +126,7 @@ description = "機能に関する提案"
 [dequeued]
 color = "6e936c"
 name = "dequeued"
-#description = null  # To use: uncomment and replace null with value
+description = ""
 
 [queued]
 color = "845610"
