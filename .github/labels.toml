@@ -123,6 +123,16 @@ color = "ec79a1"
 name = "5-フィードバック: 3-提案"
 description = "機能に関する提案"
 
+[dequeued]
+color = "6e936c"
+name = "dequeued"
+description = ""
+
+[queued]
+color = "845610"
+name = "queued"
+description = ""
+
 ["依存関係"]
 color = "2c71bf"
 name = "依存関係"
