@@ -68,7 +68,7 @@ logger.info("セットアップ完了")
 src = []
 soup = BeautifulSoup(requests.get(os.environ["GOOGLE_URL"]).text, "html.parser")
 for im in soup.select('meta[content^="https://lh7-us.googleusercontent.com/docs/"]'):
-  src.append(im["src"])
+  src.append(im["content"])
 if src:
   logger.info(f"imgタグ抽出: {src}")
 else:
