@@ -61,6 +61,13 @@ def finish(exit_message):
   subprocess.run([f"echo STATUS={exit_message} >> $GITHUB_OUTPUT"], shell=True)
   exit()
 
+def image_signature(url):
+  try:
+    return str(cv2u.urlread(url))
+  except Exception as error:
+    logger.warning(f"画像の読み込みに失敗: {url}\n{error}")
+    return f"URL:{url}"
+
 logger.info("セットアップ完了")
 
 #----------------------------------------------------------------------------------------------------
@@ -81,10 +88,11 @@ for i in range(len(src)):
   url = src[i]
   logger.info(f"{i}枚目: {url}")
   if src[i]:
-    if not str(cv2u.urlread(url)) in cv2u_now:
+    cv2u_data = image_signature(url)
+    if not cv2u_data in cv2u_now:
       logger.info(" → append")
       url_now.append(url)
-      cv2u_now.append(str(cv2u.urlread(url)))
+      cv2u_now.append(cv2u_data)
   else:
     logger.info(f"{i}枚目の画像が空")
 logger.info(f"現在の画像:{url_now}")
@@ -115,7 +123,7 @@ except:
   exit()
 cv2u_old = []
 for im in url_old:
-    cv2u_old.append(str(cv2u.urlread(im)))
+    cv2u_old.append(image_signature(im))
 logger.info(f"過去の画像:{url_old}")
 subprocess.run([f"echo BEFORE={",".join(url_old)} >> $GITHUB_OUTPUT"], shell=True)
 
